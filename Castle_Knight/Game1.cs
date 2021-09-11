@@ -1173,7 +1173,7 @@ namespace Castle_Knight
                             {
                                 if (knockBack3 == true)
                                 {
-                                    enemy3_Pos.X += 3;
+                                    enemy3_Pos.X += 6;
                                     enemy3_Pos.Y -= 2;
                                 }
                                 else
@@ -1414,7 +1414,7 @@ namespace Castle_Knight
                 }
                 for (int i = 0; i < e3_Status.hp; i++)
                 {
-                    spriteBatch.Draw(Heart, e3_HeartPos[i], new Rectangle(0, 0, 32, 32), Color.LightGoldenrodYellow);
+                    spriteBatch.Draw(Heart, e3_HeartPos[i], new Rectangle(0, 0, 32, 32), Color.Brown);
                 }
 
                 if (p_died == false)
