@@ -155,9 +155,9 @@ namespace Castle_Knight
         private TimeSpan lastTimeSpecialCount;
 
         // time hp
-        private static readonly TimeSpan intervalBetweenHp = TimeSpan.FromMilliseconds(200);
+        private static readonly TimeSpan intervalBetweenHp = TimeSpan.FromMilliseconds(250);
         private TimeSpan lastTimeHp;
-        private static readonly TimeSpan intervalBetweenHp2 = TimeSpan.FromMilliseconds(150);
+        private static readonly TimeSpan intervalBetweenHp2 = TimeSpan.FromMilliseconds(250);
         private TimeSpan lastTimeHp2;
 
         // time animation
@@ -187,7 +187,7 @@ namespace Castle_Knight
         private static readonly TimeSpan _intervalBetweenAttack2 = TimeSpan.FromMilliseconds(1500);
         private TimeSpan e_lastTimeAttack2;
 
-        private TimeSpan e_intervalBetweenAttack3 = TimeSpan.FromMilliseconds(3000);
+        private TimeSpan e_intervalBetweenAttack3 = TimeSpan.FromMilliseconds(2850);
         private static readonly TimeSpan _intervalBetweenAttack3 = TimeSpan.FromMilliseconds(400);
         private TimeSpan e_lastTimeAttack3;
 
@@ -875,6 +875,7 @@ namespace Castle_Knight
                                         lastTimeAni = gameTime.TotalGameTime;
                                     }
                                     Ai3WavePos.Y = 600;
+                                    ai3_Wave = false;
                                 }
                                 else
                                 {
@@ -893,6 +894,7 @@ namespace Castle_Knight
                                         lastTimeHp = gameTime.TotalGameTime;
                                     }
                                     Ai3WavePos.Y = 600;
+                                    ai3_Wave = false;
                                 }
                             }
                         }
@@ -900,7 +902,7 @@ namespace Castle_Knight
                         if (ai3_atk == true && e1_died == true && e2_died == true)
                         {
                             blockEnemy3 = new Rectangle((int)enemy3_Pos.X + 18, (int)enemy3_Pos.Y, 32, 160);
-                            if (charRectangle.Intersects(blockEnemy3) && e3_died == false)
+                            if (charRectangle.Intersects(blockEnemy3) && e3_died == false && ai3_Wave == false)
                             {
                                 if (def == true)
                                 {
@@ -1049,9 +1051,9 @@ namespace Castle_Knight
                             {
                                 if (lastTimeHp2 + intervalBetweenHp2 < gameTime.TotalGameTime)
                                 {
-                                    if (enemy3_Pos.X - player_Pos.X >= 61)
+                                    if (enemy3_Pos.X - player_Pos.X >= 120)
                                     {
-                                        e_intervalBetweenAttack3 = TimeSpan.FromMilliseconds(3000);
+                                        e_intervalBetweenAttack3 = TimeSpan.FromMilliseconds(2850);
                                         if (e_lastTimeAttack3 + e_intervalBetweenAttack3 < gameTime.TotalGameTime)
                                         {
                                             ai3_atk = true;
@@ -1067,9 +1069,22 @@ namespace Castle_Knight
                                             ai3_atk = false;
                                         }
                                     }
-                                    else
+                                    else if (enemy3_Pos.X - player_Pos.X >= 61 && enemy3_Pos.X - player_Pos.X < 120)
                                     {
-                                        e_intervalBetweenAttack3 = TimeSpan.FromMilliseconds(1500);
+                                        if (ai3_atk == false)
+                                        {
+                                            enemy3_Pos.X -= 1;
+                                        }
+                                        if (e_lastTimeAttack3 + _intervalBetweenAttack3 < gameTime.TotalGameTime)
+                                        {
+                                            Ai3_walk.Play();
+                                            enemy3_Pos.X -= 1;
+                                            ai3_atk = false;
+                                        }
+                                    }
+                                    else if (enemy3_Pos.X - player_Pos.X < 61)
+                                    {
+                                        e_intervalBetweenAttack3 = TimeSpan.FromMilliseconds(1200);
                                         Ai3_atk.Play();
                                         if (e_lastTimeAttack3 + e_intervalBetweenAttack3 < gameTime.TotalGameTime)
                                         {
@@ -1777,10 +1792,36 @@ namespace Castle_Knight
                 {
                     if (gamePause == false)
                     {
+                        Ai1_walk.Pause();
+                        Ai1_walk.Pause();
+                        Ai2_atk.Pause();
+                        Ai2_walk.Pause();
+                        Ai3_atk.Pause();
+                        Ai3_walk.Pause();
+                        player_died.Pause();
+                        player_walk.Pause();
+                        player_idle.Pause();
+                        player_atk.Pause();
+                        player_def.Pause();
+                        player_special.Pause();
+                        atk_special.Pause();
                         gamePause = true;
                     }
                     else
                     {
+                        Ai1_walk.Play();
+                        Ai1_walk.Play();
+                        Ai2_atk.Play();
+                        Ai2_walk.Play();
+                        Ai3_atk.Play();
+                        Ai3_walk.Play();
+                        player_died.Play();
+                        player_walk.Play();
+                        player_idle.Play();
+                        player_atk.Play();
+                        player_def.Play();
+                        player_special.Play();
+                        atk_special.Play();
                         gamePause = false;
                     }
                     lastTimeSelect = gameTime.TotalGameTime;
