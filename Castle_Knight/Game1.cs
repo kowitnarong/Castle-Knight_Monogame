@@ -13,7 +13,7 @@ namespace Castle_Knight
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
+        #region Factor
         bool w_left = false, w_right = false;
         bool atk = false;
         bool def = false;
@@ -164,7 +164,9 @@ namespace Castle_Knight
         private const float Rotation = 0;
         private const float Scale = 1.0f;
         private const float Depth = 0.5f;
-        #region Charatoer
+        #endregion
+
+        #region TimeCharatoer
         // time wait
         private static readonly TimeSpan intervalBetweenAttack = TimeSpan.FromMilliseconds(800);
         private static readonly TimeSpan _intervalBetweenAttack = TimeSpan.FromMilliseconds(300);
@@ -180,6 +182,8 @@ namespace Castle_Knight
         private TimeSpan lastTimeSpecialAni;
         private TimeSpan lastTimeSpecialCount;
         #endregion
+
+        #region Other
         // time hp
         private static readonly TimeSpan intervalBetweenHp = TimeSpan.FromMilliseconds(250);
         private TimeSpan lastTimeHp;
@@ -230,7 +234,7 @@ namespace Castle_Knight
         private TimeSpan e_intervalBetweenAttack5 = TimeSpan.FromMilliseconds(1200);
         private static readonly TimeSpan _intervalBetweenAttack5 = TimeSpan.FromMilliseconds(300);
         private TimeSpan e_lastTimeAttack5;
-
+        #endregion
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -238,6 +242,8 @@ namespace Castle_Knight
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 480;
             graphics.ApplyChanges();
+
+            #region AnimatedTexture
             soundEffects = new List<SoundEffect>();
             player_idle = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             player_walk = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
@@ -263,12 +269,14 @@ namespace Castle_Knight
             rabbit_idle = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             player_special = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             atk_special = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
+            #endregion
 
             Content.RootDirectory = "Content";
         }
 
         protected override void Initialize()
         {
+            #region Loadflie
             string filepath = Path.Combine(@"Content\data.txt");
             FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Read);
             StreamReader sr = new StreamReader(fs);
@@ -282,6 +290,7 @@ namespace Castle_Knight
             string tmpStrDead = srDead.ReadLine();
             dead_count = Convert.ToInt32(tmpStrDead);
             srDead.Close();
+            #endregion
 
             select_Pos = new Vector2(130, 195);
             IsMouseVisible = true;
@@ -319,6 +328,7 @@ namespace Castle_Knight
             base.Initialize();
         }
 
+        #region Vector and Frame
         // Pos Player
         private Vector2 player_Pos = new Vector2(50, 255);
         private const int Frames = 2;
@@ -385,10 +395,13 @@ namespace Castle_Knight
         private const int e_atk_FramesPerSec = 18;
         private const int e_atk_FramesRow = 1;
 
+        #endregion
+
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            #region Asset
             // Sound Effect
             soundEffects.Add(Content.Load<SoundEffect>("WalkSound")); //[0]
             soundEffects.Add(Content.Load<SoundEffect>("button-15")); //[1]
@@ -460,6 +473,8 @@ namespace Castle_Knight
             glass.Load(Content, "Glass", 2, 1, 2);
             p_title.Load(Content, "p_Title", 2, 1, 4);
             player_walk.Pause();
+            #endregion
+
         }
 
         void MediaPlayer_MediaStateChanged(object sender, System.EventArgs e)
@@ -515,6 +530,7 @@ namespace Castle_Knight
                 {
                     if (!p_died)
                     {
+                        #region PlayerHeartPos
                         // Player heart
                         for (int i = 0; i < 5; i++)
                         {
@@ -547,7 +563,7 @@ namespace Castle_Knight
                             e5_HeartPos[i].X = (enemy5_Pos.X + 20) - (i + 1) * -22;
                             e5_HeartPos[i].Y = enemy5_Pos.Y - 15;
                         }
-
+                        #endregion
                         // Glass
                         for (int i = 0; i < 70; i++)
                         {
@@ -593,6 +609,7 @@ namespace Castle_Knight
                         Rectangle blockEnemy4Fire;
                         Rectangle blockEnemy4BigFire;
 
+                        #region PlayerAbility
                         if (special == true)
                         {
                             charRectangle = new Rectangle((int)player_Pos.X, (int)player_Pos.Y, 125, 160);
@@ -872,7 +889,10 @@ namespace Castle_Knight
                                 }
                             }
                         }
+                        #endregion
 
+                        #region EnemyAbility
+                        // Enemy 1
                         if (ai1_atk == true && e1_died == false)
                         {
                             blockEnemy1 = new Rectangle((int)enemy1_Pos.X + 18, (int)enemy1_Pos.Y, 32, 160);
@@ -1539,6 +1559,9 @@ namespace Castle_Knight
                                 }
                             }
 
+                            #endregion
+
+                            #region KnockBack
 
                             if (p_knockBack == true)
                             {
@@ -1685,7 +1708,9 @@ namespace Castle_Knight
                             Ai5_atk.Pause(0, 0);
                             Ai5_walk.Pause(0, 0);
                         }
+                        #endregion
 
+                        #region EnemyDiedCheck
                         if (e1_Status.hp <= 0)
                         {
                             e1_died = true;
@@ -1721,7 +1746,9 @@ namespace Castle_Knight
                             Ai5_atk.Pause(0, 0);
                             Ai5_walk.Pause(0, 0);
                         }
+                        #endregion
 
+                        #region Check
                         // Potion
                         if (potion_Count >= 1) { potion_Count = 1; }
                         if (potion_Count == 1)
@@ -1735,6 +1762,7 @@ namespace Castle_Knight
                                 potion_Use[0] = true;
                             }
                         }
+                        #endregion
 
                         if (Camera_Pos.X - player_Pos.X >= 80 && menuLoading == false)
                         {
@@ -1782,7 +1810,7 @@ namespace Castle_Knight
                 }
             }
 
-
+            #region DiedPlayer
             if (p_Status.hp <= 0 && p_died == false)
             {
                 if (walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
@@ -1833,6 +1861,8 @@ namespace Castle_Knight
                     Switch = "Mainmenu";
                 }
             }
+            #endregion
+
             // UpdateFrame
             UpdateFrame(elapsed);
 
@@ -1909,7 +1939,7 @@ namespace Castle_Knight
                         break;
                 }
 
-
+                #region HeartDraw
                 for (int i = 0; i < p_Status.hp; i++)
                 {
                     spriteBatch.Draw(Heart, Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.White);
@@ -1934,6 +1964,7 @@ namespace Castle_Knight
                 {
                     spriteBatch.Draw(Heart, e5_HeartPos[i], new Rectangle(0, 0, 32, 32), Color.Black);
                 }
+                #endregion
 
                 if (p_died == false)
                 {
@@ -2000,6 +2031,7 @@ namespace Castle_Knight
                     spriteBatch.Draw(gameOver, new Vector2(350 - camera.ViewMatrix.Translation.X, 120 - camera.ViewMatrix.Translation.Y), Color.White);
                 }
 
+                #region EnemyDraw
                 // Enemy
                 if (e1_died == false)
                 {
@@ -2072,6 +2104,8 @@ namespace Castle_Knight
                         Ai5_walk.DrawFrame(spriteBatch, enemy5_Pos);
                     }
                 }
+                #endregion
+
                 string strDead = "Dead = " + dead_count;
                 if (Switch == "InGame1")
                 {
