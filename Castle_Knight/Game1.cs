@@ -164,9 +164,9 @@ namespace Castle_Knight
         private const float Rotation = 0;
         private const float Scale = 1.0f;
         private const float Depth = 0.5f;
-
+        #region Charatoer
         // time wait
-        private static readonly TimeSpan intervalBetweenAttack = TimeSpan.FromMilliseconds(1000);
+        private static readonly TimeSpan intervalBetweenAttack = TimeSpan.FromMilliseconds(800);
         private static readonly TimeSpan _intervalBetweenAttack = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan intervalBetweenBlock = TimeSpan.FromMilliseconds(1400);
         private static readonly TimeSpan intervalBetweenSpecialCount = TimeSpan.FromMilliseconds(800);
@@ -179,7 +179,7 @@ namespace Castle_Knight
         private TimeSpan lastTimeSpecial;
         private TimeSpan lastTimeSpecialAni;
         private TimeSpan lastTimeSpecialCount;
-
+        #endregion
         // time hp
         private static readonly TimeSpan intervalBetweenHp = TimeSpan.FromMilliseconds(250);
         private TimeSpan lastTimeHp;
@@ -587,7 +587,7 @@ namespace Castle_Knight
                         Rectangle blockEnemy1 = new Rectangle((int)enemy1_Pos.X + 64, (int)enemy1_Pos.Y, 32, 160);
                         Rectangle blockEnemy2 = new Rectangle((int)enemy2_Pos.X + 64, (int)enemy2_Pos.Y, 32, 160);
                         Rectangle blockEnemy3 = new Rectangle((int)enemy3_Pos.X + 64, (int)enemy3_Pos.Y, 32, 160);
-                        Rectangle blockEnemy4 = new Rectangle((int)enemy4_Pos.X + 20, (int)enemy4_Pos.Y, 100, 160);
+                        Rectangle blockEnemy4 = new Rectangle((int)enemy4_Pos.X + 30, (int)enemy4_Pos.Y, 32, 160);
                         Rectangle blockEnemy5 = new Rectangle((int)enemy5_Pos.X + 64, (int)enemy5_Pos.Y, 32, 160);
                         Rectangle blockEnemy3Wave;
                         Rectangle blockEnemy4Fire;
@@ -760,6 +760,7 @@ namespace Castle_Knight
                         if (atk == true)
                         {
                             charRectangle = new Rectangle((int)player_Pos.X, (int)player_Pos.Y, 125, 160);
+                            blockEnemy4 = new Rectangle((int)enemy4_Pos.X, (int)enemy4_Pos.Y, 32, 160);
                             if (charRectangle.Intersects(blockEnemy1) && e1_died == false)
                             {
                                 if (lastTimeAni2 + intervalBetweenAni2 < gameTime.TotalGameTime)
@@ -1210,7 +1211,7 @@ namespace Castle_Knight
                         }
                         if (ai4_atk == true && e1_died == true && e2_died == true && e3_died == true)
                         {
-                            blockEnemy4 = new Rectangle((int)enemy4_Pos.X + 20, (int)enemy4_Pos.Y, 100, 160);
+                            blockEnemy4 = new Rectangle((int)enemy4_Pos.X + 35, (int)enemy4_Pos.Y, 32, 160);
                             if (charRectangle.Intersects(blockEnemy4) && e4_died == false && ai4_Fireball == false)
                             {
                                 if (lastTimeAni + intervalBetweenAni < gameTime.TotalGameTime)
@@ -1221,7 +1222,7 @@ namespace Castle_Knight
 
                                     lastTimeAni = gameTime.TotalGameTime;
                                 }
-                                if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime)
+                                if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime && !atk)
                                 {
                                     p_Status.hp -= 1;
 
@@ -1233,7 +1234,7 @@ namespace Castle_Knight
                         {
                             if (e4_died == false && e1_died == true && e2_died == true && e3_died == true)
                             {
-                                blockEnemy4 = new Rectangle((int)enemy4_Pos.X + 20, (int)enemy4_Pos.Y, 100, 160);
+                                blockEnemy4 = new Rectangle((int)enemy4_Pos.X + 35, (int)enemy4_Pos.Y, 32, 160);
                                 if (charRectangle.Intersects(blockEnemy4) && e4_died == false && ai4_Fireball == false)
                                 {
                                     if (lastTimeAni + intervalBetweenAni < gameTime.TotalGameTime)
@@ -1244,7 +1245,7 @@ namespace Castle_Knight
 
                                         lastTimeAni = gameTime.TotalGameTime;
                                     }
-                                    if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime)
+                                    if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime && !atk)
                                     {
                                         p_Status.hp -= 1;
 
