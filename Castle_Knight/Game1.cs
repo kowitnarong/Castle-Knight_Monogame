@@ -102,6 +102,8 @@ namespace Castle_Knight
 
         // Player
         int special_Count = 0;
+        bool getHit = false;
+        bool playerInvi = false;
         Status p_Status = new Status();
         Status e1_Status = new Status();
         Status e2_Status = new Status();
@@ -170,7 +172,7 @@ namespace Castle_Knight
         // time wait
         private static readonly TimeSpan intervalBetweenAttack = TimeSpan.FromMilliseconds(800);
         private static readonly TimeSpan _intervalBetweenAttack = TimeSpan.FromMilliseconds(300);
-        private static readonly TimeSpan intervalBetweenBlock = TimeSpan.FromMilliseconds(1400);
+        private static readonly TimeSpan intervalBetweenBlock = TimeSpan.FromMilliseconds(1280);
         private static readonly TimeSpan intervalBetweenSpecialCount = TimeSpan.FromMilliseconds(800);
         private static readonly TimeSpan _intervalBetweenBlock = TimeSpan.FromMilliseconds(410);
         private static readonly TimeSpan sIntervalBetweenAttackAni = TimeSpan.FromMilliseconds(300);
@@ -187,7 +189,7 @@ namespace Castle_Knight
         // time hp
         private static readonly TimeSpan intervalBetweenHp = TimeSpan.FromMilliseconds(250);
         private TimeSpan lastTimeHp;
-        private static readonly TimeSpan intervalBetweenHp2 = TimeSpan.FromMilliseconds(250);
+        private static readonly TimeSpan intervalBetweenHp2 = TimeSpan.FromMilliseconds(300);
         private TimeSpan lastTimeHp2;
 
         // time animation
@@ -207,6 +209,12 @@ namespace Castle_Knight
         // time died
         private static readonly TimeSpan intervalBetweenDied = TimeSpan.FromMilliseconds(700);
         private TimeSpan lastTimeDied;
+
+        // time delayDetHit
+        private static readonly TimeSpan GetHitDelay = TimeSpan.FromMilliseconds(90);
+        private static readonly TimeSpan _GetHitDelay = TimeSpan.FromMilliseconds(180);
+        private static readonly TimeSpan _GetHitDelay2 = TimeSpan.FromMilliseconds(250);
+        private TimeSpan GetHitTime;
 
         // Enemy time
         private static readonly TimeSpan e_intervalBetweenAttack = TimeSpan.FromMilliseconds(3000);
@@ -235,6 +243,7 @@ namespace Castle_Knight
         private static readonly TimeSpan _intervalBetweenAttack5 = TimeSpan.FromMilliseconds(300);
         private TimeSpan e_lastTimeAttack5;
         #endregion
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -682,7 +691,7 @@ namespace Castle_Knight
                                 if (lastTimeAni2 + intervalBetweenAni2 < gameTime.TotalGameTime)
                                 {
                                     knockBack5 = true;
-
+                                    special_Pos = new Vector2(500, 600);
                                     lastTimeAni2 = gameTime.TotalGameTime;
                                 }
                                 if (lastTimeHp2 + intervalBetweenHp2 < gameTime.TotalGameTime)
@@ -927,7 +936,10 @@ namespace Castle_Knight
                                     if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime)
                                     {
                                         p_Status.hp -= 1;
+                                        getHit = true;
+                                        playerInvi = true;
 
+                                        GetHitTime = gameTime.TotalGameTime;
                                         lastTimeHp = gameTime.TotalGameTime;
                                     }
                                 }
@@ -950,7 +962,10 @@ namespace Castle_Knight
                                     if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime)
                                     {
                                         p_Status.hp -= 1;
+                                        getHit = true;
+                                        playerInvi = true;
 
+                                        GetHitTime = gameTime.TotalGameTime;
                                         lastTimeHp = gameTime.TotalGameTime;
                                     }
                                 }
@@ -992,7 +1007,10 @@ namespace Castle_Knight
                                     if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime)
                                     {
                                         p_Status.hp -= 1;
+                                        getHit = true;
+                                        playerInvi = true;
 
+                                        GetHitTime = gameTime.TotalGameTime;
                                         lastTimeHp = gameTime.TotalGameTime;
                                     }
                                 }
@@ -1015,7 +1033,10 @@ namespace Castle_Knight
                                     if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime)
                                     {
                                         p_Status.hp -= 1;
+                                        getHit = true;
+                                        playerInvi = true;
 
+                                        GetHitTime = gameTime.TotalGameTime;
                                         lastTimeHp = gameTime.TotalGameTime;
                                     }
                                 }
@@ -1065,7 +1086,10 @@ namespace Castle_Knight
                                     if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime)
                                     {
                                         p_Status.hp -= 1;
+                                        getHit = true;
+                                        playerInvi = true;
 
+                                        GetHitTime = gameTime.TotalGameTime;
                                         lastTimeHp = gameTime.TotalGameTime;
                                     }
                                     Ai3WavePos.Y = 600;
@@ -1107,7 +1131,10 @@ namespace Castle_Knight
                                     if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime)
                                     {
                                         p_Status.hp -= 1;
+                                        getHit = true;
+                                        playerInvi = true;
 
+                                        GetHitTime = gameTime.TotalGameTime;
                                         lastTimeHp = gameTime.TotalGameTime;
                                     }
                                 }
@@ -1130,7 +1157,10 @@ namespace Castle_Knight
                                     if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime)
                                     {
                                         p_Status.hp -= 1;
+                                        getHit = true;
+                                        playerInvi = true;
 
+                                        GetHitTime = gameTime.TotalGameTime;
                                         lastTimeHp = gameTime.TotalGameTime;
                                     }
                                 }
@@ -1170,7 +1200,10 @@ namespace Castle_Knight
                                     if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime)
                                     {
                                         p_Status.hp -= 1;
+                                        getHit = true;
+                                        playerInvi = true;
 
+                                        GetHitTime = gameTime.TotalGameTime;
                                         lastTimeHp = gameTime.TotalGameTime;
                                     }
                                     Ai4FirePos.Y = 600;
@@ -1220,7 +1253,10 @@ namespace Castle_Knight
                                         if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime)
                                         {
                                             p_Status.hp -= 1;
+                                            getHit = true;
+                                            playerInvi = true;
 
+                                            GetHitTime = gameTime.TotalGameTime;
                                             lastTimeHp = gameTime.TotalGameTime;
                                         }
                                         Ai4FirePos.Y = 600;
@@ -1245,7 +1281,10 @@ namespace Castle_Knight
                                 if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime && !atk)
                                 {
                                     p_Status.hp -= 1;
+                                    getHit = true;
+                                    playerInvi = true;
 
+                                    GetHitTime = gameTime.TotalGameTime;
                                     lastTimeHp = gameTime.TotalGameTime;
                                 }
                             }
@@ -1268,7 +1307,10 @@ namespace Castle_Knight
                                     if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime && !atk)
                                     {
                                         p_Status.hp -= 1;
+                                        getHit = true;
+                                        playerInvi = true;
 
+                                        GetHitTime = gameTime.TotalGameTime;
                                         lastTimeHp = gameTime.TotalGameTime;
                                     }
                                 }
@@ -1310,7 +1352,10 @@ namespace Castle_Knight
                                     if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime)
                                     {
                                         p_Status.hp -= 1;
+                                        getHit = true;
+                                        playerInvi = true;
 
+                                        GetHitTime = gameTime.TotalGameTime;
                                         lastTimeHp = gameTime.TotalGameTime;
                                     }
                                 }
@@ -1333,7 +1378,10 @@ namespace Castle_Knight
                                     if (lastTimeHp + intervalBetweenHp < gameTime.TotalGameTime)
                                     {
                                         p_Status.hp -= 1;
+                                        getHit = true;
+                                        playerInvi = true;
 
+                                        GetHitTime = gameTime.TotalGameTime;
                                         lastTimeHp = gameTime.TotalGameTime;
                                     }
                                 }
@@ -1558,7 +1606,6 @@ namespace Castle_Knight
                                     }
                                 }
                             }
-
                             #endregion
 
                             #region KnockBack
@@ -1776,6 +1823,30 @@ namespace Castle_Knight
                             }
                         }
 
+                        #region Visible When GetHit
+                        if (GetHitTime + GetHitDelay < gameTime.TotalGameTime)
+                        {
+                            getHit = false;
+                        }
+                        if (GetHitTime + GetHitDelay < gameTime.TotalGameTime && playerInvi && GetHitTime + _GetHitDelay < gameTime.TotalGameTime)
+                        {
+                            getHit = true;
+
+                            if (GetHitTime + GetHitDelay + _GetHitDelay < gameTime.TotalGameTime)
+                            {
+                                getHit = false;
+
+                                if (GetHitTime + GetHitDelay + _GetHitDelay2 < gameTime.TotalGameTime)
+                                {
+                                    getHit = true;
+
+                                    GetHitTime = gameTime.TotalGameTime;
+                                    playerInvi = false;
+                                }
+                            }
+                        }
+                        #endregion
+
                         // Rabbit
                         if (rabbit_Pos.X < 1100 && rab_direction == false)
                         {
@@ -1966,53 +2037,57 @@ namespace Castle_Knight
                 }
                 #endregion
 
+                #region PlayerDraw
                 if (p_died == false)
                 {
                     Cat_idle.DrawFrame(spriteBatch, Cat_Pos);
                     rabbit_idle.DrawFrame(spriteBatch, rabbit_Pos, _rab_direction);
-                    if (special == true)
+                    if (!getHit)
                     {
-                        atk_special.DrawFrame(spriteBatch, special_Pos);
-                    }
-                    if (special_ani == true)
-                    {
-                        player_special.DrawFrame(spriteBatch, player_Pos);
-                    }
-                    else if (atk == true)
-                    {
-                        player_atk.DrawFrame(spriteBatch, player_Pos);
-                    }
-                    else if (def == true)
-                    {
-                        player_def.DrawFrame(spriteBatch, player_Pos);
-                    }
-                    else
-                    {
-                        if ((w_left == false && w_right == false) || (w_left == true && w_right == true))
+                        if (special == true)
                         {
-                            player_idle.Play();
-                            if (gamePause) { player_idle.Pause(); }
-                            player_idle.DrawFrame(spriteBatch, player_Pos);
+                            atk_special.DrawFrame(spriteBatch, special_Pos);
+                        }
+                        if (special_ani == true)
+                        {
+                            player_special.DrawFrame(spriteBatch, player_Pos);
+                        }
+                        else if (atk == true)
+                        {
+                            player_atk.DrawFrame(spriteBatch, player_Pos);
+                        }
+                        else if (def == true)
+                        {
+                            player_def.DrawFrame(spriteBatch, player_Pos);
                         }
                         else
                         {
-                            if (w_left == true)
+                            if ((w_left == false && w_right == false) || (w_left == true && w_right == true))
                             {
-                                if (player_walk.IsPaused)
-                                {
-                                    player_walk.Play();
-                                }
-                                if (gamePause) { player_walk.Pause(); }
-                                player_walk.DrawFrame(spriteBatch, player_Pos);
+                                player_idle.Play();
+                                if (gamePause) { player_idle.Pause(); }
+                                player_idle.DrawFrame(spriteBatch, player_Pos);
                             }
-                            if (w_right == true)
+                            else
                             {
-                                if (player_walk.IsPaused)
+                                if (w_left == true)
                                 {
-                                    player_walk.Play();
+                                    if (player_walk.IsPaused)
+                                    {
+                                        player_walk.Play();
+                                    }
+                                    if (gamePause) { player_walk.Pause(); }
+                                    player_walk.DrawFrame(spriteBatch, player_Pos);
                                 }
-                                if (gamePause) { player_walk.Pause(); }
-                                player_walk.DrawFrame(spriteBatch, player_Pos);
+                                if (w_right == true)
+                                {
+                                    if (player_walk.IsPaused)
+                                    {
+                                        player_walk.Play();
+                                    }
+                                    if (gamePause) { player_walk.Pause(); }
+                                    player_walk.DrawFrame(spriteBatch, player_Pos);
+                                }
                             }
                         }
                     }
@@ -2030,6 +2105,7 @@ namespace Castle_Knight
                     rabbit_idle.DrawFrame(spriteBatch, rabbit_Pos, _rab_direction);
                     spriteBatch.Draw(gameOver, new Vector2(350 - camera.ViewMatrix.Translation.X, 120 - camera.ViewMatrix.Translation.Y), Color.White);
                 }
+                #endregion
 
                 #region EnemyDraw
                 // Enemy
