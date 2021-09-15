@@ -53,9 +53,9 @@ namespace Castle_Knight
         public TimeSpan DelayKnockBack = TimeSpan.FromMilliseconds(100);
         public TimeSpan lastTimeKnockBack;
 
-        public static readonly TimeSpan GetHitDelay = TimeSpan.FromMilliseconds(90);
-        public static readonly TimeSpan _GetHitDelay = TimeSpan.FromMilliseconds(180);
-        public static readonly TimeSpan _GetHitDelay2 = TimeSpan.FromMilliseconds(250);
+        public static readonly TimeSpan GetHitDelay = TimeSpan.FromMilliseconds(80);
+        public static readonly TimeSpan _GetHitDelay = TimeSpan.FromMilliseconds(160);
+        public static readonly TimeSpan _GetHitDelay2 = TimeSpan.FromMilliseconds(240);
         public TimeSpan GetHitTime;
 
         public Rectangle charBlock;

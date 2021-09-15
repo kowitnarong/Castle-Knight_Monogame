@@ -14,6 +14,12 @@ namespace Castle_Knight
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        ScreenState mCurrentScreen;
+        enum ScreenState
+        {
+            Title, Gameplay
+        }
+
         Player Player = new Player();
         Enemy enemyBlack = new Enemy();
         Enemy enemyBlack2 = new Enemy();
@@ -26,7 +32,6 @@ namespace Castle_Knight
         bool def = false;
         bool special = false;
         bool special_ani = false;
-
 
         // Menu
         string Switch;
@@ -318,6 +323,7 @@ namespace Castle_Knight
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            mCurrentScreen = ScreenState.Title;
             #region Asset
             // Sound Effect
             soundEffects.Add(Content.Load<SoundEffect>("WalkSound")); //[0]
@@ -409,12 +415,198 @@ namespace Castle_Knight
         protected override void Update(GameTime gameTime)
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (Switch == "Mainmenu")
+
+            switch (mCurrentScreen)
             {
-                Player.died = false;
-                UpdateMenu(gameTime);
+                case ScreenState.Title:
+                    {
+                        Player.died = false;
+                        UpdateTitle(gameTime);
+                        break;
+                    }
+                case ScreenState.Gameplay:
+                    {
+                        UpdateGameplay(gameTime, elapsed);
+                        break;
+                    }
+            }         
+            base.Update(gameTime);
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.Black);
+            switch (mCurrentScreen)
+            {
+                case ScreenState.Title:
+                    {
+                        DrawMenu();
+                        break;
+                    }
+                case ScreenState.Gameplay:
+                    {
+                        DrawGameplay(gameTime);
+                        break;
+                    }
+            }        
+            base.Draw(gameTime);
+        }
+
+        private void UpdateTitle(GameTime gameTime)
+        {
+            float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            p_title.UpdateFrame(elapsed);
+            Player.hp = 5;
+            keyboardState = Keyboard.GetState();
+            if (keyboardState.IsKeyDown(Keys.Down) && stopPress == false)
+            {
+                if (lastTimeSelect + intervalBetweenSelect < gameTime.TotalGameTime)
+                {
+                    if (!(select_Pos.Y == 315))
+                    {
+                        soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
+                    }
+                    if (select_Pos.Y <= 255)
+                    {
+                        select_Pos.Y += 60;
+
+                        lastTimeSelect = gameTime.TotalGameTime;
+                    }
+                }
             }
-            else if (Switch == "Loading")
+            else if (keyboardState.IsKeyDown(Keys.Up) && stopPress == false)
+            {
+                if (lastTimeSelect + intervalBetweenSelect < gameTime.TotalGameTime)
+                {
+                    if (!(select_Pos.Y == 195))
+                    {
+                        soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
+                    }
+                    if (select_Pos.Y >= 255)
+                    {
+                        select_Pos.Y -= 60;
+
+                        lastTimeSelect = gameTime.TotalGameTime;
+                    }
+                }
+            }
+            else if (keyboardState.IsKeyDown(Keys.A) && stopPress == false)
+            {
+                stopPress = true;
+                soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
+                if (select_Pos.Y == 195)
+                {
+                    select = 1;
+                }
+                else if (select_Pos.Y == 255)
+                {
+                    select = 2;
+                }
+                else if (select_Pos.Y == 315)
+                {
+                    select = 3;
+                }
+
+                if (select == 1)
+                {
+                    bg1Song = false;
+                    noLoad = false;
+                    string filepath = Path.Combine(@"Content\data.txt");
+                    FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Write);
+                    StreamWriter sw = new StreamWriter(fs);
+                    sw.WriteLine("InGame1");
+                    sw.Flush();
+                    sw.Close();
+                    enemyBlack.died = false;
+                    enemyBlack2.died = false;
+                    enemyGold.died = false;
+                    enemyWizard.died = false;
+                    enemyRed.died = false;
+                    fireBallCount = 0;
+                    ai4_bigFireball = false;
+                    enemyBlack.Position = new Vector2(800, 255);
+                    enemyBlack2.Position = new Vector2(1500, 255);
+                    enemyGold.Position = new Vector2(3000, 255);
+                    enemyWizard.Position = new Vector2(2600, 255);
+                    enemyRed.Position = new Vector2(3500, 255);
+                    Player.Position = new Vector2(50, 255);
+                    Camera_Pos = new Vector2(700, 255);
+                    special_Pos = new Vector2(500, 600);
+                    enemyBlack.hp = 3;
+                    enemyBlack2.hp = 5;
+                    enemyGold.hp = 5;
+                    enemyWizard.hp = 3;
+                    enemyRed.hp = 5;
+                    potion_Count = 0;
+                    Player.SpeCount = 0;
+                    potion_Pos[0] = new Vector2(700, 390);
+                    potion_Pos[1] = new Vector2(2200, 390);
+                    potion_Ena[0] = false;
+                    potion_Use[0] = false;
+                    potion_Ena[1] = false;
+                    potion_Use[1] = false;
+                    Player.diedAni.Pause(0, 0);
+
+                    lastTimeLoad = gameTime.TotalGameTime;
+
+                    Switch = "Loading";
+                    mCurrentScreen = ScreenState.Gameplay;
+                }
+                else if (select == 2)
+                {
+                    if (loadingText == "InGame1")
+                    {
+                        bg1Song = false;
+                        noLoad = false;
+                        enemyBlack.died = false;
+                        enemyBlack2.died = false;
+                        enemyGold.died = false;
+                        enemyWizard.died = false;
+                        enemyRed.died = false;
+                        fireBallCount = 0;
+                        ai4_bigFireball = false;
+                        enemyBlack.Position = new Vector2(800, 255);
+                        enemyBlack2.Position = new Vector2(1500, 255);
+                        enemyGold.Position = new Vector2(3000, 255);
+                        enemyWizard.Position = new Vector2(2600, 255);
+                        enemyRed.Position = new Vector2(3500, 255);
+                        Player.Position = new Vector2(50, 255);
+                        Camera_Pos = new Vector2(700, 255);
+                        special_Pos = new Vector2(500, 600);
+                        enemyBlack.hp = 3;
+                        enemyBlack2.hp = 5;
+                        enemyGold.hp = 5;
+                        enemyWizard.hp = 3;
+                        enemyRed.hp = 5;
+                        potion_Count = 0;
+                        Player.SpeCount = 0;
+                        potion_Pos[0] = new Vector2(700, 390);
+                        potion_Pos[1] = new Vector2(2200, 390);
+                        potion_Ena[0] = false;
+                        potion_Use[0] = false;
+                        potion_Ena[1] = false;
+                        potion_Use[1] = false;
+                        Player.diedAni.Pause(0, 0);
+                    }
+                    else
+                    {
+                        noLoad = true;
+                    }
+                    lastTimeLoad = gameTime.TotalGameTime;
+
+                    Switch = "Loading";
+                    mCurrentScreen = ScreenState.Gameplay;
+                }
+                else if (select == 3)
+                {
+                    Exit();
+                }
+            }
+        }
+
+        private void UpdateGameplay(GameTime gameTime, float elapsed)
+        {
+            if (Switch == "Loading")
             {
                 menuLoading = true;
                 string filepath = Path.Combine(@"Content\data.txt");
@@ -426,6 +618,7 @@ namespace Castle_Knight
                 if (noLoad == true)
                 {
                     Switch = "Mainmenu";
+                    mCurrentScreen = ScreenState.Title;
                 }
                 else if (noLoad == false)
                 {
@@ -709,7 +902,7 @@ namespace Castle_Knight
                             }
                             Ai3WavePos.X -= 7;
                             blockEnemy3Wave = new Rectangle((int)Ai3WavePos.X, (int)Ai3WavePos.Y, 50, 160);
-                            if(Player.charBlock.Intersects(blockEnemy3Wave) && enemyGold.died == false)
+                            if (Player.charBlock.Intersects(blockEnemy3Wave) && enemyGold.died == false)
                             {
                                 if (def == true)
                                 {
@@ -834,7 +1027,7 @@ namespace Castle_Knight
                         // Enemy 5 atk
                         if (enemyRed.atk == true && enemyBlack.died == true && enemyBlack2.died == true && enemyGold.died == true && enemyWizard.died == true)
                         {
-                            Player.charBlock = new Rectangle((int)enemyRed.Position.X + 18, (int)enemyRed.Position.Y, 32, 160);
+                            enemyRed.charBlock = new Rectangle((int)enemyRed.Position.X + 18, (int)enemyRed.Position.Y, 32, 160);
                             if (Player.charBlock.Intersects(enemyRed.charBlock) && enemyRed.died == false)
                             {
                                 if (def == true)
@@ -852,7 +1045,7 @@ namespace Castle_Knight
                         {
                             if (enemyRed.died == false && enemyBlack.died == true && enemyBlack2.died == true && enemyGold.died == true && enemyWizard.died == true)
                             {
-                                Player.charBlock = new Rectangle((int)enemyRed.Position.X + 96, (int)enemyRed.Position.Y, 32, 160);
+                                enemyRed.charBlock = new Rectangle((int)enemyRed.Position.X + 96, (int)enemyRed.Position.Y, 32, 160);
                                 if (Player.charBlock.Intersects(enemyRed.charBlock) && enemyRed.died == false)
                                 {
                                     Player.WhenDefFalse(gameTime, soundEffects);
@@ -1275,7 +1468,7 @@ namespace Castle_Knight
                 Player.died = true;
                 Player.stop_move = true;
                 Player.diedAni.Play();
-                enemyBlack.atkAni.Pause(0,0);
+                enemyBlack.atkAni.Pause(0, 0);
                 enemyBlack2.atkAni.Pause(0, 0);
                 enemyGold.atkAni.Pause(0, 0);
                 enemyWizard.atkAni.Pause(0, 0);
@@ -1316,20 +1509,207 @@ namespace Castle_Knight
                     MediaPlayer.IsMuted = true;
                     if (Dead.State != SoundState.Stopped) { Dead.Stop(); }
                     Switch = "Mainmenu";
+                    mCurrentScreen = ScreenState.Title;
                 }
             }
             #endregion
 
             // UpdateFrame
             UpdateFrame(elapsed);
-
-            base.Update(gameTime);
         }
 
-
-        protected override void Draw(GameTime gameTime)
+        private void gameKeyDown()
         {
-            GraphicsDevice.Clear(Color.Black);
+            keyboardState = Keyboard.GetState();
+            if (!menuLoading)
+            {
+                var walk = soundEffects[0].CreateInstance();
+                if (keyboardState.IsKeyDown(Keys.Left) && Player.stop_move == false)
+                {
+                    Player.Position.X -= 2;
+                    w_left = true;
+                    if (keyboardState.IsKeyDown(Keys.Left) && walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Play(); }
+                }
+                else if (old_keyboardState.IsKeyDown(Keys.Left) && keyboardState.IsKeyUp(Keys.Left))
+                {
+                    Player.walkAni.Pause(0, 0);
+                    w_left = false;
+                    if (old_keyboardState.IsKeyDown(Keys.Left) && keyboardState.IsKeyUp(Keys.Left) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
+                }
+
+                if (keyboardState.IsKeyDown(Keys.Right) && Player.stop_move == false)
+                {
+                    Player.Position.X += 2;
+                    w_right = true;
+                    if (keyboardState.IsKeyDown(Keys.Right) && walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Play(); }
+                }
+                else if (old_keyboardState.IsKeyDown(Keys.Right) && keyboardState.IsKeyUp(Keys.Right))
+                {
+                    Player.walkAni.Pause(0, 0);
+                    w_right = false;
+                    if (old_keyboardState.IsKeyDown(Keys.Right) && keyboardState.IsKeyUp(Keys.Right) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
+                }
+                if (keyboardState.IsKeyDown(Keys.Right) && keyboardState.IsKeyDown(Keys.Left) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
+                if (keyboardState.IsKeyDown(Keys.Left) && keyboardState.IsKeyDown(Keys.Right) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
+                old_keyboardState = keyboardState;
+            }
+           
+        }
+
+        private void gameKeyAttack(GameTime gameTime)
+        {
+            keyboardState = Keyboard.GetState();
+            if (!menuLoading)
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.A) && Player.lastTimeAttack + Player.DelayAttack < gameTime.TotalGameTime && Player.lastTimeBlock + Player.CDBlock < gameTime.TotalGameTime && Player.lastTimeSpecial + Player.DelaySAttack < gameTime.TotalGameTime)
+                {
+                    if (keyboardState.IsKeyDown(Keys.A) && SwordWhoosh.State != SoundState.Playing) { SwordWhoosh.Play(); }
+                    def = false;
+                    special_ani = false;
+                    Player.atk = true;
+                    Player.stop_move = true;
+                    if (Keyboard.GetState().IsKeyDown(Keys.A) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
+                    Player.atkAni.Play();
+                    Player.walkAni.Pause(0, 0);
+
+                    Player.lastTimeAttack = gameTime.TotalGameTime;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.S) && Player.lastTimeBlock + Player.DelayBlock < gameTime.TotalGameTime && Player.lastTimeAttack + Player.CDAttack < gameTime.TotalGameTime && Player.lastTimeSpecial + Player.DelaySAttack < gameTime.TotalGameTime)
+                {
+                    Player.atk = false;
+                    special_ani = false;
+                    def = true;
+                    Player.stop_move = true;
+                    if (Keyboard.GetState().IsKeyDown(Keys.S) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
+                    Player.defAni.Play();
+                    Player.walkAni.Pause(0, 0);
+
+                    Player.lastTimeBlock = gameTime.TotalGameTime;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.F) && Player.SpeCount == 4 && Player.lastTimeSpecial + Player.DelaySAttack < gameTime.TotalGameTime && Player.lastTimeBlock + Player.CDBlock < gameTime.TotalGameTime && Player.lastTimeAttack + Player.CDAttack < gameTime.TotalGameTime)
+                {
+                    Player.atk = false;
+                    def = false;
+                    special = true;
+                    special_ani = true;
+                    Player.stop_move = true;
+                    if (Keyboard.GetState().IsKeyDown(Keys.F) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
+                    soundEffects[6].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
+                    Player.specialAtkAni.Play();
+                    Player.specialAni.Play();
+                    Player.walkAni.Pause(0, 0);
+                    special_Pos = new Vector2(Player.Position.X + 120, Player.Position.Y);
+                    Player.SpeCount = 0;
+
+                    Player.lastTimeSpecial = gameTime.TotalGameTime;
+                    Player.lastTimeSpecialDuring = gameTime.TotalGameTime;
+                }
+
+                // ก่ารทำงาน
+                if (Player.lastTimeAttack + Player.CDAttack < gameTime.TotalGameTime && Player.lastTimeBlock + Player.CDBlock < gameTime.TotalGameTime && Player.lastTimeSpecialDuring + Player.CDSAttack < gameTime.TotalGameTime)
+                {
+                    if (SwordWhoosh.State != SoundState.Stopped) { SwordWhoosh.Stop(); }
+                    Player.atk = false;
+                    Player.stop_move = false;
+                    def = false;
+                    special_ani = false;
+                    Player.specialAni.Pause(0, 0);
+                    Player.atkAni.Pause(0, 0);
+                    Player.defAni.Pause(0, 0);
+                }
+                if (Player.lastTimeSpecial + Player.TimeDuringSAttack < gameTime.TotalGameTime)
+                {
+                    special = false;
+                    special_Pos = new Vector2(500, 600);
+                    Player.specialAtkAni.Pause(0, 0);
+                }
+            } 
+        }
+
+        private void gameKeyPause(GameTime gameTime)
+        {
+            keyboardState = Keyboard.GetState();
+            if (lastTimeSelect + intervalBetweenSelect < gameTime.TotalGameTime)
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                {
+                    if (gamePause == false)
+                    {
+                        enemyBlack.walkAni.Pause();
+                        enemyBlack.walkAni.Pause();
+                        enemyBlack2.atkAni.Pause();
+                        enemyBlack2.walkAni.Pause();
+                        enemyGold.atkAni.Pause();
+                        enemyWizard.atkAni.Pause();
+                        enemyGold.walkAni.Pause();
+                        Player.diedAni.Pause();
+                        Player.walkAni.Pause();
+                        Player.idleAni.Pause();
+                        Player.atkAni.Pause();
+                        Player.defAni.Pause();
+                        Player.specialAni.Pause();
+                        Player.specialAtkAni.Pause();
+                        if (walkSoundInstance.State != SoundState.Paused) { walkSoundInstance.Pause(); }
+                        gamePause = true;
+                    }
+                    else
+                    {
+                        enemyBlack.walkAni.Play();
+                        enemyBlack.walkAni.Play();
+                        enemyBlack2.atkAni.Play();
+                        enemyBlack2.walkAni.Play();
+                        enemyGold.atkAni.Play();
+                        enemyGold.walkAni.Play();
+                        enemyWizard.atkAni.Play();
+                        Player.diedAni.Play();
+                        Player.walkAni.Play();
+                        Player.idleAni.Play();
+                        Player.atkAni.Play();
+                        Player.defAni.Play();
+                        Player.specialAni.Play();
+                        Player.specialAtkAni.Play();
+                        if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Resume(); }
+                        gamePause = false;
+                    }
+                    lastTimeSelect = gameTime.TotalGameTime;
+                }
+            }
+        }
+
+        private void UpdateFrame(float Elapsed)
+        {
+            // Enemy Update frame
+            enemyBlack.walkAni.UpdateFrame(Elapsed);
+            enemyBlack.idleAni.UpdateFrame(Elapsed);
+            enemyBlack.atkAni.UpdateFrame(Elapsed);
+            enemyBlack2.walkAni.UpdateFrame(Elapsed);
+            enemyBlack2.idleAni.UpdateFrame(Elapsed);
+            enemyBlack2.atkAni.UpdateFrame(Elapsed);
+            enemyGold.walkAni.UpdateFrame(Elapsed);
+            enemyGold.atkAni.UpdateFrame(Elapsed);
+            enemyWizard.atkAni.UpdateFrame(Elapsed);
+            enemyRed.walkAni.UpdateFrame(Elapsed);
+            enemyRed.atkAni.UpdateFrame(Elapsed);
+            enemyWizard.idleAni.UpdateFrame(Elapsed);
+
+            // Player Update frame
+            Player.diedAni.UpdateFrame(Elapsed);
+            Player.walkAni.UpdateFrame(Elapsed);
+            Player.idleAni.UpdateFrame(Elapsed);
+            Player.atkAni.UpdateFrame(Elapsed);
+            Player.defAni.UpdateFrame(Elapsed);
+            Player.specialAni.UpdateFrame(Elapsed);
+            Player.specialAtkAni.UpdateFrame(Elapsed);
+
+            // ฉาก Update frame
+            glass.UpdateFrame(Elapsed);
+            loading.UpdateFrame(Elapsed);
+            Cat_idle.UpdateFrame(Elapsed);
+            rabbit_idle.UpdateFrame(Elapsed);
+        }
+
+        private void DrawMenu()
+        {
             if (Switch == "Mainmenu")
             {
                 spriteBatch.Begin();
@@ -1341,7 +1721,11 @@ namespace Castle_Knight
                 p_title.DrawFrame(spriteBatch, new Vector2(560, 80));
                 spriteBatch.End();
             }
-            else if (Switch == "InGame1" && menuLoading == false)
+        }
+
+        private void DrawGameplay(GameTime gameTime)
+        {
+            if (Switch == "InGame1" && menuLoading == false)
             {
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.ViewMatrix);
                 spriteBatch.Draw(BG1_1, new Vector2(0 - camera.ViewMatrix.Translation.X * 0.8f, 0), Color.White);
@@ -1603,349 +1987,6 @@ namespace Castle_Knight
                 }
                 spriteBatch.End();
             }
-                
-            base.Draw(gameTime);
-        }
-
-        private void UpdateMenu(GameTime gameTime)
-        {
-            float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            p_title.UpdateFrame(elapsed);
-            Player.hp = 5;
-            keyboardState = Keyboard.GetState();
-            if (keyboardState.IsKeyDown(Keys.Down) && stopPress == false)
-            {
-                if (lastTimeSelect + intervalBetweenSelect < gameTime.TotalGameTime)
-                {
-                    if (!(select_Pos.Y == 315))
-                    {
-                        soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
-                    }
-                    if (select_Pos.Y <= 255)
-                    {
-                        select_Pos.Y += 60;
-
-                        lastTimeSelect = gameTime.TotalGameTime;
-                    }
-                }
-            }
-            else if (keyboardState.IsKeyDown(Keys.Up) && stopPress == false)
-            {
-                if (lastTimeSelect + intervalBetweenSelect < gameTime.TotalGameTime)
-                {
-                    if (!(select_Pos.Y == 195))
-                    {
-                        soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
-                    }
-                    if (select_Pos.Y >= 255)
-                    {
-                        select_Pos.Y -= 60;
-
-                        lastTimeSelect = gameTime.TotalGameTime;
-                    }
-
-                }
-            }
-            else if (keyboardState.IsKeyDown(Keys.A) && stopPress == false)
-            {
-                stopPress = true;
-                soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
-                if (select_Pos.Y == 195)
-                {
-                    select = 1;
-                }
-                else if (select_Pos.Y == 255)
-                {
-                    select = 2;
-                }
-                else if (select_Pos.Y == 315)
-                {
-                    select = 3;
-                }
-
-                if (select == 1)
-                {
-                    bg1Song = false;
-                    noLoad = false;
-                    string filepath = Path.Combine(@"Content\data.txt");
-                    FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Write);
-                    StreamWriter sw = new StreamWriter(fs);
-                    sw.WriteLine("InGame1");
-                    sw.Flush();
-                    sw.Close();
-                    enemyBlack.died = false;
-                    enemyBlack2.died = false;
-                    enemyGold.died = false;
-                    enemyWizard.died = false;
-                    enemyRed.died = false;
-                    fireBallCount = 0;
-                    ai4_bigFireball = false;
-                    enemyBlack.Position = new Vector2(800, 255);
-                    enemyBlack2.Position = new Vector2(1500, 255);
-                    enemyGold.Position = new Vector2(3000, 255);
-                    enemyWizard.Position = new Vector2(2600, 255);
-                    enemyRed.Position = new Vector2(3500, 255);
-                    Player.Position = new Vector2(50, 255);
-                    Camera_Pos = new Vector2(700, 255);
-                    special_Pos = new Vector2(500, 600);
-                    enemyBlack.hp = 3;
-                    enemyBlack2.hp = 5;
-                    enemyGold.hp = 5;
-                    enemyWizard.hp = 3;
-                    enemyRed.hp = 5;
-                    potion_Count = 0;
-                    Player.SpeCount = 0;
-                    potion_Pos[0] = new Vector2(700, 390);
-                    potion_Pos[1] = new Vector2(2200, 390);
-                    potion_Ena[0] = false;
-                    potion_Use[0] = false;
-                    potion_Ena[1] = false;
-                    potion_Use[1] = false;
-                    Player.diedAni.Pause(0, 0);
-
-                    lastTimeLoad = gameTime.TotalGameTime;
-
-                    Switch = "Loading";
-                }
-                else if (select == 2)
-                {
-                    if (loadingText == "InGame1")
-                    {
-                        bg1Song = false;
-                        noLoad = false;
-                        enemyBlack.died = false;
-                        enemyBlack2.died = false;
-                        enemyGold.died = false;
-                        enemyWizard.died = false;
-                        enemyRed.died = false;
-                        fireBallCount = 0;
-                        ai4_bigFireball = false;
-                        enemyBlack.Position = new Vector2(800, 255);
-                        enemyBlack2.Position = new Vector2(1500, 255);
-                        enemyGold.Position = new Vector2(3000, 255);
-                        enemyWizard.Position = new Vector2(2600, 255);
-                        enemyRed.Position = new Vector2(3500, 255);
-                        Player.Position = new Vector2(50, 255);
-                        Camera_Pos = new Vector2(700, 255);
-                        special_Pos = new Vector2(500, 600);
-                        enemyBlack.hp = 3;
-                        enemyBlack2.hp = 5;
-                        enemyGold.hp = 5;
-                        enemyWizard.hp = 3;
-                        enemyRed.hp = 5;
-                        potion_Count = 0;
-                        Player.SpeCount = 0;
-                        potion_Pos[0] = new Vector2(700, 390);
-                        potion_Pos[1] = new Vector2(2200, 390);
-                        potion_Ena[0] = false;
-                        potion_Use[0] = false;
-                        potion_Ena[1] = false;
-                        potion_Use[1] = false;
-                        Player.diedAni.Pause(0, 0);
-                    }
-                    else
-                    {
-                        noLoad = true;
-                    }
-                    lastTimeLoad = gameTime.TotalGameTime;
-
-                    Switch = "Loading";
-                }
-                else if (select == 3)
-                {
-                    Exit();
-                }
-            }
-        }
-
-        private void gameKeyDown()
-        {
-            keyboardState = Keyboard.GetState();
-            if (!menuLoading)
-            {
-                var walk = soundEffects[0].CreateInstance();
-                if (keyboardState.IsKeyDown(Keys.Left) && Player.stop_move == false)
-                {
-                    Player.Position.X -= 2;
-                    w_left = true;
-                    if (keyboardState.IsKeyDown(Keys.Left) && walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Play(); }
-                }
-                else if (old_keyboardState.IsKeyDown(Keys.Left) && keyboardState.IsKeyUp(Keys.Left))
-                {
-                    Player.walkAni.Pause(0, 0);
-                    w_left = false;
-                    if (old_keyboardState.IsKeyDown(Keys.Left) && keyboardState.IsKeyUp(Keys.Left) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
-                }
-
-                if (keyboardState.IsKeyDown(Keys.Right) && Player.stop_move == false)
-                {
-                    Player.Position.X += 2;
-                    w_right = true;
-                    if (keyboardState.IsKeyDown(Keys.Right) && walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Play(); }
-                }
-                else if (old_keyboardState.IsKeyDown(Keys.Right) && keyboardState.IsKeyUp(Keys.Right))
-                {
-                    Player.walkAni.Pause(0, 0);
-                    w_right = false;
-                    if (old_keyboardState.IsKeyDown(Keys.Right) && keyboardState.IsKeyUp(Keys.Right) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
-                }
-                if (keyboardState.IsKeyDown(Keys.Right) && keyboardState.IsKeyDown(Keys.Left) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
-                if (keyboardState.IsKeyDown(Keys.Left) && keyboardState.IsKeyDown(Keys.Right) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
-                old_keyboardState = keyboardState;
-            }
-           
-        }
-
-        private void gameKeyAttack(GameTime gameTime)
-        {
-            keyboardState = Keyboard.GetState();
-            if (!menuLoading)
-            {
-                if (Keyboard.GetState().IsKeyDown(Keys.A) && Player.lastTimeAttack + Player.DelayAttack < gameTime.TotalGameTime && Player.lastTimeBlock + Player.CDBlock < gameTime.TotalGameTime && Player.lastTimeSpecial + Player.DelaySAttack < gameTime.TotalGameTime)
-                {
-                    if (keyboardState.IsKeyDown(Keys.A) && SwordWhoosh.State != SoundState.Playing) { SwordWhoosh.Play(); }
-                    def = false;
-                    special_ani = false;
-                    Player.atk = true;
-                    Player.stop_move = true;
-                    if (Keyboard.GetState().IsKeyDown(Keys.A) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
-                    Player.atkAni.Play();
-                    Player.walkAni.Pause(0, 0);
-
-                    Player.lastTimeAttack = gameTime.TotalGameTime;
-                }
-                if (Keyboard.GetState().IsKeyDown(Keys.S) && Player.lastTimeBlock + Player.DelayBlock < gameTime.TotalGameTime && Player.lastTimeAttack + Player.CDAttack < gameTime.TotalGameTime && Player.lastTimeSpecial + Player.DelaySAttack < gameTime.TotalGameTime)
-                {
-                    Player.atk = false;
-                    special_ani = false;
-                    def = true;
-                    Player.stop_move = true;
-                    if (Keyboard.GetState().IsKeyDown(Keys.S) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
-                    Player.defAni.Play();
-                    Player.walkAni.Pause(0, 0);
-
-                    Player.lastTimeBlock = gameTime.TotalGameTime;
-                }
-                if (Keyboard.GetState().IsKeyDown(Keys.F) && Player.SpeCount == 4 && Player.lastTimeSpecial + Player.DelaySAttack < gameTime.TotalGameTime && Player.lastTimeBlock + Player.CDBlock < gameTime.TotalGameTime && Player.lastTimeAttack + Player.CDAttack < gameTime.TotalGameTime)
-                {
-                    Player.atk = false;
-                    def = false;
-                    special = true;
-                    special_ani = true;
-                    Player.stop_move = true;
-                    if (Keyboard.GetState().IsKeyDown(Keys.F) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
-                    soundEffects[6].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
-                    Player.specialAtkAni.Play();
-                    Player.specialAni.Play();
-                    Player.walkAni.Pause(0, 0);
-                    special_Pos = new Vector2(Player.Position.X + 120, Player.Position.Y);
-                    Player.SpeCount = 0;
-
-                    Player.lastTimeSpecial = gameTime.TotalGameTime;
-                    Player.lastTimeSpecialDuring = gameTime.TotalGameTime;
-                }
-
-                // ก่ารทำงาน
-                if (Player.lastTimeAttack + Player.CDAttack < gameTime.TotalGameTime && Player.lastTimeBlock + Player.CDBlock < gameTime.TotalGameTime && Player.lastTimeSpecialDuring + Player.CDSAttack < gameTime.TotalGameTime)
-                {
-                    if (SwordWhoosh.State != SoundState.Stopped) { SwordWhoosh.Stop(); }
-                    Player.atk = false;
-                    Player.stop_move = false;
-                    def = false;
-                    special_ani = false;
-                    Player.specialAni.Pause(0, 0);
-                    Player.atkAni.Pause(0, 0);
-                    Player.defAni.Pause(0, 0);
-                }
-                if (Player.lastTimeSpecial + Player.TimeDuringSAttack < gameTime.TotalGameTime)
-                {
-                    special = false;
-                    special_Pos = new Vector2(500, 600);
-                    Player.specialAtkAni.Pause(0, 0);
-                }
-            } 
-        }
-
-        private void gameKeyPause(GameTime gameTime)
-        {
-            keyboardState = Keyboard.GetState();
-            if (lastTimeSelect + intervalBetweenSelect < gameTime.TotalGameTime)
-            {
-                if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                {
-                    if (gamePause == false)
-                    {
-                        enemyBlack.walkAni.Pause();
-                        enemyBlack.walkAni.Pause();
-                        enemyBlack2.atkAni.Pause();
-                        enemyBlack2.walkAni.Pause();
-                        enemyGold.atkAni.Pause();
-                        enemyWizard.atkAni.Pause();
-                        enemyGold.walkAni.Pause();
-                        Player.diedAni.Pause();
-                        Player.walkAni.Pause();
-                        Player.idleAni.Pause();
-                        Player.atkAni.Pause();
-                        Player.defAni.Pause();
-                        Player.specialAni.Pause();
-                        Player.specialAtkAni.Pause();
-                        if (walkSoundInstance.State != SoundState.Paused) { walkSoundInstance.Pause(); }
-                        gamePause = true;
-                    }
-                    else
-                    {
-                        enemyBlack.walkAni.Play();
-                        enemyBlack.walkAni.Play();
-                        enemyBlack2.atkAni.Play();
-                        enemyBlack2.walkAni.Play();
-                        enemyGold.atkAni.Play();
-                        enemyGold.walkAni.Play();
-                        enemyWizard.atkAni.Play();
-                        Player.diedAni.Play();
-                        Player.walkAni.Play();
-                        Player.idleAni.Play();
-                        Player.atkAni.Play();
-                        Player.defAni.Play();
-                        Player.specialAni.Play();
-                        Player.specialAtkAni.Play();
-                        if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Resume(); }
-                        gamePause = false;
-                    }
-                    lastTimeSelect = gameTime.TotalGameTime;
-                }
-            }
-        }
-
-        private void UpdateFrame(float Elapsed)
-        {
-            // Enemy Update frame
-            enemyBlack.walkAni.UpdateFrame(Elapsed);
-            enemyBlack.idleAni.UpdateFrame(Elapsed);
-            enemyBlack.atkAni.UpdateFrame(Elapsed);
-            enemyBlack2.walkAni.UpdateFrame(Elapsed);
-            enemyBlack2.idleAni.UpdateFrame(Elapsed);
-            enemyBlack2.atkAni.UpdateFrame(Elapsed);
-            enemyGold.walkAni.UpdateFrame(Elapsed);
-            enemyGold.atkAni.UpdateFrame(Elapsed);
-            enemyWizard.atkAni.UpdateFrame(Elapsed);
-            enemyRed.walkAni.UpdateFrame(Elapsed);
-            enemyRed.atkAni.UpdateFrame(Elapsed);
-            enemyWizard.idleAni.UpdateFrame(Elapsed);
-
-            // Player Update frame
-            Player.diedAni.UpdateFrame(Elapsed);
-            Player.walkAni.UpdateFrame(Elapsed);
-            Player.idleAni.UpdateFrame(Elapsed);
-            Player.atkAni.UpdateFrame(Elapsed);
-            Player.defAni.UpdateFrame(Elapsed);
-            Player.specialAni.UpdateFrame(Elapsed);
-            Player.specialAtkAni.UpdateFrame(Elapsed);
-
-            // ฉาก Update frame
-            glass.UpdateFrame(Elapsed);
-            loading.UpdateFrame(Elapsed);
-            Cat_idle.UpdateFrame(Elapsed);
-            rabbit_idle.UpdateFrame(Elapsed);
         }
     }
 }
