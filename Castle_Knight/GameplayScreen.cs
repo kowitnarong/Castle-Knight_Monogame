@@ -29,6 +29,7 @@ namespace Castle_Knight
         bool special = false;
         bool special_ani = false;
         bool devMode = false;
+        bool loadOn = false;
 
         // Menu
         bool load = false;
@@ -382,6 +383,7 @@ namespace Castle_Knight
         public void ResetValue(GameTime theTime)
         {
             load = true;
+            loadOn = false;
             Switch = "loading";
 
             bg1Song = false;
@@ -417,7 +419,6 @@ namespace Castle_Knight
             Player.hp = 5;
             Player.died = false;
 
-            lastTimeLoad = theTime.TotalGameTime;
         }
 
         private void GameplayUpdate(GameTime theTime, float elapsed)
@@ -425,6 +426,8 @@ namespace Castle_Knight
             if (load)
             {
                 menuLoading = true;
+
+                if (!loadOn) { lastTimeLoad = theTime.TotalGameTime; loadOn = true; }
             }
             if (Switch == "InGame1")
             {
