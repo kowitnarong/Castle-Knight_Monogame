@@ -28,6 +28,7 @@ namespace Castle_Knight
         bool def = false;
         bool special = false;
         bool special_ani = false;
+        bool devMode = false;
 
         // Menu
         bool load = false;
@@ -1260,28 +1261,32 @@ namespace Castle_Knight
             }
 
             #region DiedPlayer
-            if (Player.hp <= 0 && Player.died == false)
-            {
-                if (walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
-                if (Dead.State != SoundState.Playing) { Dead.Play(); }
-                Player.died = true;
-                Player.stop_move = true;
-                Player.diedAni.Play();
-                enemyBlack.atkAni.Pause(0, 0);
-                enemyBlack2.atkAni.Pause(0, 0);
-                enemyGold.atkAni.Pause(0, 0);
-                enemyWizard.atkAni.Pause(0, 0);
-                enemyBlack.walkAni.Pause(0, 0);
-                enemyBlack2.walkAni.Pause(0, 0);
-                enemyGold.walkAni.Pause(0, 0);
-                enemyRed.atkAni.Pause(0, 0);
-                enemyRed.walkAni.Pause(0, 0);
 
-                lastTimeDied = theTime.TotalGameTime;
-            }
-            else if (Player.died == true)
+            if (!devMode)
             {
-                Player.stop_move = true;
+                if (Player.hp <= 0 && Player.died == false)
+                {
+                    if (walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
+                    if (Dead.State != SoundState.Playing) { Dead.Play(); }
+                    Player.died = true;
+                    Player.stop_move = true;
+                    Player.diedAni.Play();
+                    enemyBlack.atkAni.Pause(0, 0);
+                    enemyBlack2.atkAni.Pause(0, 0);
+                    enemyGold.atkAni.Pause(0, 0);
+                    enemyWizard.atkAni.Pause(0, 0);
+                    enemyBlack.walkAni.Pause(0, 0);
+                    enemyBlack2.walkAni.Pause(0, 0);
+                    enemyGold.walkAni.Pause(0, 0);
+                    enemyRed.atkAni.Pause(0, 0);
+                    enemyRed.walkAni.Pause(0, 0);
+
+                    lastTimeDied = theTime.TotalGameTime;
+                }
+                else if (Player.died == true)
+                {
+                    Player.stop_move = true;
+                }
             }
 
             if (lastTimeDied + intervalBetweenDied < theTime.TotalGameTime)
@@ -1550,9 +1555,14 @@ namespace Castle_Knight
                 #endregion
 
                 string strDead = "Dead = " + dead_count;
+                string strDevMode = "DevMode";
                 if (Switch == "InGame1")
                 {
                     theBatch.DrawString(ArialFont, strDead, new Vector2(470 - camera.ViewMatrix.Translation.X, 435 - camera.ViewMatrix.Translation.Y), Color.White);
+                }
+                if (devMode)
+                {
+                    theBatch.DrawString(ArialFont, strDevMode, new Vector2(880 - camera.ViewMatrix.Translation.X, 435 - camera.ViewMatrix.Translation.Y), Color.Red);
                 }
 
                 if (gamePause && Switch == "InGame1")
@@ -1759,6 +1769,21 @@ namespace Castle_Knight
                         Player.specialAtkAni.Play();
                         if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Resume(); }
                         gamePause = false;
+                    }
+                    lastTimeSelect = theTime.TotalGameTime;
+                }
+            }
+            if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.F1))
+                {
+                    if (devMode == false)
+                    {
+                        devMode = true;
+                    }
+                    else
+                    {
+                        devMode = false;
                     }
                     lastTimeSelect = theTime.TotalGameTime;
                 }
