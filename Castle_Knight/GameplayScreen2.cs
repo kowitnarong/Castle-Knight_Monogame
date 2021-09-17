@@ -17,6 +17,7 @@ namespace Castle_Knight
         bool resetValue = false;
 
         Player Player = new Player();
+        Enemy enemyArcher = new Enemy();
 
         #region Factor
         bool w_left = false, w_right = false;
@@ -39,13 +40,13 @@ namespace Castle_Knight
         private AnimatedTexture loading;
 
         // Sound
-        Song bgSong;
+        Song bgSong2;
         List<SoundEffect> soundEffects;
         SoundEffectInstance walkSoundInstance;
         SoundEffectInstance SwordHit;
         SoundEffectInstance SwordWhoosh;
         SoundEffectInstance Dead;
-        bool bg1Song = false;
+        bool bg2Song = false;
 
         Texture2D BG1_1;
         Texture2D BG1_2;
@@ -69,6 +70,13 @@ namespace Castle_Knight
         // Ai
         Random r = new Random();
 
+        // Ai1
+        Texture2D eWaveAtk;
+        bool ai1_Wave = false;
+        bool ai1_Use = false;
+        bool arrowOn = false;
+        Vector2 Ai1WavePos = new Vector2(0, 600);
+
         private AnimatedTexture Touch;
 
         private const float Rotation = 0;
@@ -91,31 +99,13 @@ namespace Castle_Knight
         private TimeSpan lastTimeDied;
 
         // Enemy time
-        private static readonly TimeSpan eDelayAtk = TimeSpan.FromMilliseconds(3000);
-        private static readonly TimeSpan eCoolDownAtk = TimeSpan.FromMilliseconds(1500);
-        private TimeSpan eAtkTime;
 
-        private static readonly TimeSpan eDelayAtk2 = TimeSpan.FromMilliseconds(2200);
-        private static readonly TimeSpan eCoolDownAtk2 = TimeSpan.FromMilliseconds(800);
-        private TimeSpan eAtkTime2;
+        private TimeSpan eDelayAtk1 = TimeSpan.FromMilliseconds(2300);
+        private static readonly TimeSpan eCoolDownAtk1 = TimeSpan.FromMilliseconds(450);
+        private TimeSpan eAtkTime1;
+        private static readonly TimeSpan DelayAttackWave1 = TimeSpan.FromMilliseconds(2000);
+        private TimeSpan AttackWave1;
 
-        private TimeSpan eDelayAtk3 = TimeSpan.FromMilliseconds(1650);
-        private static readonly TimeSpan eCoolDownAtk3 = TimeSpan.FromMilliseconds(400);
-        private TimeSpan eAtkTime3;
-
-        private static readonly TimeSpan DelayAttackWave3 = TimeSpan.FromMilliseconds(2000);
-        private TimeSpan AttackWave3;
-
-        private TimeSpan eDelayAtk4 = TimeSpan.FromMilliseconds(2500);
-        private static readonly TimeSpan eCoolDownAtk4 = TimeSpan.FromMilliseconds(400);
-        private TimeSpan eAtkTime4;
-
-        private static readonly TimeSpan DelayAttackWave4 = TimeSpan.FromMilliseconds(800);
-        private TimeSpan AttackWave4;
-
-        private TimeSpan eDelayAtk5 = TimeSpan.FromMilliseconds(1200);
-        private static readonly TimeSpan eCoolDownAtk5 = TimeSpan.FromMilliseconds(300);
-        private TimeSpan eAtkTime5;
         #endregion
 
         #region Vector and Frame
@@ -178,6 +168,10 @@ namespace Castle_Knight
             Player.diedAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             Player.specialAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             Player.specialAtkAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
+
+            enemyArcher.atkAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
+            enemyArcher.idleAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
+
             Touch = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
 
             #endregion
@@ -198,9 +192,8 @@ namespace Castle_Knight
             SwordWhoosh = soundEffects[3].CreateInstance();
             Dead = soundEffects[7].CreateInstance();
 
-            bgSong = game.Content.Load<Song>("BackgroundLevel1");
+            bgSong2 = game.Content.Load<Song>("BackgroundLevel2");
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.MediaStateChanged += MediaPlayer_MediaStateChanged;
             SoundEffect.MasterVolume = 0.5f;
 
             pausePic = game.Content.Load<Texture2D>("pause");
@@ -225,12 +218,15 @@ namespace Castle_Knight
             Player.specialAtkAni.Load(game.Content, "atk_special", special_Frames, special_FramesRow, special_FramesPerSec);
 
             // Ai
+            enemyArcher.atkAni.Load(game.Content, "ArcherAni", 8, e_atk_FramesRow, 10);
+            enemyArcher.idleAni.Load(game.Content, "Archer_idle", Frames, FramesRow, FramesPerSec);
+            eWaveAtk = game.Content.Load<Texture2D>("Arrow");
+
             Player.walkAni.Pause();
 
             Touch.Load(game.Content, "Touch", 9, 1, 5);
 
             #endregion
-
 
             string fileName = @"Content\Dead.txt";
             if (File.Exists(fileName))
@@ -251,6 +247,7 @@ namespace Castle_Knight
 
             game.IsMouseVisible = true;
             Player.hp = 5;
+            enemyArcher.hp = 3;
 
             potion_Ena[0] = false;
             potion_Use[0] = false;
@@ -262,14 +259,16 @@ namespace Castle_Knight
 
             Player.Position = new Vector2(50, 255);
 
+            enemyArcher.Position = new Vector2(800, 255);
+
             this.game = game;
         }
 
         void MediaPlayer_MediaStateChanged(object sender, System.EventArgs e)
         {
             // 0.0f is silent, 1.0f is full volume
-            MediaPlayer.Volume -= 0.1f;
-            MediaPlayer.Play(bgSong);
+            MediaPlayer.Volume -= 0.5f;
+            MediaPlayer.Play(bgSong2);
         }
 
         public override void Update(GameTime theTime)
@@ -299,12 +298,15 @@ namespace Castle_Knight
             loadOn = false;
             Switch = "loading";
 
-            bg1Song = false;
+            bg2Song = false;
+            arrowOn = false;
             Player.Position = new Vector2(50, 255);
             Camera_Pos = new Vector2(700, 255);
             special_Pos = new Vector2(500, 600);
             potion_Count = 0;
             Player.SpeCount = 0;
+            enemyArcher.Position = new Vector2(800, 255);
+            enemyArcher.hp = 3;
             potion_Pos[0] = new Vector2(700, 390);
             potion_Pos[1] = new Vector2(2200, 390);
             potion_Ena[0] = false;
@@ -327,11 +329,11 @@ namespace Castle_Knight
             }
             if (Switch == "InGame2")
             {
-                if (!bg1Song)
+                if (!bg2Song)
                 {
-                    MediaPlayer.Play(bgSong);
+                    MediaPlayer.Play(bgSong2);
                     MediaPlayer.IsMuted = false;
-                    bg1Song = true;
+                    bg2Song = true;
                 }
 
                 // Key Pause
@@ -349,7 +351,11 @@ namespace Castle_Knight
                         }
 
                         // Enemy heart
-
+                        for (int i = 0; i < 3; i++)
+                        {
+                            enemyArcher.Heart_Pos[i].X = (enemyArcher.Position.X + 12) - (i + 1) * -22;
+                            enemyArcher.Heart_Pos[i].Y = enemyArcher.Position.Y - 15;
+                        }
 
                         #endregion
 
@@ -362,6 +368,8 @@ namespace Castle_Knight
                         Rectangle[] charPotion = new Rectangle[2];
                         charPotion[0] = new Rectangle((int)potion_Pos[0].X, (int)potion_Pos[0].Y, 32, 32);
                         charPotion[1] = new Rectangle((int)potion_Pos[1].X, (int)potion_Pos[1].Y, 32, 32);
+                        enemyArcher.charBlock = new Rectangle((int)enemyArcher.Position.X + 32, (int)enemyArcher.Position.Y, 32, 160);
+                        Rectangle blockEnemy1Wave;
 
                         #region PlayerAbility
                         if (special == true)
@@ -369,12 +377,30 @@ namespace Castle_Knight
                             Player.charBlock = new Rectangle((int)Player.Position.X, (int)Player.Position.Y, 125, 160);
                             Player.charSpecialAtk = new Rectangle((int)special_Pos.X, (int)special_Pos.Y, 20, 32);
                             special_Pos.X += 15;
+                            if (Player.charSpecialAtk.Intersects(enemyArcher.charBlock) && enemyArcher.died == false)
+                            {
+                                if (enemyArcher.lastTimeKnockBack + enemyArcher.DelayKnockBack < theTime.TotalGameTime)
+                                {
+                                    enemyArcher.knockBack = true;
+
+                                    enemyArcher.lastTimeKnockBack = theTime.TotalGameTime;
+                                }
+                                if (enemyArcher.lastTimeHp + enemyArcher.DelayHp < theTime.TotalGameTime)
+                                {
+                                    enemyArcher.hp -= 2;
+
+                                    enemyArcher.lastTimeHp = theTime.TotalGameTime;
+                                }
+                            }
 
                         }
                         if (Player.atk == true)
                         {
                             Player.charBlock = new Rectangle((int)Player.Position.X, (int)Player.Position.Y, 125, 160);
-
+                            if (Player.charBlock.Intersects(enemyArcher.charBlock) && enemyArcher.died == false)
+                            {
+                                enemyArcher.PlayerAtk(theTime, SwordHit);
+                            }
                         }
                         else
                         {
@@ -407,88 +433,209 @@ namespace Castle_Knight
                         #endregion
 
                         #region EnemyAbility
+                        // Enemy 1
+                        if (ai1_Wave == true)
+                        {
+                            if (enemyArcher.atkAni.Frame >= 4)
+                            {
+                                arrowOn = true;
+                            }
+                            if (!ai1_Use && arrowOn)
+                            {
+                                Ai1WavePos = new Vector2(enemyArcher.Position.X - 15, enemyArcher.Position.Y + 15);
+                                ai1_Use = true;
+                            }
+                            if (arrowOn)
+                            {
+                                Ai1WavePos.X -= 7;
+                            }
+                            blockEnemy1Wave = new Rectangle((int)Ai1WavePos.X, (int)Ai1WavePos.Y, 50, 160);
+                            if (Player.charBlock.Intersects(blockEnemy1Wave) && enemyArcher.died == false)
+                            {
+                                if (def == true)
+                                {
+                                    Player.WhenDefTrue(theTime, soundEffects);
 
+                                    Ai1WavePos.Y = 600;
+                                    ai1_Wave = false;
+                                }
+                                else
+                                {
+                                    Player.WhenDefFalse(theTime, soundEffects);
+
+                                    Ai1WavePos.Y = 600;
+                                    ai1_Wave = false;
+                                }
+                            }
+                        }
+                        if (enemyArcher.atk == true)
+                        {
+                            if (enemyArcher.atkAni.Frame >= 4 && enemyArcher.atkAni.Frame <= 6) { enemyArcher.Position.X += 8; }
+                            enemyArcher.charBlock = new Rectangle((int)enemyArcher.Position.X + 32, (int)enemyArcher.Position.Y, 32, 160);
+                            if (Player.charBlock.Intersects(enemyArcher.charBlock) && enemyArcher.died == false && ai1_Wave == false)
+                            {
+                                if (def == true)
+                                {
+                                    Player.WhenDefTrue(theTime, soundEffects);
+                                }
+                                else
+                                {
+                                    Player.WhenDefFalse(theTime, soundEffects);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (enemyArcher.died == false)
+                            {
+                                enemyArcher.charBlock = new Rectangle((int)enemyArcher.Position.X + 32, (int)enemyArcher.Position.Y, 32, 160);
+                                if (Player.charBlock.Intersects(enemyArcher.charBlock) && enemyArcher.died == false)
+                                {
+                                    Player.WhenDefFalse(theTime, soundEffects);
+                                }
+                            }
+                        }
                         #endregion
 
 
                         if (Player.died == false)
                         {
+                            // Enemy 1
+                            enemyArcher.idleAni.Play();
+                            if (enemyArcher.lastTimeHp + enemyArcher.DelayHp < theTime.TotalGameTime)
+                            {
+                                if (enemyArcher.lastTimeHp + enemyArcher.DelayHp < theTime.TotalGameTime)
+                                {
+                                    if (enemyArcher.Position.X - Player.Position.X < 600)
+                                    {
+                                        if (eAtkTime1 + eDelayAtk1 < theTime.TotalGameTime)
+                                        {
+                                            enemyArcher.idle = false;
+                                            enemyArcher.atk = true;
+                                            enemyArcher.atkAni.Play();
+                                            ai1_Wave = true;
+                                            ai1_Use = false;
+
+                                            AttackWave1 = theTime.TotalGameTime;
+                                            eAtkTime1 = theTime.TotalGameTime;
+                                        }
+                                        else if (eAtkTime1 + eCoolDownAtk1 < theTime.TotalGameTime)
+                                        {
+                                            enemyArcher.atk = false;
+                                            enemyArcher.idle = true;
+                                            enemyArcher.atkAni.Pause(0, 0);
+                                        }
+                                        if (AttackWave1 + DelayAttackWave1 < theTime.TotalGameTime)
+                                        {
+                                            arrowOn = false;
+                                            ai1_Wave = false;
+
+                                            Ai1WavePos.Y = 600;
+                                        }
+                                    }
+                                    else if (enemyArcher.Position.X - Player.Position.X >= 600)
+                                    {
+                                        if (!enemyArcher.atk)
+                                        {
+                                            enemyArcher.idle = true;
+                                        }
+                                    }
+                                }
+                            }
 
                             #region KnockBack
 
                             Player.PlayerKnockBack(theTime);
 
                             // Enemy 1 knockBack
-
-
-                            #endregion
-
-                            #region Check
-                            // Potion
-                            if (potion_Count >= 1) { potion_Count = 1; }
-                            if (potion_Count == 1)
+                            if (enemyArcher.died == false)
                             {
-                                if (keyboardState.IsKeyDown(Keys.E))
-                                {
-                                    soundEffects[5].Play(volume: 1.0f, pitch: 0.0f, pan: 0.0f);
-                                    potion_Count = 0;
-                                    if (Player.hp < 5) { Player.hp += 2; }
-                                    if (Player.hp > 5) { Player.hp = 5; }
-                                    potion_Use[0] = true;
-                                }
+                                enemyArcher.EnemyKnockBack(theTime);
                             }
-                            #endregion
+                        }
+                        else
+                        {
+                            enemyArcher.atkAni.Pause(0, 0);
+                            enemyArcher.idleAni.Pause(0, 0);
+                        }
 
-                            if (Camera_Pos.X - Player.Position.X >= 80 && menuLoading == false)
-                            {
-                                Camera_Pos.X -= 2;
-                            }
-                            else if (Camera_Pos.X - Player.Position.X <= -80 && menuLoading == false)
-                            {
-                                if (3680 - Camera_Pos.X > 625)
-                                {
-                                    Camera_Pos.X += 2;
-                                }
-                            }
+                        #endregion
 
-                            #region Visible When GetHit
-                            if (Player.GetHitTime + Player.GetHitDelay < theTime.TotalGameTime)
+                        if (enemyArcher.hp <= 0)
+                        {
+                            enemyArcher.died = true;
+                            enemyArcher.atk = false;
+                            enemyArcher.atkAni.Pause(0, 0);
+                            enemyArcher.idleAni.Pause(0, 0);
+                        }
+
+                        #region Check
+                        // Potion
+                        if (potion_Count >= 1) { potion_Count = 1; }
+                        if (potion_Count == 1)
+                        {
+                            if (keyboardState.IsKeyDown(Keys.E))
+                            {
+                                soundEffects[5].Play(volume: 1.0f, pitch: 0.0f, pan: 0.0f);
+                                potion_Count = 0;
+                                if (Player.hp < 5) { Player.hp += 2; }
+                                if (Player.hp > 5) { Player.hp = 5; }
+                                potion_Use[0] = true;
+                            }
+                        }
+                        #endregion
+
+                        if (Camera_Pos.X - Player.Position.X >= 80 && menuLoading == false)
+                        {
+                            Camera_Pos.X -= 2;
+                        }
+                        else if (Camera_Pos.X - Player.Position.X <= -80 && menuLoading == false)
+                        {
+                            if (3680 - Camera_Pos.X > 625)
+                            {
+                                Camera_Pos.X += 2;
+                            }
+                        }
+
+                        #region Visible When GetHit
+                        if (Player.GetHitTime + Player.GetHitDelay < theTime.TotalGameTime)
+                        {
+                            Player.getHit = false;
+                        }
+                        if (Player.GetHitTime + Player.GetHitDelay < theTime.TotalGameTime && Player.playerInvi && Player.GetHitTime + Player._GetHitDelay < theTime.TotalGameTime)
+                        {
+                            Player.getHit = true;
+
+                            if (Player.GetHitTime + Player.GetHitDelay + Player._GetHitDelay < theTime.TotalGameTime)
                             {
                                 Player.getHit = false;
-                            }
-                            if (Player.GetHitTime + Player.GetHitDelay < theTime.TotalGameTime && Player.playerInvi && Player.GetHitTime + Player._GetHitDelay < theTime.TotalGameTime)
-                            {
-                                Player.getHit = true;
 
-                                if (Player.GetHitTime + Player.GetHitDelay + Player._GetHitDelay < theTime.TotalGameTime)
+                                if (Player.GetHitTime + Player.GetHitDelay + Player._GetHitDelay2 < theTime.TotalGameTime)
                                 {
-                                    Player.getHit = false;
+                                    Player.getHit = true;
 
-                                    if (Player.GetHitTime + Player.GetHitDelay + Player._GetHitDelay2 < theTime.TotalGameTime)
-                                    {
-                                        Player.getHit = true;
-
-                                        Player.GetHitTime = theTime.TotalGameTime;
-                                        Player.playerInvi = false;
-                                    }
+                                    Player.GetHitTime = theTime.TotalGameTime;
+                                    Player.playerInvi = false;
                                 }
                             }
-                            #endregion
-
-
-                            if (Player.Position.X >= 3610)
-                            {
-                                Player.Position.X -= 2;
-                            }
-                            else if (Player.Position.X < 0)
-                            {
-                                Player.Position.X += 2;
-                            }
-
-                            camera.Update(Camera_Pos);
                         }
+                        #endregion
+
+
+                        if (Player.Position.X >= 3610)
+                        {
+                            Player.Position.X -= 2;
+                        }
+                        else if (Player.Position.X < 0)
+                        {
+                            Player.Position.X += 2;
+                        }
+
+                        camera.Update(Camera_Pos);
                     }
                 }
+            }
+        
 
                 #region DiedPlayer
 
@@ -501,8 +648,10 @@ namespace Castle_Knight
                         Player.died = true;
                         Player.stop_move = true;
                         Player.diedAni.Play();
+                        enemyArcher.atkAni.Pause(0, 0);
+                        enemyArcher.idleAni.Pause(0, 0);
 
-                        lastTimeDied = theTime.TotalGameTime;
+                    lastTimeDied = theTime.TotalGameTime;
                     }
                     else if (Player.died == true)
                     {
@@ -540,7 +689,6 @@ namespace Castle_Knight
 
                 // UpdateFrame
                 UpdateFrame(elapsed);
-            }
         }
 
         private void DrawGameplay(SpriteBatch theBatch, GameTime theTime)
@@ -592,7 +740,11 @@ namespace Castle_Knight
                 {
                     theBatch.Draw(Heart, Player.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.White);
                 }
-                
+                for (int i = 0; i < enemyArcher.hp; i++)
+                {
+                    theBatch.Draw(Heart, enemyArcher.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.Black);
+                }
+
                 #endregion
 
                 #region PlayerDraw
@@ -663,7 +815,21 @@ namespace Castle_Knight
 
                 #region EnemyDraw
                 // Enemy
-                
+                if (enemyArcher.died == false)
+                {
+                    if (ai1_Wave == true && arrowOn)
+                    {
+                        theBatch.Draw(eWaveAtk, Ai1WavePos, Color.White);
+                    }
+                    if (enemyArcher.atk == true)
+                    {
+                        enemyArcher.atkAni.DrawFrame(theBatch, enemyArcher.Position);
+                    }
+                    else if (enemyArcher.idle == true)
+                    {
+                        enemyArcher.idleAni.DrawFrame(theBatch, enemyArcher.Position);
+                    }
+                }
                 #endregion
 
                 string strDead = "Dead = " + dead_count;
@@ -701,7 +867,8 @@ namespace Castle_Knight
         private void UpdateFrame(float Elapsed)
         {
             // Enemy Update frame
-            
+            enemyArcher.atkAni.UpdateFrame(Elapsed);
+            enemyArcher.idleAni.UpdateFrame(Elapsed);
 
             // Player Update frame
             Player.diedAni.UpdateFrame(Elapsed);
@@ -842,6 +1009,8 @@ namespace Castle_Knight
                         Player.defAni.Pause();
                         Player.specialAni.Pause();
                         Player.specialAtkAni.Pause();
+                        enemyArcher.atkAni.Pause();
+                        enemyArcher.idleAni.Pause();
                         if (walkSoundInstance.State != SoundState.Paused) { walkSoundInstance.Pause(); }
                         gamePause = true;
                     }
@@ -854,6 +1023,8 @@ namespace Castle_Knight
                         Player.defAni.Play();
                         Player.specialAni.Play();
                         Player.specialAtkAni.Play();
+                        enemyArcher.atkAni.Play();
+                        enemyArcher.idleAni.Play();
                         if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Resume(); }
                         gamePause = false;
                     }

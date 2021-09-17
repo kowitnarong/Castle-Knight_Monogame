@@ -251,7 +251,8 @@ namespace Castle_Knight
 
             bgSong = game.Content.Load<Song>("BackgroundLevel1");
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.MediaStateChanged += MediaPlayer_MediaStateChanged;
+            MediaPlayer.Volume -= 0.5f;
+            MediaPlayer.MediaStateChanged -= MediaPlayer_MediaStateChanged;
             SoundEffect.MasterVolume = 0.5f;
 
             eWaveAtk = game.Content.Load<Texture2D>("goldEneAtkWave");
@@ -365,7 +366,7 @@ namespace Castle_Knight
         void MediaPlayer_MediaStateChanged(object sender, System.EventArgs e)
         {
             // 0.0f is silent, 1.0f is full volume
-            MediaPlayer.Volume -= 0.1f;
+            MediaPlayer.Volume -= 0.5f;
             MediaPlayer.Play(bgSong);
         }
 
@@ -1177,6 +1178,7 @@ namespace Castle_Knight
                         {
                             enemyWizard.died = true;
                             enemyWizard.atkAni.Pause(0, 0);
+                            enemyWizard.idleAni.Pause(0, 0);
                         }
                         if (enemyRed.hp <= 0)
                         {
@@ -1281,7 +1283,6 @@ namespace Castle_Knight
                     if (walkSoundInstance.State != SoundState.Stopped)
                     {
                         walkSoundInstance.Stop();
-
                     }
                 }
                 string filepath = Path.Combine(@"Content\data.txt");
@@ -1291,7 +1292,7 @@ namespace Castle_Knight
                 { sw.WriteLine("InGame2"); }
                 sw.Flush();
                 sw.Close();
-
+                MediaPlayer.MediaStateChanged += MediaPlayer_MediaStateChanged;
                 ScreenEvent.Invoke(game.mGameplayScreen2, new EventArgs());
             }
 
@@ -1306,11 +1307,12 @@ namespace Castle_Knight
                     Player.diedAni.Play();
                     enemyBlack.atkAni.Pause(0, 0);
                     enemyBlack2.atkAni.Pause(0, 0);
-                    enemyGold.atkAni.Pause(0, 0);
-                    enemyWizard.atkAni.Pause(0, 0);
                     enemyBlack.walkAni.Pause(0, 0);
                     enemyBlack2.walkAni.Pause(0, 0);
+                    enemyGold.atkAni.Pause(0, 0);
                     enemyGold.walkAni.Pause(0, 0);
+                    enemyWizard.atkAni.Pause(0, 0);
+                    enemyWizard.idleAni.Pause(0, 0);
                     enemyRed.atkAni.Pause(0, 0);
                     enemyRed.walkAni.Pause(0, 0);
 
@@ -1544,7 +1546,7 @@ namespace Castle_Knight
                         if (Player.died) { enemyGold.atkAni.Pause(0, 0); }
                         enemyGold.atkAni.DrawFrame(theBatch, enemyGold.Position);
                     }
-                    else if (enemyBlack2.atk == false)
+                    else if (enemyGold.atk == false)
                     {
                         enemyGold.walkAni.Play();
                         if (Player.died) { enemyGold.walkAni.Pause(0, 0); }
@@ -1772,8 +1774,11 @@ namespace Castle_Knight
                         enemyBlack2.atkAni.Pause();
                         enemyBlack2.walkAni.Pause();
                         enemyGold.atkAni.Pause();
-                        enemyWizard.atkAni.Pause();
                         enemyGold.walkAni.Pause();
+                        enemyWizard.atkAni.Pause();
+                        enemyWizard.idleAni.Pause();
+                        enemyRed.atkAni.Pause();
+                        enemyRed.walkAni.Pause();
                         Player.diedAni.Pause();
                         Player.walkAni.Pause();
                         Player.idleAni.Pause();
@@ -1793,6 +1798,9 @@ namespace Castle_Knight
                         enemyGold.atkAni.Play();
                         enemyGold.walkAni.Play();
                         enemyWizard.atkAni.Play();
+                        enemyWizard.idleAni.Play();
+                        enemyRed.atkAni.Play();
+                        enemyRed.walkAni.Play();
                         Player.diedAni.Play();
                         Player.walkAni.Play();
                         Player.idleAni.Play();

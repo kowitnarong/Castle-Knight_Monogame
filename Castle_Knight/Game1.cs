@@ -54,7 +54,7 @@ namespace Castle_Knight
         protected override void Update(GameTime gameTime)
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
+            
             mCurrentScreen.Update(gameTime);
 
             base.Update(gameTime);
