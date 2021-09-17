@@ -24,7 +24,6 @@ namespace Castle_Knight
         Texture2D noLoadPic;
         private AnimatedTexture p_title;
 
-        SpriteFont ArialFont;
         string loadingText;
 
         SoundEffect soundEffects;
