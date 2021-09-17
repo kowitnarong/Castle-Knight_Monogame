@@ -472,17 +472,6 @@ namespace Castle_Knight
                         {
                             if (enemyArcher.atkAni.Frame >= 4 && enemyArcher.atkAni.Frame <= 6) { enemyArcher.Position.X += 8; }
                             enemyArcher.charBlock = new Rectangle((int)enemyArcher.Position.X + 32, (int)enemyArcher.Position.Y, 32, 160);
-                            if (Player.charBlock.Intersects(enemyArcher.charBlock) && enemyArcher.died == false && ai1_Wave == false)
-                            {
-                                if (def == true)
-                                {
-                                    Player.WhenDefTrue(theTime, soundEffects);
-                                }
-                                else
-                                {
-                                    Player.WhenDefFalse(theTime, soundEffects);
-                                }
-                            }
                         }
                         else
                         {
@@ -510,9 +499,9 @@ namespace Castle_Knight
                                     {
                                         if (eAtkTime1 + eDelayAtk1 < theTime.TotalGameTime)
                                         {
+                                            enemyArcher.atkAni.Play();
                                             enemyArcher.idle = false;
                                             enemyArcher.atk = true;
-                                            enemyArcher.atkAni.Play();
                                             ai1_Wave = true;
                                             ai1_Use = false;
 
@@ -535,10 +524,8 @@ namespace Castle_Knight
                                     }
                                     else if (enemyArcher.Position.X - Player.Position.X >= 600)
                                     {
-                                        if (!enemyArcher.atk)
-                                        {
-                                            enemyArcher.idle = true;
-                                        }
+                                        enemyArcher.idle = true;
+                                        enemyArcher.atk = false;
                                     }
                                 }
                             }
