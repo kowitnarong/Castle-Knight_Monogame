@@ -1275,6 +1275,11 @@ namespace Castle_Knight
 
             #region DiedPlayer
 
+            if (Player.Position.X >= 3600)
+            {
+                ScreenEvent.Invoke(game.mGameplayScreen2, new EventArgs());
+            }
+
             if (!devMode)
             {
                 if (Player.hp <= 0 && Player.died == false)

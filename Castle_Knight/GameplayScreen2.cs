@@ -36,8 +36,6 @@ namespace Castle_Knight
         Texture2D pausePic;
         Texture2D gameOver;
         int potion_Count = 0;
-        float[] speedCloud = new float[10];
-        float[] speedCloud2 = new float[5];
         private AnimatedTexture loading;
 
         // Sound
@@ -70,6 +68,13 @@ namespace Castle_Knight
 
         // Ai
         Random r = new Random();
+
+        // Vector
+        Vector2 touch1Pos;
+        Vector2 touch2Pos;
+        Vector2 touch3Pos;
+
+        private AnimatedTexture Touch;
 
         private const float Rotation = 0;
         private const float Scale = 1.0f;
@@ -178,6 +183,8 @@ namespace Castle_Knight
             Player.diedAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             Player.specialAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             Player.specialAtkAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
+            Touch = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
+
             #endregion
 
             #region Asset
@@ -224,7 +231,15 @@ namespace Castle_Knight
 
             // Ai
             Player.walkAni.Pause();
+
+            Touch.Load(game.Content, "Touch", 9, 1, 18);
+
+            touch1Pos = new Vector2(900, 150);
+            touch2Pos = new Vector2(1800, 150);
+            touch3Pos = new Vector2(3600, 150);
+
             #endregion
+
 
             string fileName = @"Content\Dead.txt";
             if (File.Exists(fileName))
@@ -543,9 +558,10 @@ namespace Castle_Knight
             {
                 theBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.ViewMatrix);
                 theBatch.Draw(BG1_1, new Vector2(0 - camera.ViewMatrix.Translation.X * 0.8f, 0), Color.White);
-
-                // Cloud
                 theBatch.Draw(BG1_2, new Vector2(0, 0), Color.White);
+                Touch.DrawFrame(theBatch, touch1Pos);
+                Touch.DrawFrame(theBatch, touch1Pos);
+                Touch.DrawFrame(theBatch, touch1Pos);
 
                 // Potion
                 if (potion_Ena[0] == true && potion_Use[0] == false)
