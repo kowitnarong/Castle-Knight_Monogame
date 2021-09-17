@@ -15,6 +15,7 @@ namespace Castle_Knight
         SpriteBatch spriteBatch;
 
         public GameplayScreen mGameplayScreen;
+        public GameplayScreen2 mGameplayScreen2;
         public TitleScreen mTitleScreen;
         public screen mCurrentScreen;
 
@@ -39,6 +40,7 @@ namespace Castle_Knight
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             mGameplayScreen = new GameplayScreen(this, new EventHandler(GameplayScreenEvent));
+            mGameplayScreen2 = new GameplayScreen2(this, new EventHandler(GameplayScreenEvent2));
             mTitleScreen = new TitleScreen(this, new EventHandler(GameplayScreenEvent));
             mCurrentScreen = mTitleScreen;
 
@@ -67,6 +69,10 @@ namespace Castle_Knight
             base.Draw(gameTime);
         }
         public void GameplayScreenEvent(object obj, EventArgs e)
+        {
+            mCurrentScreen = (screen)obj;
+        }
+        public void GameplayScreenEvent2(object obj, EventArgs e)
         {
             mCurrentScreen = (screen)obj;
         }
