@@ -300,12 +300,22 @@ namespace Castle_Knight
             Player.walkAni.Pause();
             #endregion
 
-            string filepathDead = Path.Combine(@"Content\Dead.txt");
-            FileStream fsDead = new FileStream(filepathDead, FileMode.Open, FileAccess.Read);
-            StreamReader srDead = new StreamReader(fsDead);
-            string tmpStrDead = srDead.ReadLine();
-            dead_count = Convert.ToInt32(tmpStrDead);
-            srDead.Close();
+            string fileName = @"Content\Dead.txt";
+            if (File.Exists(fileName))
+            {
+                string filepathDead = Path.Combine(@"Content\Dead.txt");
+                FileStream fsDead = new FileStream(filepathDead, FileMode.Open, FileAccess.Read);
+                StreamReader srDead = new StreamReader(fsDead);
+                string tmpStrDead = srDead.ReadLine();
+                dead_count = Convert.ToInt32(tmpStrDead);
+                srDead.Close();
+            }
+            else
+            {
+                string filepath = Path.Combine(@"Content\Dead.txt");
+                FileStream fc = new FileStream(filepath, FileMode.CreateNew);
+                fc.Close();
+            }
 
             game.IsMouseVisible = true;
             Player.hp = 5;

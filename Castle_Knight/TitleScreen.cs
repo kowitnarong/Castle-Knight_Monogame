@@ -61,12 +61,23 @@ namespace Castle_Knight
             select_Pos = new Vector2(130, 195);
 
             #region Loadflie
-            string filepath = Path.Combine(@"Content\data.txt");
-            FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Read);
-            StreamReader sr = new StreamReader(fs);
-            string tmpStr = sr.ReadLine();
-            loadingText = tmpStr;
-            sr.Close();
+            string fileName = @"Content\data.txt";
+            if (File.Exists(fileName))
+            {
+                string filepath = Path.Combine(@"Content\data.txt");
+                FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Read);
+                StreamReader sr = new StreamReader(fs);
+                string tmpStr = sr.ReadLine();
+                loadingText = tmpStr;
+                sr.Close();
+            }
+            else
+            {
+                string filepath = Path.Combine(@"Content\data.txt");
+                FileStream fc = new FileStream(filepath, FileMode.CreateNew);
+                fc.Close();
+            }
+            
             #endregion
 
             this.game = game;
