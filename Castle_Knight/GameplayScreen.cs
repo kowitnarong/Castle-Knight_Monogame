@@ -48,6 +48,16 @@ namespace Castle_Knight
         private AnimatedTexture loading;
         private AnimatedTexture glass;
 
+        Texture2D buttonRetry;
+        Texture2D buttonSoundOn;
+        Texture2D buttonSoundOff;
+        Texture2D buttonExit;
+        private AnimatedTexture buttonSelect;
+        Vector2 select_Pos;
+        int select = 0;
+        bool stopPress = false;
+        bool soundOn = true;
+
         // Sound
         Song bgSong;
         List<SoundEffect> soundEffects;
@@ -112,6 +122,9 @@ namespace Castle_Knight
         // time select
         private static readonly TimeSpan intervalBetweenSelect = TimeSpan.FromMilliseconds(250);
         private TimeSpan lastTimeSelect;
+
+        private static readonly TimeSpan intervalBetweenPause = TimeSpan.FromMilliseconds(250);
+        private TimeSpan lastTimePause;
 
         // time wait loading
         private static readonly TimeSpan intervalBetweenLoad = TimeSpan.FromMilliseconds(2500);
@@ -208,6 +221,7 @@ namespace Castle_Knight
 
             #region AnimatedTexture
             soundEffects = new List<SoundEffect>();
+            buttonSelect = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             Player.idleAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             Player.walkAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             Player.atkAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
@@ -251,7 +265,8 @@ namespace Castle_Knight
 
             bgSong = game.Content.Load<Song>("BackgroundLevel1");
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.MediaStateChanged += MediaPlayer_MediaStateChanged;
+            MediaPlayer.Volume -= 0.7f;
+            MediaPlayer.MediaStateChanged -= MediaPlayer_MediaStateChanged;
             SoundEffect.MasterVolume = 0.5f;
 
             eWaveAtk = game.Content.Load<Texture2D>("goldEneAtkWave");
@@ -297,6 +312,13 @@ namespace Castle_Knight
             Cat_idle.Load(game.Content, "cat", 3, 1, 3);
             rabbit_idle.Load(game.Content, "rabbit", 3, 1, 3);
             glass.Load(game.Content, "Glass", 2, 1, 2);
+
+            buttonRetry = game.Content.Load<Texture2D>("RetryButton");
+            buttonSoundOn = game.Content.Load<Texture2D>("SfxOn");
+            buttonSoundOff = game.Content.Load<Texture2D>("SfxOff");
+            buttonExit = game.Content.Load<Texture2D>("ExitButton");
+            buttonSelect.Load(game.Content, "Select", 4, 1, 5);
+
             Player.walkAni.Pause();
             #endregion
 
@@ -347,6 +369,8 @@ namespace Castle_Knight
             potion_Use[1] = false;
             potion_Pos[1] = new Vector2(2200, 390);
 
+            select_Pos = new Vector2(340, 215);
+
             Player.Position = new Vector2(50, 255);
 
             enemyBlack.Position = new Vector2(800, 255);
@@ -365,7 +389,7 @@ namespace Castle_Knight
         void MediaPlayer_MediaStateChanged(object sender, System.EventArgs e)
         {
             // 0.0f is silent, 1.0f is full volume
-            MediaPlayer.Volume -= 0.1f;
+            MediaPlayer.Volume -= 0.7f;
             MediaPlayer.Play(bgSong);
         }
 
@@ -397,6 +421,10 @@ namespace Castle_Knight
             Switch = "loading";
 
             bg1Song = false;
+            select = 0;
+            soundOn = true;
+            SoundEffect.MasterVolume = 0.5f;
+            gamePause = false;
             enemyBlack.died = false;
             enemyBlack2.died = false;
             enemyGold.died = false;
@@ -1177,6 +1205,7 @@ namespace Castle_Knight
                         {
                             enemyWizard.died = true;
                             enemyWizard.atkAni.Pause(0, 0);
+                            enemyWizard.idleAni.Pause(0, 0);
                         }
                         if (enemyRed.hp <= 0)
                         {
@@ -1275,6 +1304,25 @@ namespace Castle_Knight
 
             #region DiedPlayer
 
+            if (Player.Position.X >= 3600)
+            {    
+                {
+                    if (walkSoundInstance.State != SoundState.Stopped)
+                    {
+                        walkSoundInstance.Stop();
+                    }
+                }
+                string filepath = Path.Combine(@"Content\data.txt");
+                FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(fs);
+                if (Switch == "InGame1")
+                { sw.WriteLine("InGame2"); }
+                sw.Flush();
+                sw.Close();
+                MediaPlayer.MediaStateChanged += MediaPlayer_MediaStateChanged;
+                ScreenEvent.Invoke(game.mGameplayScreen2, new EventArgs());
+            }
+
             if (!devMode)
             {
                 if (Player.hp <= 0 && Player.died == false)
@@ -1286,11 +1334,12 @@ namespace Castle_Knight
                     Player.diedAni.Play();
                     enemyBlack.atkAni.Pause(0, 0);
                     enemyBlack2.atkAni.Pause(0, 0);
-                    enemyGold.atkAni.Pause(0, 0);
-                    enemyWizard.atkAni.Pause(0, 0);
                     enemyBlack.walkAni.Pause(0, 0);
                     enemyBlack2.walkAni.Pause(0, 0);
+                    enemyGold.atkAni.Pause(0, 0);
                     enemyGold.walkAni.Pause(0, 0);
+                    enemyWizard.atkAni.Pause(0, 0);
+                    enemyWizard.idleAni.Pause(0, 0);
                     enemyRed.atkAni.Pause(0, 0);
                     enemyRed.walkAni.Pause(0, 0);
 
@@ -1524,7 +1573,7 @@ namespace Castle_Knight
                         if (Player.died) { enemyGold.atkAni.Pause(0, 0); }
                         enemyGold.atkAni.DrawFrame(theBatch, enemyGold.Position);
                     }
-                    else if (enemyBlack2.atk == false)
+                    else if (enemyGold.atk == false)
                     {
                         enemyGold.walkAni.Play();
                         if (Player.died) { enemyGold.walkAni.Pause(0, 0); }
@@ -1581,6 +1630,17 @@ namespace Castle_Knight
                 if (gamePause && Switch == "InGame1")
                 {
                     theBatch.Draw(pausePic, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
+                    theBatch.Draw(buttonRetry, new Vector2(435 - camera.ViewMatrix.Translation.X, 210 - camera.ViewMatrix.Translation.Y), Color.White);
+                    theBatch.Draw(buttonExit, new Vector2(435 - camera.ViewMatrix.Translation.X, 350 - camera.ViewMatrix.Translation.Y), Color.White);
+                    buttonSelect.DrawFrame(theBatch, new Vector2(select_Pos.X - camera.ViewMatrix.Translation.X, select_Pos.Y - camera.ViewMatrix.Translation.Y));
+                    if (soundOn)
+                    {
+                        theBatch.Draw(buttonSoundOn, new Vector2(435 - camera.ViewMatrix.Translation.X, 280 - camera.ViewMatrix.Translation.Y), Color.White);
+                    }
+                    else if (!soundOn)
+                    {
+                        theBatch.Draw(buttonSoundOff, new Vector2(435 - camera.ViewMatrix.Translation.X, 280 - camera.ViewMatrix.Translation.Y), Color.White);
+                    }
                 }
                 theBatch.End();
             }
@@ -1628,6 +1688,7 @@ namespace Castle_Knight
             loading.UpdateFrame(Elapsed);
             Cat_idle.UpdateFrame(Elapsed);
             rabbit_idle.UpdateFrame(Elapsed);
+            buttonSelect.UpdateFrame(Elapsed);
         }
 
         private void GameKeyDown()
@@ -1635,8 +1696,7 @@ namespace Castle_Knight
             keyboardState = Keyboard.GetState();
             if (!menuLoading)
             {
-                var walk = soundEffects[0].CreateInstance();
-                if (keyboardState.IsKeyDown(Keys.Left) && Player.stop_move == false)
+                if (keyboardState.IsKeyDown(Keys.Left) && Player.stop_move == false && !gamePause)
                 {
                     Player.Position.X -= 2;
                     w_left = true;
@@ -1649,7 +1709,7 @@ namespace Castle_Knight
                     if (old_keyboardState.IsKeyDown(Keys.Left) && keyboardState.IsKeyUp(Keys.Left) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
                 }
 
-                if (keyboardState.IsKeyDown(Keys.Right) && Player.stop_move == false)
+                if (keyboardState.IsKeyDown(Keys.Right) && Player.stop_move == false && !gamePause)
                 {
                     Player.Position.X += 2;
                     w_right = true;
@@ -1741,9 +1801,9 @@ namespace Castle_Knight
         private void GameKeyPause(GameTime theTime)
         {
             keyboardState = Keyboard.GetState();
-            if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
+            if (lastTimePause + intervalBetweenPause < theTime.TotalGameTime)
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !Player.died)
                 {
                     if (gamePause == false)
                     {
@@ -1752,8 +1812,11 @@ namespace Castle_Knight
                         enemyBlack2.atkAni.Pause();
                         enemyBlack2.walkAni.Pause();
                         enemyGold.atkAni.Pause();
-                        enemyWizard.atkAni.Pause();
                         enemyGold.walkAni.Pause();
+                        enemyWizard.atkAni.Pause();
+                        enemyWizard.idleAni.Pause();
+                        enemyRed.atkAni.Pause();
+                        enemyRed.walkAni.Pause();
                         Player.diedAni.Pause();
                         Player.walkAni.Pause();
                         Player.idleAni.Pause();
@@ -1761,6 +1824,7 @@ namespace Castle_Knight
                         Player.defAni.Pause();
                         Player.specialAni.Pause();
                         Player.specialAtkAni.Pause();
+                        select_Pos = new Vector2(340, 215);
                         if (walkSoundInstance.State != SoundState.Paused) { walkSoundInstance.Pause(); }
                         gamePause = true;
                     }
@@ -1773,6 +1837,9 @@ namespace Castle_Knight
                         enemyGold.atkAni.Play();
                         enemyGold.walkAni.Play();
                         enemyWizard.atkAni.Play();
+                        enemyWizard.idleAni.Play();
+                        enemyRed.atkAni.Play();
+                        enemyRed.walkAni.Play();
                         Player.diedAni.Play();
                         Player.walkAni.Play();
                         Player.idleAni.Play();
@@ -1783,10 +1850,10 @@ namespace Castle_Knight
                         if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Resume(); }
                         gamePause = false;
                     }
-                    lastTimeSelect = theTime.TotalGameTime;
+                    lastTimePause = theTime.TotalGameTime;
                 }
             }
-            if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
+            if (lastTimePause + intervalBetweenPause < theTime.TotalGameTime)
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.F1))
                 {
@@ -1798,7 +1865,96 @@ namespace Castle_Knight
                     {
                         devMode = false;
                     }
-                    lastTimeSelect = theTime.TotalGameTime;
+                    lastTimePause = theTime.TotalGameTime;
+                }
+            }
+            if (gamePause)
+            {
+                if (keyboardState.IsKeyDown(Keys.Down) && stopPress == false)
+                {
+                    if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
+                    {
+                        if (!(select_Pos.Y == 355))
+                        {
+                            soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
+                        }
+                        if (select_Pos.Y <= 285)
+                        {
+                            select_Pos.Y += 70;
+
+                            lastTimeSelect = theTime.TotalGameTime;
+                        }
+                    }
+                }
+                else if (keyboardState.IsKeyDown(Keys.Up) && stopPress == false)
+                {
+                    if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
+                    {
+                        if (!(select_Pos.Y == 215))
+                        {
+                            soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
+                        }
+                        if (select_Pos.Y >= 285)
+                        {
+                            select_Pos.Y -= 70;
+
+                            lastTimeSelect = theTime.TotalGameTime;
+                        }
+                    }
+                }
+                else if (keyboardState.IsKeyDown(Keys.A) && stopPress == false && lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
+                {
+                    stopPress = true;
+                    soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
+                    if (select_Pos.Y == 215)
+                    {
+                        select = 1;
+                    }
+                    else if (select_Pos.Y == 285)
+                    {
+                        select = 2;
+                    }
+                    else if (select_Pos.Y == 355)
+                    {
+                        select = 3;
+                    }
+
+                    if (select == 1)
+                    {
+                        resetValue = false;
+                        stopPress = false;
+
+                        lastTimeSelect = theTime.TotalGameTime;
+                    }
+                    else if (select == 2)
+                    {
+                        if (soundOn)
+                        {
+                            MediaPlayer.IsMuted = true;
+                            SoundEffect.MasterVolume = 0f;
+                            if (walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
+                            stopPress = false;
+                            soundOn = false;
+                            select = 0;
+
+                            lastTimeSelect = theTime.TotalGameTime;
+                        }
+                        else if (!soundOn)
+                        {
+                            MediaPlayer.IsMuted = false;
+                            SoundEffect.MasterVolume = 0.5f;
+                            if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Play(); }
+                            stopPress = false;
+                            soundOn = true;
+                            select = 0;
+
+                            lastTimeSelect = theTime.TotalGameTime;
+                        }
+                    }
+                    else if (select == 3)
+                    {
+                        game.Exit();
+                    }
                 }
             }
         }
