@@ -1276,7 +1276,22 @@ namespace Castle_Knight
             #region DiedPlayer
 
             if (Player.Position.X >= 3600)
-            {
+            {    
+                {
+                    if (walkSoundInstance.State != SoundState.Stopped)
+                    {
+                        walkSoundInstance.Stop();
+
+                    }
+                }
+                string filepath = Path.Combine(@"Content\data.txt");
+                FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(fs);
+                if (Switch == "InGame1")
+                { sw.WriteLine("InGame2"); }
+                sw.Flush();
+                sw.Close();
+
                 ScreenEvent.Invoke(game.mGameplayScreen2, new EventArgs());
             }
 

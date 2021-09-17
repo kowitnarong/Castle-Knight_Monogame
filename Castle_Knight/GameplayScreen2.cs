@@ -69,11 +69,6 @@ namespace Castle_Knight
         // Ai
         Random r = new Random();
 
-        // Vector
-        Vector2 touch1Pos;
-        Vector2 touch2Pos;
-        Vector2 touch3Pos;
-
         private AnimatedTexture Touch;
 
         private const float Rotation = 0;
@@ -232,11 +227,7 @@ namespace Castle_Knight
             // Ai
             Player.walkAni.Pause();
 
-            Touch.Load(game.Content, "Touch", 9, 1, 18);
-
-            touch1Pos = new Vector2(900, 150);
-            touch2Pos = new Vector2(1800, 150);
-            touch3Pos = new Vector2(3600, 150);
+            Touch.Load(game.Content, "Touch", 9, 1, 5);
 
             #endregion
 
@@ -557,11 +548,10 @@ namespace Castle_Knight
             if (Switch == "InGame2" && menuLoading == false)
             {
                 theBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.ViewMatrix);
-                theBatch.Draw(BG1_1, new Vector2(0 - camera.ViewMatrix.Translation.X * 0.8f, 0), Color.White);
+                theBatch.Draw(BG1_1, new Vector2(0 - camera.ViewMatrix.Translation.X * 0.65f, 0), Color.White);
                 theBatch.Draw(BG1_2, new Vector2(0, 0), Color.White);
-                Touch.DrawFrame(theBatch, touch1Pos);
-                Touch.DrawFrame(theBatch, touch1Pos);
-                Touch.DrawFrame(theBatch, touch1Pos);
+                Touch.DrawFrame(theBatch, new Vector2(550 - camera.ViewMatrix.Translation.X * 0.65f, 100));
+                Touch.DrawFrame(theBatch, new Vector2(1550 - camera.ViewMatrix.Translation.X * 0.65f, 100));
 
                 // Potion
                 if (potion_Ena[0] == true && potion_Use[0] == false)
@@ -723,7 +713,8 @@ namespace Castle_Knight
             Player.specialAtkAni.UpdateFrame(Elapsed);
 
             // ฉาก Update frame
-           
+            Touch.UpdateFrame(Elapsed);
+
             loading.UpdateFrame(Elapsed);
         }
 
