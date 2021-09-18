@@ -251,7 +251,7 @@ namespace Castle_Knight
 
             bgSong = game.Content.Load<Song>("BackgroundLevel1");
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.Volume -= 0.5f;
+            MediaPlayer.Volume -= 0.7f;
             MediaPlayer.MediaStateChanged -= MediaPlayer_MediaStateChanged;
             SoundEffect.MasterVolume = 0.5f;
 
@@ -366,7 +366,7 @@ namespace Castle_Knight
         void MediaPlayer_MediaStateChanged(object sender, System.EventArgs e)
         {
             // 0.0f is silent, 1.0f is full volume
-            MediaPlayer.Volume -= 0.5f;
+            MediaPlayer.Volume -= 0.7f;
             MediaPlayer.Play(bgSong);
         }
 
