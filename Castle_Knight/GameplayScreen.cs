@@ -1696,8 +1696,7 @@ namespace Castle_Knight
             keyboardState = Keyboard.GetState();
             if (!menuLoading)
             {
-                var walk = soundEffects[0].CreateInstance();
-                if (keyboardState.IsKeyDown(Keys.Left) && Player.stop_move == false)
+                if (keyboardState.IsKeyDown(Keys.Left) && Player.stop_move == false && !gamePause)
                 {
                     Player.Position.X -= 2;
                     w_left = true;
@@ -1710,7 +1709,7 @@ namespace Castle_Knight
                     if (old_keyboardState.IsKeyDown(Keys.Left) && keyboardState.IsKeyUp(Keys.Left) && walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
                 }
 
-                if (keyboardState.IsKeyDown(Keys.Right) && Player.stop_move == false)
+                if (keyboardState.IsKeyDown(Keys.Right) && Player.stop_move == false && !gamePause)
                 {
                     Player.Position.X += 2;
                     w_right = true;
