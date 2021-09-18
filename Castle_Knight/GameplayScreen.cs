@@ -1943,7 +1943,6 @@ namespace Castle_Knight
                         {
                             MediaPlayer.IsMuted = false;
                             SoundEffect.MasterVolume = 0.5f;
-                            if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Play(); }
                             stopPress = false;
                             soundOn = true;
                             select = 0;
