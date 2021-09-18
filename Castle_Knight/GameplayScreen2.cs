@@ -86,6 +86,7 @@ namespace Castle_Knight
         bool ai1_Use = false;
         bool arrowOn = false;
         Vector2 Ai1WavePos = new Vector2(0, 600);
+        int speedArrow = 0;
 
         private AnimatedTexture Touch;
 
@@ -335,6 +336,7 @@ namespace Castle_Knight
             Player.SpeCount = 0;
             enemyArcher.Position = new Vector2(800, 255);
             enemyArcher.hp = 3;
+            speedArrow = 0;
             enemyArcher.died = false;
             potion_Pos[0] = new Vector2(700, 390);
             potion_Pos[1] = new Vector2(2200, 390);
@@ -478,7 +480,14 @@ namespace Castle_Knight
                                 }
                                 if (arrowOn)
                                 {
-                                    Ai1WavePos.X -= 20;
+                                    if (speedArrow % 3 == 0)
+                                    {
+                                        Ai1WavePos.X -= 20;
+                                    }
+                                    else if (speedArrow % 3 != 0)
+                                    {
+                                        Ai1WavePos.X -= 8;
+                                    }
                                     blockEnemy1Wave = new Rectangle((int)Ai1WavePos.X, (int)Ai1WavePos.Y, 144, 144);
                                     if (Player.charBlock.Intersects(blockEnemy1Wave) && enemyArcher.died == false)
                                     {
@@ -542,6 +551,7 @@ namespace Castle_Knight
                                                 enemyArcher.atk = true;
                                                 ai1_Wave = true;
                                                 ai1_Use = false;
+                                                speedArrow += 1;
                                                 soundEffects[9].Play(volume: 1f, pitch: 0.0f, pan: 0.0f);
 
                                                 AttackWave1 = theTime.TotalGameTime;
@@ -557,7 +567,6 @@ namespace Castle_Knight
                                             {
                                                 arrowOn = false;
                                                 ai1_Wave = false;
-
                                                 Ai1WavePos.Y = 600;
                                             }
                                         }
