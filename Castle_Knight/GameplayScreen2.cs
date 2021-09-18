@@ -39,6 +39,16 @@ namespace Castle_Knight
         int potion_Count = 0;
         private AnimatedTexture loading;
 
+        Texture2D buttonRetry;
+        Texture2D buttonSoundOn;
+        Texture2D buttonSoundOff;
+        Texture2D buttonExit;
+        private AnimatedTexture buttonSelect;
+        Vector2 select_Pos;
+        int select = 0;
+        bool stopPress = false;
+        bool soundOn = true;
+
         // Sound
         Song bgSong2;
         List<SoundEffect> soundEffects;
@@ -90,6 +100,9 @@ namespace Castle_Knight
         private static readonly TimeSpan intervalBetweenSelect = TimeSpan.FromMilliseconds(250);
         private TimeSpan lastTimeSelect;
 
+        private static readonly TimeSpan intervalBetweenPause = TimeSpan.FromMilliseconds(250);
+        private TimeSpan lastTimePause;
+
         // time wait loading
         private static readonly TimeSpan intervalBetweenLoad = TimeSpan.FromMilliseconds(2500);
         private TimeSpan lastTimeLoad;
@@ -100,7 +113,7 @@ namespace Castle_Knight
 
         // Enemy time
 
-        private TimeSpan eDelayAtk1 = TimeSpan.FromMilliseconds(2300);
+        private TimeSpan eDelayAtk1 = TimeSpan.FromMilliseconds(2050);
         private static readonly TimeSpan eCoolDownAtk1 = TimeSpan.FromMilliseconds(450);
         private TimeSpan eAtkTime1;
         private static readonly TimeSpan DelayAttackWave1 = TimeSpan.FromMilliseconds(2000);
@@ -160,6 +173,7 @@ namespace Castle_Knight
         {
             #region AnimatedTexture
             soundEffects = new List<SoundEffect>();
+            buttonSelect = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             Player.idleAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             Player.walkAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             Player.atkAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
@@ -224,6 +238,12 @@ namespace Castle_Knight
             enemyArcher.idleAni.Load(game.Content, "Archer_idle", Frames, FramesRow, FramesPerSec);
             eWaveAtk = game.Content.Load<Texture2D>("Arrow");
 
+            buttonRetry = game.Content.Load<Texture2D>("RetryButton");
+            buttonSoundOn = game.Content.Load<Texture2D>("SfxOn");
+            buttonSoundOff = game.Content.Load<Texture2D>("SfxOff");
+            buttonExit = game.Content.Load<Texture2D>("ExitButton");
+            buttonSelect.Load(game.Content, "Select", 4, 1, 5);
+
             Player.walkAni.Pause();
 
             Touch.Load(game.Content, "Touch", 9, 1, 5);
@@ -258,6 +278,8 @@ namespace Castle_Knight
             potion_Ena[1] = false;
             potion_Use[1] = false;
             potion_Pos[1] = new Vector2(2200, 390);
+
+            select_Pos = new Vector2(340, 215);
 
             Player.Position = new Vector2(50, 255);
 
@@ -301,6 +323,9 @@ namespace Castle_Knight
             Switch = "loading";
 
             bg2Song = false;
+            select = 0;
+            soundOn = true;
+            gamePause = false;
             arrowOn = false;
             Player.Position = new Vector2(50, 255);
             Camera_Pos = new Vector2(700, 255);
@@ -309,6 +334,7 @@ namespace Castle_Knight
             Player.SpeCount = 0;
             enemyArcher.Position = new Vector2(800, 255);
             enemyArcher.hp = 3;
+            enemyArcher.died = false;
             potion_Pos[0] = new Vector2(700, 390);
             potion_Pos[1] = new Vector2(2200, 390);
             potion_Ena[0] = false;
@@ -451,7 +477,7 @@ namespace Castle_Knight
                                 }
                                 if (arrowOn)
                                 {
-                                    Ai1WavePos.X -= 7;
+                                    Ai1WavePos.X -= 20;
                                     blockEnemy1Wave = new Rectangle((int)Ai1WavePos.X, (int)Ai1WavePos.Y, 144, 144);
                                     if (Player.charBlock.Intersects(blockEnemy1Wave) && enemyArcher.died == false)
                                     {
@@ -846,6 +872,18 @@ namespace Castle_Knight
                 if (gamePause && Switch == "InGame2")
                 {
                     theBatch.Draw(pausePic, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
+                    theBatch.Draw(pausePic, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
+                    theBatch.Draw(buttonRetry, new Vector2(435 - camera.ViewMatrix.Translation.X, 210 - camera.ViewMatrix.Translation.Y), Color.White);
+                    theBatch.Draw(buttonExit, new Vector2(435 - camera.ViewMatrix.Translation.X, 350 - camera.ViewMatrix.Translation.Y), Color.White);
+                    buttonSelect.DrawFrame(theBatch, new Vector2(select_Pos.X - camera.ViewMatrix.Translation.X, select_Pos.Y - camera.ViewMatrix.Translation.Y));
+                    if (soundOn)
+                    {
+                        theBatch.Draw(buttonSoundOn, new Vector2(435 - camera.ViewMatrix.Translation.X, 280 - camera.ViewMatrix.Translation.Y), Color.White);
+                    }
+                    else if (!soundOn)
+                    {
+                        theBatch.Draw(buttonSoundOff, new Vector2(435 - camera.ViewMatrix.Translation.X, 280 - camera.ViewMatrix.Translation.Y), Color.White);
+                    }
                 }
                 theBatch.End();
             }
@@ -881,6 +919,7 @@ namespace Castle_Knight
 
             // ฉาก Update frame
             Touch.UpdateFrame(Elapsed);
+            buttonSelect.UpdateFrame(Elapsed);
 
             loading.UpdateFrame(Elapsed);
         }
@@ -995,7 +1034,7 @@ namespace Castle_Knight
         private void GameKeyPause(GameTime theTime)
         {
             keyboardState = Keyboard.GetState();
-            if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
+            if (lastTimePause + intervalBetweenPause < theTime.TotalGameTime)
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 {
@@ -1010,6 +1049,7 @@ namespace Castle_Knight
                         Player.specialAtkAni.Pause();
                         enemyArcher.atkAni.Pause();
                         enemyArcher.idleAni.Pause();
+                        select_Pos = new Vector2(340, 215);
                         if (walkSoundInstance.State != SoundState.Paused) { walkSoundInstance.Pause(); }
                         gamePause = true;
                     }
@@ -1027,10 +1067,10 @@ namespace Castle_Knight
                         if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Resume(); }
                         gamePause = false;
                     }
-                    lastTimeSelect = theTime.TotalGameTime;
+                    lastTimePause = theTime.TotalGameTime;
                 }
             }
-            if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
+            if (lastTimePause + intervalBetweenPause < theTime.TotalGameTime)
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.F1))
                 {
@@ -1042,7 +1082,92 @@ namespace Castle_Knight
                     {
                         devMode = false;
                     }
-                    lastTimeSelect = theTime.TotalGameTime;
+                    lastTimePause = theTime.TotalGameTime;
+                }
+            }
+            if (gamePause)
+            {
+                if (keyboardState.IsKeyDown(Keys.Down) && stopPress == false)
+                {
+                    if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
+                    {
+                        if (!(select_Pos.Y == 355))
+                        {
+                            soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
+                        }
+                        if (select_Pos.Y <= 285)
+                        {
+                            select_Pos.Y += 70;
+
+                            lastTimeSelect = theTime.TotalGameTime;
+                        }
+                    }
+                }
+                else if (keyboardState.IsKeyDown(Keys.Up) && stopPress == false)
+                {
+                    if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
+                    {
+                        if (!(select_Pos.Y == 215))
+                        {
+                            soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
+                        }
+                        if (select_Pos.Y >= 285)
+                        {
+                            select_Pos.Y -= 70;
+
+                            lastTimeSelect = theTime.TotalGameTime;
+                        }
+                    }
+                }
+                else if (keyboardState.IsKeyDown(Keys.A) && stopPress == false && lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
+                {
+                    stopPress = true;
+                    soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
+                    if (select_Pos.Y == 215)
+                    {
+                        select = 1;
+                    }
+                    else if (select_Pos.Y == 285)
+                    {
+                        select = 2;
+                    }
+                    else if (select_Pos.Y == 355)
+                    {
+                        select = 3;
+                    }
+
+                    if (select == 1)
+                    {
+                        resetValue = false;
+                        stopPress = false;
+
+                        lastTimeSelect = theTime.TotalGameTime;
+                    }
+                    else if (select == 2)
+                    {
+                        if (soundOn)
+                        {
+                            MediaPlayer.IsMuted = true;
+                            SoundEffect.MasterVolume = 0f;
+                            stopPress = false;
+                            soundOn = false;
+
+                            lastTimeSelect = theTime.TotalGameTime;
+                        }
+                        else if (!soundOn)
+                        {
+                            MediaPlayer.IsMuted = false;
+                            SoundEffect.MasterVolume = 0.5f;
+                            stopPress = false;
+                            soundOn = true;
+
+                            lastTimeSelect = theTime.TotalGameTime;
+                        }
+                    }
+                    else if (select == 3)
+                    {
+                        game.Exit();
+                    }
                 }
             }
         }

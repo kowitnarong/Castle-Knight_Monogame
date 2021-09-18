@@ -20,9 +20,9 @@ namespace Castle_Knight
         Texture2D buttonLoad;
         Texture2D buttonExit;
         Texture2D bg_mainmenu;
-        Texture2D buttonSelect;
         Texture2D noLoadPic;
         private AnimatedTexture p_title;
+        private AnimatedTexture buttonSelect;
 
         string loadingText;
 
@@ -48,13 +48,14 @@ namespace Castle_Knight
         : base(theScreenEvent)
         {
             p_title = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
+            buttonSelect = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             bg_mainmenu = game.Content.Load<Texture2D>("gameTitle");
             noLoadPic = game.Content.Load<Texture2D>("noLoad");
             buttonStart = game.Content.Load<Texture2D>("Start");
             buttonLoad = game.Content.Load<Texture2D>("Load");
             buttonExit = game.Content.Load<Texture2D>("Exit");
-            buttonSelect = game.Content.Load<Texture2D>("Select");
             p_title.Load(game.Content, "p_Title", 2, 1, 4);
+            buttonSelect.Load(game.Content, "Select", 4, 1, 5);
 
             soundEffects = game.Content.Load<SoundEffect>("button-15");
 
@@ -87,6 +88,7 @@ namespace Castle_Knight
             float elapsed = (float)theTime.ElapsedGameTime.TotalSeconds;
             keyboardState = Keyboard.GetState();
             p_title.UpdateFrame(elapsed);
+            buttonSelect.UpdateFrame(elapsed);
 
             if (keyboardState.IsKeyDown(Keys.Down) && stopPress == false)
             {
@@ -201,7 +203,7 @@ namespace Castle_Knight
             theBatch.Draw(buttonStart, new Vector2(230, 200), Color.White);
             theBatch.Draw(buttonLoad, new Vector2(230, 260), Color.White);
             theBatch.Draw(buttonExit, new Vector2(230, 320), Color.White);
-            theBatch.Draw(buttonSelect, select_Pos, Color.White);
+            buttonSelect.DrawFrame(theBatch, select_Pos);
             p_title.DrawFrame(theBatch, new Vector2(560, 80));
             if (noLoad == true)
             {
