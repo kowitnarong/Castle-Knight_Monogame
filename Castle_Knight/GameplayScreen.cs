@@ -47,6 +47,8 @@ namespace Castle_Knight
         float[] speedCloud2 = new float[5];
         private AnimatedTexture loading;
         private AnimatedTexture glass;
+        private AnimatedTexture effect1;
+        private AnimatedTexture effect2;
 
         Texture2D buttonRetry;
         Texture2D buttonSoundOn;
@@ -134,6 +136,10 @@ namespace Castle_Knight
         private static readonly TimeSpan intervalBetweenDied = TimeSpan.FromMilliseconds(700);
         private TimeSpan lastTimeDied;
 
+        // time effec1
+        private static readonly TimeSpan effectfadeOut = TimeSpan.FromMilliseconds(30);
+        private TimeSpan lasttimeEffect;
+
         // Enemy time
         private static readonly TimeSpan eDelayAtk = TimeSpan.FromMilliseconds(3000);
         private static readonly TimeSpan eCoolDownAtk = TimeSpan.FromMilliseconds(1500);
@@ -169,6 +175,10 @@ namespace Castle_Knight
 
         // Pos Camera
         private Vector2 Camera_Pos = new Vector2(700, 255);
+
+        // effect pos
+        private Vector2 effect1_Pos = new Vector2(700, 600);
+        private Vector2 effect2_Pos = new Vector2(700, 600);
 
         // Cat Pos
         private Vector2 Cat_Pos = new Vector2(1040, 55);
@@ -221,6 +231,8 @@ namespace Castle_Knight
 
             #region AnimatedTexture
             soundEffects = new List<SoundEffect>();
+            effect1 = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
+            effect2 = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             buttonSelect = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             Player.idleAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             Player.walkAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
@@ -269,6 +281,8 @@ namespace Castle_Knight
             MediaPlayer.MediaStateChanged -= MediaPlayer_MediaStateChanged;
             SoundEffect.MasterVolume = 0.5f;
 
+            effect1.Load(game.Content, "effect1", 3, 1, 15);
+            effect2.Load(game.Content, "effect2", 3, 1, 15);
             eWaveAtk = game.Content.Load<Texture2D>("goldEneAtkWave");
             fireball = game.Content.Load<Texture2D>("fireBall");
             bigFireball = game.Content.Load<Texture2D>("bigFireBall");
@@ -627,22 +641,42 @@ namespace Castle_Knight
                             enemyWizard.charBlock = new Rectangle((int)enemyWizard.Position.X, (int)enemyWizard.Position.Y, 32, 160);
                             if (Player.charBlock.Intersects(enemyBlack.charBlock) && enemyBlack.died == false)
                             {
+                                effect1.Play();
+                                effect1_Pos = new Vector2(Player.Position.X + 110, Player.Position.Y + 57);
+
+                                lasttimeEffect = theTime.TotalGameTime;
                                 enemyBlack.PlayerAtk(theTime, SwordHit);
                             }
                             else if (Player.charBlock.Intersects(enemyBlack2.charBlock) && enemyBlack2.died == false)
                             {
+                                effect1.Play();
+                                effect1_Pos = new Vector2(Player.Position.X + 110, Player.Position.Y + 57);
+
+                                lasttimeEffect = theTime.TotalGameTime;
                                 enemyBlack2.PlayerAtk(theTime, SwordHit);
                             }
                             else if (Player.charBlock.Intersects(enemyGold.charBlock) && enemyGold.died == false)
                             {
+                                effect1.Play();
+                                effect1_Pos = new Vector2(Player.Position.X + 110, Player.Position.Y + 57);
+
+                                lasttimeEffect = theTime.TotalGameTime;
                                 enemyGold.PlayerAtk(theTime, SwordHit);
                             }
                             else if (Player.charBlock.Intersects(enemyWizard.charBlock) && enemyWizard.died == false)
                             {
+                                effect2.Play();
+                                effect2_Pos = new Vector2(Player.Position.X + 110, Player.Position.Y + 57);
+
+                                lasttimeEffect = theTime.TotalGameTime;
                                 enemyWizard.PlayerAtk(theTime, SwordHit);
                             }
                             else if (Player.charBlock.Intersects(enemyRed.charBlock) && enemyRed.died == false)
                             {
+                                effect1.Play();
+                                effect1_Pos = new Vector2(Player.Position.X + 110, Player.Position.Y + 57);
+
+                                lasttimeEffect = theTime.TotalGameTime;
                                 enemyRed.PlayerAtk(theTime, SwordHit);
                             }
                         }
@@ -673,6 +707,15 @@ namespace Castle_Knight
                                     }
                                 }
                             }
+                        }
+                        if (lasttimeEffect + effectfadeOut < theTime.TotalGameTime && !Player.atk)
+                        {
+                            effect1_Pos = new Vector2(700, 600);
+                            effect1.Reset();
+                            effect1.Pause(2, 0);
+                            effect2_Pos = new Vector2(700, 600);
+                            effect2.Reset();
+                            effect2.Pause(2, 0);
                         }
                         #endregion
 
@@ -893,7 +936,6 @@ namespace Castle_Knight
                                 }
                             }
                         }
-
 
                         if (Player.died == false)
                         {
@@ -1616,6 +1658,11 @@ namespace Castle_Knight
                 }
                 #endregion
 
+                // effect1
+
+                    effect2.DrawFrame(theBatch, effect2_Pos);
+                    effect1.DrawFrame(theBatch, effect1_Pos);
+
                 string strDead = "Dead = " + dead_count;
                 string strDevMode = "DevMode";
                 if (Switch == "InGame1")
@@ -1689,6 +1736,8 @@ namespace Castle_Knight
             Cat_idle.UpdateFrame(Elapsed);
             rabbit_idle.UpdateFrame(Elapsed);
             buttonSelect.UpdateFrame(Elapsed);
+            effect1.UpdateFrame(Elapsed);
+            effect2.UpdateFrame(Elapsed);
         }
 
         private void GameKeyDown()
