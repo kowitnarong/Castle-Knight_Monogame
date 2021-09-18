@@ -325,6 +325,7 @@ namespace Castle_Knight
             bg2Song = false;
             select = 0;
             soundOn = true;
+            SoundEffect.MasterVolume = 0.5f;
             gamePause = false;
             arrowOn = false;
             Player.Position = new Vector2(50, 255);
@@ -1036,7 +1037,7 @@ namespace Castle_Knight
             keyboardState = Keyboard.GetState();
             if (lastTimePause + intervalBetweenPause < theTime.TotalGameTime)
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !Player.died)
                 {
                     if (gamePause == false)
                     {
@@ -1149,8 +1150,10 @@ namespace Castle_Knight
                         {
                             MediaPlayer.IsMuted = true;
                             SoundEffect.MasterVolume = 0f;
+                            if(walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
                             stopPress = false;
                             soundOn = false;
+                            select = 0;
 
                             lastTimeSelect = theTime.TotalGameTime;
                         }
@@ -1158,8 +1161,10 @@ namespace Castle_Knight
                         {
                             MediaPlayer.IsMuted = false;
                             SoundEffect.MasterVolume = 0.5f;
+                            if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Play(); }
                             stopPress = false;
                             soundOn = true;
+                            select = 0;
 
                             lastTimeSelect = theTime.TotalGameTime;
                         }
