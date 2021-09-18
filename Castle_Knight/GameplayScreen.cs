@@ -369,7 +369,7 @@ namespace Castle_Knight
             potion_Use[1] = false;
             potion_Pos[1] = new Vector2(2200, 390);
 
-            select_Pos = new Vector2(340, 215);
+            select_Pos = new Vector2(340, 185);
 
             Player.Position = new Vector2(50, 255);
 
@@ -1630,16 +1630,16 @@ namespace Castle_Knight
                 if (gamePause && Switch == "InGame1")
                 {
                     theBatch.Draw(pausePic, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
-                    theBatch.Draw(buttonRetry, new Vector2(435 - camera.ViewMatrix.Translation.X, 210 - camera.ViewMatrix.Translation.Y), Color.White);
-                    theBatch.Draw(buttonExit, new Vector2(435 - camera.ViewMatrix.Translation.X, 350 - camera.ViewMatrix.Translation.Y), Color.White);
+                    theBatch.Draw(buttonRetry, new Vector2(435 - camera.ViewMatrix.Translation.X, 180 - camera.ViewMatrix.Translation.Y), Color.White);
+                    theBatch.Draw(buttonExit, new Vector2(435 - camera.ViewMatrix.Translation.X, 320 - camera.ViewMatrix.Translation.Y), Color.White);
                     buttonSelect.DrawFrame(theBatch, new Vector2(select_Pos.X - camera.ViewMatrix.Translation.X, select_Pos.Y - camera.ViewMatrix.Translation.Y));
                     if (soundOn)
                     {
-                        theBatch.Draw(buttonSoundOn, new Vector2(435 - camera.ViewMatrix.Translation.X, 280 - camera.ViewMatrix.Translation.Y), Color.White);
+                        theBatch.Draw(buttonSoundOn, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
                     }
                     else if (!soundOn)
                     {
-                        theBatch.Draw(buttonSoundOff, new Vector2(435 - camera.ViewMatrix.Translation.X, 280 - camera.ViewMatrix.Translation.Y), Color.White);
+                        theBatch.Draw(buttonSoundOff, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
                     }
                 }
                 theBatch.End();
@@ -1825,7 +1825,7 @@ namespace Castle_Knight
                         Player.defAni.Pause();
                         Player.specialAni.Pause();
                         Player.specialAtkAni.Pause();
-                        select_Pos = new Vector2(340, 215);
+                        select_Pos = new Vector2(340, 185);
                         if (walkSoundInstance.State != SoundState.Paused) { walkSoundInstance.Pause(); }
                         gamePause = true;
                     }
@@ -1875,11 +1875,11 @@ namespace Castle_Knight
                 {
                     if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
                     {
-                        if (!(select_Pos.Y == 355))
+                        if (!(select_Pos.Y == 325))
                         {
                             soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
                         }
-                        if (select_Pos.Y <= 285)
+                        if (select_Pos.Y <= 255)
                         {
                             select_Pos.Y += 70;
 
@@ -1891,11 +1891,11 @@ namespace Castle_Knight
                 {
                     if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
                     {
-                        if (!(select_Pos.Y == 215))
+                        if (!(select_Pos.Y == 185))
                         {
                             soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
                         }
-                        if (select_Pos.Y >= 285)
+                        if (select_Pos.Y >= 255)
                         {
                             select_Pos.Y -= 70;
 
@@ -1907,15 +1907,15 @@ namespace Castle_Knight
                 {
                     stopPress = true;
                     soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
-                    if (select_Pos.Y == 215)
+                    if (select_Pos.Y == 185)
                     {
                         select = 1;
                     }
-                    else if (select_Pos.Y == 285)
+                    else if (select_Pos.Y == 255)
                     {
                         select = 2;
                     }
-                    else if (select_Pos.Y == 355)
+                    else if (select_Pos.Y == 325)
                     {
                         select = 3;
                     }
