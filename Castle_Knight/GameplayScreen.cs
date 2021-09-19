@@ -1370,6 +1370,7 @@ namespace Castle_Knight
                 sw.Flush();
                 sw.Close();
                 MediaPlayer.MediaStateChanged += MediaPlayer_MediaStateChanged;
+                resetValue = false;
                 ScreenEvent.Invoke(game.mGameplayScreen2, new EventArgs());
             }
 
@@ -2030,6 +2031,21 @@ namespace Castle_Knight
                     }
                     else if (select == 3)
                     {
+                        string filepath = Path.Combine(@"Content\data.txt");
+                        FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Write);
+                        StreamWriter sw = new StreamWriter(fs);
+                        if (Switch == "InGame1")
+                        { sw.WriteLine("InGame1"); }
+                        sw.Flush();
+                        sw.Close();
+
+                        string filepathDead = Path.Combine(@"Content\Dead.txt");
+                        FileStream fsDead = new FileStream(filepathDead, FileMode.Open, FileAccess.Write);
+                        StreamWriter swDead = new StreamWriter(fsDead);
+                        if (Switch == "InGame1")
+                        { swDead.WriteLine(dead_count.ToString()); }
+                        swDead.Flush();
+                        swDead.Close();
                         game.Exit();
                     }
                 }
