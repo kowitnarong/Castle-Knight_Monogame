@@ -333,7 +333,7 @@ namespace Castle_Knight
 
             enemyArcher.Position = new Vector2(800, 255);
 
-            enemyGold.Position = new Vector2(3000, 255);
+            enemyGold.Position = new Vector2(2000, 255);
 
             enemyGhost.Position = new Vector2(-600, 255);
 
@@ -387,7 +387,7 @@ namespace Castle_Knight
             potion_Count = 0;
             Player.SpeCount = 0;
             enemyArcher.Position = new Vector2(800, 255);
-            enemyGold.Position = new Vector2(3000, 255);
+            enemyGold.Position = new Vector2(2000, 255);
             enemyGhost.Position = new Vector2(-600, 255);
             enemyArcher.hp = 3;
             enemyGold.hp = 5;
@@ -592,7 +592,7 @@ namespace Castle_Knight
                                 }
                                 if (arrowOn)
                                 {
-                                    if (enemyArcher.Position.X < 1500)
+                                    if (enemyArcher.Position.X < 1200)
                                     {
                                         if (speedArrow % 3 == 0)
                                         {
@@ -603,7 +603,7 @@ namespace Castle_Knight
                                             Ai1WavePos.X -= 8;
                                         }
                                     }
-                                    else if (enemyArcher.Position.X >= 1500)
+                                    else if (enemyArcher.Position.X >= 1200)
                                     {
                                         Ai1WavePos.X -= 30;
                                     }
@@ -629,7 +629,10 @@ namespace Castle_Knight
                             }
                             if (enemyArcher.atk == true)
                             {
-                                if (enemyArcher.atkAni.Frame >= 4 && enemyArcher.atkAni.Frame <= 6) { enemyArcher.Position.X += 8; }
+                                if (enemyArcher.Position.X < 1400)
+                                {
+                                    if (enemyArcher.atkAni.Frame >= 4 && enemyArcher.atkAni.Frame <= 6) { enemyArcher.Position.X += 8; }
+                                }
                                 enemyArcher.charBlock = new Rectangle((int)enemyArcher.Position.X + 18, (int)enemyArcher.Position.Y, 32, 160);
                             }
                             else
