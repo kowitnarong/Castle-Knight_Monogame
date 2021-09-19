@@ -19,6 +19,7 @@ namespace Castle_Knight
         Player Player = new Player();
         Enemy enemyArcher = new Enemy();
         Enemy enemyGold = new Enemy();
+        Enemy enemyGhost = new Enemy();
 
         #region Factor
         bool w_left = false, w_right = false;
@@ -96,7 +97,12 @@ namespace Castle_Knight
         bool ai2_Use = false;
         Vector2 Ai2WavePos = new Vector2(0, 600);
 
+        // ฉาก
         private AnimatedTexture Touch;
+
+        bool batMove = false;
+        bool batMove2 = false;
+        private AnimatedTexture Bat;
 
         private const float Rotation = 0;
         private const float Scale = 1.0f;
@@ -138,6 +144,9 @@ namespace Castle_Knight
         private static readonly TimeSpan DelayAttackWave2 = TimeSpan.FromMilliseconds(2000);
         private TimeSpan AttackWave2;
 
+        private static readonly TimeSpan DelayAttack3 = TimeSpan.FromMilliseconds(2000);
+        private TimeSpan lasttimeDelay3;
+
         #endregion
 
         #region Vector and Frame
@@ -150,6 +159,10 @@ namespace Castle_Knight
 
         // Pos Camera
         private Vector2 Camera_Pos = new Vector2(700, 255);
+
+        // Bat Pos
+        private Vector2 Bat_Pos = new Vector2(450, 80);
+        private Vector2 Bat2_Pos = new Vector2(1450, 80);
 
         // Special atk
         private Vector2 special_Pos = new Vector2(500, 600);
@@ -209,9 +222,11 @@ namespace Castle_Knight
             enemyArcher.idleAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             enemyGold.walkAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             enemyGold.atkAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
+            enemyGhost.walkAni = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
 
             Touch = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             effect1 = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
+            Bat = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
 
             #endregion
 
@@ -238,6 +253,7 @@ namespace Castle_Knight
             SoundEffect.MasterVolume = 0.5f;
 
             effect1.Load(game.Content, "effect1", 3, 1, 15);
+            Bat.Load(game.Content, "Bat", 2, 1, 6);
             pausePic = game.Content.Load<Texture2D>("pause");
             ArialFont = game.Content.Load<SpriteFont>("ArialFont");
             BG1_1 = game.Content.Load<Texture2D>("Map1");
@@ -266,6 +282,7 @@ namespace Castle_Knight
             enemyGold.walkAni.Load(game.Content, "goldEnemy", e_walk_Frames, e_walk_FramesRow, e_walk_FramesPerSec);
             enemyGold.atkAni.Load(game.Content, "goldEnemyAtk", 8, e_atk_FramesRow, 16);
             eWaveAtk2 = game.Content.Load<Texture2D>("goldEneAtkWave");
+            enemyGhost.walkAni.Load(game.Content, "Ghost", 2, 1, 4);
 
             buttonRetry = game.Content.Load<Texture2D>("RetryButton");
             buttonSoundOn = game.Content.Load<Texture2D>("SfxOn");
@@ -300,6 +317,7 @@ namespace Castle_Knight
             Player.hp = 5;
             enemyArcher.hp = 3;
             enemyGold.hp = 5;
+            enemyGhost.hp = 1;
 
             potion_Ena[0] = false;
             potion_Use[0] = false;
@@ -316,6 +334,8 @@ namespace Castle_Knight
             enemyArcher.Position = new Vector2(800, 255);
 
             enemyGold.Position = new Vector2(3000, 255);
+
+            enemyGhost.Position = new Vector2(-600, 255);
 
             this.game = game;
         }
@@ -368,11 +388,14 @@ namespace Castle_Knight
             Player.SpeCount = 0;
             enemyArcher.Position = new Vector2(800, 255);
             enemyGold.Position = new Vector2(3000, 255);
+            enemyGhost.Position = new Vector2(-600, 255);
             enemyArcher.hp = 3;
             enemyGold.hp = 5;
-            speedArrow = 0;
+            enemyGhost.hp = 1;
             enemyArcher.died = false;
             enemyGold.died = false;
+            enemyGhost.died = false;
+            speedArrow = 0;
             potion_Pos[0] = new Vector2(700, 390);
             potion_Pos[1] = new Vector2(2200, 390);
             potion_Ena[0] = false;
@@ -441,6 +464,7 @@ namespace Castle_Knight
                         charPotion[1] = new Rectangle((int)potion_Pos[1].X, (int)potion_Pos[1].Y, 32, 32);
                         enemyArcher.charBlock = new Rectangle((int)enemyArcher.Position.X + 18, (int)enemyArcher.Position.Y, 32, 160);
                         enemyGold.charBlock = new Rectangle((int)enemyGold.Position.X + 64, (int)enemyGold.Position.Y, 32, 160);
+                        enemyGhost.charBlock = new Rectangle((int)enemyGhost.Position.X + 36, (int)enemyGhost.Position.Y, 81, 135);
                         Rectangle blockEnemy1Wave;
                         Rectangle blockEnemy2Wave;
 
@@ -501,6 +525,18 @@ namespace Castle_Knight
                                 lasttimeEffect = theTime.TotalGameTime;
                                 enemyGold.PlayerAtk(theTime, SwordHit);
                             }
+                            else if (Player.charBlock.Intersects(enemyGhost.charBlock) && enemyGhost.died == false)
+                            {
+                                
+                                if (enemyGhost.lastTimeHp + enemyGhost.DelayHp < theTime.TotalGameTime)
+                                {
+                                    if (SwordWhoosh.State != SoundState.Stopped) { SwordWhoosh.Stop(); }
+                                    if (SwordWhoosh.State != SoundState.Playing) { SwordWhoosh.Play(); }
+                                    enemyGhost.hp -= 1;
+
+                                    enemyGhost.lastTimeHp = theTime.TotalGameTime;
+                                }
+                            }
                         }
                         else
                         {
@@ -556,13 +592,20 @@ namespace Castle_Knight
                                 }
                                 if (arrowOn)
                                 {
-                                    if (speedArrow % 3 == 0)
+                                    if (enemyArcher.Position.X < 1500)
                                     {
-                                        Ai1WavePos.X -= 20;
+                                        if (speedArrow % 3 == 0)
+                                        {
+                                            Ai1WavePos.X -= 20;
+                                        }
+                                        else if (speedArrow % 3 != 0)
+                                        {
+                                            Ai1WavePos.X -= 8;
+                                        }
                                     }
-                                    else if (speedArrow % 3 != 0)
+                                    else if (enemyArcher.Position.X >= 1500)
                                     {
-                                        Ai1WavePos.X -= 8;
+                                        Ai1WavePos.X -= 30;
                                     }
                                     blockEnemy1Wave = new Rectangle((int)Ai1WavePos.X, (int)Ai1WavePos.Y, 144, 144);
                                     if (Player.charBlock.Intersects(blockEnemy1Wave) && enemyArcher.died == false)
@@ -660,6 +703,21 @@ namespace Castle_Knight
                             }
                         }
                         #endregion
+                        // Enemy 3
+                        if(enemyGhost.atk && enemyArcher.died && enemyGold.died)
+                        {
+                            enemyGhost.Position.X -= 8;
+                            enemyGhost.charBlock = new Rectangle((int)enemyGhost.Position.X + 36, (int)enemyGhost.Position.Y, 81, 135);
+                            if (Player.charBlock.Intersects(enemyGhost.charBlock) && enemyGhost.died == false && !Player.atk)
+                            {
+                                if (lasttimeDelay3 + DelayAttack3 < theTime.TotalGameTime)
+                                {
+                                    Player.WhenDefFalse(theTime, soundEffects);
+                                }
+
+                                lasttimeDelay3 = theTime.TotalGameTime;
+                            }
+                        }
 
 
                         if (Player.died == false)
@@ -771,6 +829,18 @@ namespace Castle_Knight
                                 Ai2WavePos.Y = 600;
                             }
 
+                            // Enemy 3
+                            if (enemyArcher.died && enemyGold.died)
+                            {
+                                enemyGhost.atk = true;
+                                if (Player.Position.X - enemyGhost.Position.X >= 600)
+                                {
+                                    enemyGhost.Position.X = Player.Position.X + 1500;
+                                }
+
+                            }
+
+
                             #region KnockBack
 
                             Player.PlayerKnockBack(theTime);
@@ -791,6 +861,7 @@ namespace Castle_Knight
                             enemyArcher.idleAni.Pause(0, 0);
                             enemyGold.atkAni.Pause(0, 0);
                             enemyGold.walkAni.Pause(0, 0);
+                            enemyGhost.walkAni.Pause(0, 0);
                         }
 
                         #endregion
@@ -808,6 +879,12 @@ namespace Castle_Knight
                             enemyGold.atk = false;
                             enemyGold.atkAni.Pause(0, 0);
                             enemyGold.walkAni.Pause(0, 0);
+                        }
+                        if (enemyGhost.hp <= 0)
+                        {
+                            enemyGhost.died = true;
+                            enemyGhost.atk = false;
+                            enemyGhost.walkAni.Pause(0, 0);
                         }
 
                         #region Check
@@ -837,6 +914,43 @@ namespace Castle_Knight
                                 Camera_Pos.X += 2;
                             }
                         }
+
+                        #region Bat movement
+                        // Bat 
+                        if (Bat_Pos.Y >= 75)
+                        {
+                            Bat_Pos.Y += 1;
+                        }
+                        if (Bat_Pos.Y > 120)
+                        {
+                            batMove = true;
+                        }
+                        if (batMove)
+                        {
+                            Bat_Pos.Y -= 2;
+                            if(Bat_Pos.Y < 80)
+                            {
+                                batMove = false;
+                            }
+                        }
+
+                        if (Bat2_Pos.Y >= 75)
+                        {
+                            Bat2_Pos.Y += 1;
+                        }
+                        if (Bat2_Pos.Y > 120)
+                        {
+                            batMove2 = true;
+                        }
+                        if (batMove2)
+                        {
+                            Bat2_Pos.Y -= 2;
+                            if (Bat2_Pos.Y < 80)
+                            {
+                                batMove2 = false;
+                            }
+                        }
+                        #endregion
 
                         #region Visible When GetHit
                         if (Player.GetHitTime + Player.GetHitDelay < theTime.TotalGameTime)
@@ -893,6 +1007,7 @@ namespace Castle_Knight
                         enemyArcher.idleAni.Pause(0, 0);
                         enemyGold.atkAni.Pause(0, 0);
                         enemyGold.walkAni.Pause(0, 0);
+                        enemyGhost.walkAni.Pause(0, 0);
 
                     lastTimeDied = theTime.TotalGameTime;
                     }
@@ -943,6 +1058,8 @@ namespace Castle_Knight
                 theBatch.Draw(BG1_2, new Vector2(0, 0), Color.White);
                 Touch.DrawFrame(theBatch, new Vector2(550 - camera.ViewMatrix.Translation.X * 0.65f, 100));
                 Touch.DrawFrame(theBatch, new Vector2(1550 - camera.ViewMatrix.Translation.X * 0.65f, 100));
+                Bat.DrawFrame(theBatch, new Vector2(Bat_Pos.X - camera.ViewMatrix.Translation.X * 0.65f, Bat_Pos.Y - camera.ViewMatrix.Translation.Y));
+                Bat.DrawFrame(theBatch, new Vector2(Bat2_Pos.X - camera.ViewMatrix.Translation.X * 0.65f, Bat2_Pos.Y - camera.ViewMatrix.Translation.Y));
 
                 // Potion
                 if (potion_Ena[0] == true && potion_Use[0] == false)
@@ -1095,6 +1212,15 @@ namespace Castle_Knight
                         enemyGold.walkAni.DrawFrame(theBatch, enemyGold.Position);
                     }
                 }
+                if (!enemyGhost.died && enemyArcher.died && enemyGold.died)
+                {
+                    if (enemyGhost.atk)
+                    {
+                        enemyGold.walkAni.Play();
+                        if (Player.died) { enemyGhost.walkAni.Pause(0, 0); }
+                        enemyGhost.walkAni.DrawFrame(theBatch, enemyGhost.Position);
+                    }
+                }
                 #endregion
 
                 // effect1
@@ -1151,6 +1277,7 @@ namespace Castle_Knight
             enemyArcher.idleAni.UpdateFrame(Elapsed);
             enemyGold.walkAni.UpdateFrame(Elapsed);
             enemyGold.atkAni.UpdateFrame(Elapsed);
+            enemyGhost.walkAni.UpdateFrame(Elapsed);
 
             // Player Update frame
             Player.diedAni.UpdateFrame(Elapsed);
@@ -1165,6 +1292,7 @@ namespace Castle_Knight
             Touch.UpdateFrame(Elapsed);
             buttonSelect.UpdateFrame(Elapsed);
             effect1.UpdateFrame(Elapsed);
+            Bat.UpdateFrame(Elapsed);
 
             loading.UpdateFrame(Elapsed);
         }
