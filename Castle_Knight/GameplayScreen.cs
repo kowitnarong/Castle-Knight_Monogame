@@ -127,6 +127,9 @@ namespace Castle_Knight
 
         private static readonly TimeSpan intervalBetweenPause = TimeSpan.FromMilliseconds(250);
         private TimeSpan lastTimePause;
+        private TimeSpan lastTimePauseOn;
+        private TimeSpan lastTimePauseOff;
+        private TimeSpan PauseTime;
 
         // time wait loading
         private static readonly TimeSpan intervalBetweenLoad = TimeSpan.FromMilliseconds(2500);
@@ -434,6 +437,7 @@ namespace Castle_Knight
             loadOn = false;
             Switch = "loading";
 
+            PauseTime = TimeSpan.FromMilliseconds(0);
             bg1Song = false;
             select = 0;
             soundOn = true;
@@ -939,21 +943,25 @@ namespace Castle_Knight
 
                         if (Player.died == false)
                         {
+                            if (lastTimePauseOn + PauseTime < theTime.TotalGameTime)
+                            {
+                                PauseTime = TimeSpan.FromMilliseconds(0);
+                            }
                             // Enemy 1
                             if (enemyBlack.died == false)
                             {
-                                if (enemyBlack.lastTimeHp + enemyBlack.DelayHp < theTime.TotalGameTime)
+                                if (enemyBlack.lastTimeHp + enemyBlack.DelayHp + PauseTime < theTime.TotalGameTime)
                                 {
                                     if (enemyBlack.Position.X - Player.Position.X >= 61)
                                     {
-                                        if (eAtkTime + eDelayAtk < theTime.TotalGameTime)
+                                        if (eAtkTime + eDelayAtk + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyBlack.walkAni.Play();
                                             enemyBlack.atk = false;
                                             enemyBlack.Position.X -= 1;
                                             enemyBlack.atkAni.Pause(0, 0);
                                         }
-                                        else if (eAtkTime + eCoolDownAtk < theTime.TotalGameTime)
+                                        else if (eAtkTime + eCoolDownAtk + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyBlack.Position.X -= 1;
                                             enemyBlack.walkAni.Play();
@@ -963,13 +971,13 @@ namespace Castle_Knight
                                     else
                                     {
                                         enemyBlack.atkAni.Play();
-                                        if (eAtkTime + eDelayAtk < theTime.TotalGameTime)
+                                        if (eAtkTime + eDelayAtk + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyBlack.atk = true;
 
                                             eAtkTime = theTime.TotalGameTime;
                                         }
-                                        if (eAtkTime + eCoolDownAtk < theTime.TotalGameTime)
+                                        if (eAtkTime + eCoolDownAtk + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyBlack.walkAni.Play();
                                             enemyBlack.atk = false;
@@ -981,18 +989,18 @@ namespace Castle_Knight
                             // Enemy 2
                             if (enemyBlack.died == true)
                             {
-                                if (enemyBlack2.lastTimeHp + enemyBlack2.DelayHp < theTime.TotalGameTime)
+                                if (enemyBlack2.lastTimeHp + enemyBlack2.DelayHp + PauseTime < theTime.TotalGameTime)
                                 {
                                     if (enemyBlack2.Position.X - Player.Position.X >= 61)
                                     {
-                                        if (eAtkTime2 + eDelayAtk2 < theTime.TotalGameTime)
+                                        if (eAtkTime2 + eDelayAtk2 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyBlack2.walkAni.Play();
                                             enemyBlack2.atk = false;
                                             enemyBlack2.Position.X -= 2;
                                             enemyBlack2.atkAni.Pause(0, 0);
                                         }
-                                        else if (eAtkTime2 + eCoolDownAtk2 < theTime.TotalGameTime)
+                                        else if (eAtkTime2 + eCoolDownAtk2 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyBlack2.Position.X -= 2;
                                             enemyBlack2.walkAni.Play();
@@ -1002,13 +1010,13 @@ namespace Castle_Knight
                                     else
                                     {
                                         enemyBlack2.atkAni.Play();
-                                        if (eAtkTime2 + eDelayAtk2 < theTime.TotalGameTime)
+                                        if (eAtkTime2 + eDelayAtk2 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyBlack2.atk = true;
 
                                             eAtkTime2 = theTime.TotalGameTime;
                                         }
-                                        if (eAtkTime2 + eCoolDownAtk2 < theTime.TotalGameTime)
+                                        if (eAtkTime2 + eCoolDownAtk2 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyBlack2.walkAni.Play();
                                             enemyBlack2.atk = false;
@@ -1020,12 +1028,12 @@ namespace Castle_Knight
                             // Enemy 3
                             if (enemyBlack.died == true && enemyBlack2.died == true)
                             {
-                                if (enemyGold.lastTimeHp + enemyGold.DelayHp < theTime.TotalGameTime)
+                                if (enemyGold.lastTimeHp + enemyGold.DelayHp + PauseTime < theTime.TotalGameTime)
                                 {
                                     if (enemyGold.Position.X - Player.Position.X >= 120)
                                     {
                                         eDelayAtk3 = TimeSpan.FromMilliseconds(1500);
-                                        if (eAtkTime3 + eDelayAtk3 < theTime.TotalGameTime)
+                                        if (eAtkTime3 + eDelayAtk3 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyGold.atk = true;
                                             ai3_Wave = true;
@@ -1033,7 +1041,7 @@ namespace Castle_Knight
                                             AttackWave3 = theTime.TotalGameTime;
                                             eAtkTime3 = theTime.TotalGameTime;
                                         }
-                                        else if (eAtkTime3 + eCoolDownAtk3 < theTime.TotalGameTime)
+                                        else if (eAtkTime3 + eCoolDownAtk3 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyGold.Position.X -= 2;
                                             enemyGold.walkAni.Play();
@@ -1046,7 +1054,7 @@ namespace Castle_Knight
                                         {
                                             enemyGold.Position.X -= 2;
                                         }
-                                        if (eAtkTime3 + eCoolDownAtk3 < theTime.TotalGameTime)
+                                        if (eAtkTime3 + eCoolDownAtk3 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyGold.walkAni.Play();
                                             enemyGold.Position.X -= 1;
@@ -1056,14 +1064,14 @@ namespace Castle_Knight
                                     else if (enemyGold.Position.X - Player.Position.X < 61)
                                     {
                                         eDelayAtk3 = TimeSpan.FromMilliseconds(1200);
-                                        if (eAtkTime3 + eDelayAtk3 < theTime.TotalGameTime)
+                                        if (eAtkTime3 + eDelayAtk3 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyGold.atkAni.Play();
                                             enemyGold.atk = true;
 
                                             eAtkTime3 = theTime.TotalGameTime;
                                         }
-                                        if (eAtkTime3 + eCoolDownAtk3 < theTime.TotalGameTime)
+                                        if (eAtkTime3 + eCoolDownAtk3 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyGold.atkAni.Pause(0, 0);
                                             enemyGold.walkAni.Play();
@@ -1073,7 +1081,7 @@ namespace Castle_Knight
                                     }
                                 }
                             }
-                            if (AttackWave3 + DelayAttackWave3 < theTime.TotalGameTime)
+                            if (AttackWave3 + DelayAttackWave3 + PauseTime < theTime.TotalGameTime)
                             {
                                 ai3_Wave = false;
                                 Ai3WavePos.Y = 600;
@@ -1082,12 +1090,12 @@ namespace Castle_Knight
                             // Enemy 4
                             if (enemyBlack.died == true && enemyBlack2.died == true && enemyGold.died == true)
                             {
-                                if (enemyWizard.lastTimeHp + enemyWizard.DelayHp < theTime.TotalGameTime)
+                                if (enemyWizard.lastTimeHp + enemyWizard.DelayHp + PauseTime < theTime.TotalGameTime)
                                 {
                                     if (enemyWizard.Position.X - Player.Position.X < 500)
                                     {
                                         enemyWizard.atkAni.Play();
-                                        if (eAtkTime4 + eDelayAtk4 < theTime.TotalGameTime)
+                                        if (eAtkTime4 + eDelayAtk4 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyWizard.idle = false;
                                             enemyWizard.atk = true;
@@ -1097,12 +1105,12 @@ namespace Castle_Knight
                                             AttackWave4 = theTime.TotalGameTime;
                                             eAtkTime4 = theTime.TotalGameTime;
                                         }
-                                        else if (eAtkTime4 + eCoolDownAtk4 < theTime.TotalGameTime)
+                                        else if (eAtkTime4 + eCoolDownAtk4 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyWizard.atk = false;
                                             enemyWizard.idle = true;
                                         }
-                                        if (AttackWave4 + DelayAttackWave4 < theTime.TotalGameTime)
+                                        if (AttackWave4 + DelayAttackWave4 + PauseTime < theTime.TotalGameTime)
                                         {
                                             ai4_Fireball = false;
                                             if (ai4_bigFireball)
@@ -1121,14 +1129,14 @@ namespace Castle_Knight
                             {
                                 if (enemyRed.Position.X - Player.Position.X >= 61)
                                 {
-                                    if (eAtkTime5 + eDelayAtk5 < theTime.TotalGameTime)
+                                    if (eAtkTime5 + eDelayAtk5 + PauseTime < theTime.TotalGameTime)
                                     {
                                         enemyRed.walkAni.Play();
                                         enemyRed.atk = false;
                                         enemyRed.Position.X -= 5;
                                         enemyRed.atkAni.Pause(0, 0);
                                     }
-                                    else if (eAtkTime5 + eCoolDownAtk5 < theTime.TotalGameTime)
+                                    else if (eAtkTime5 + eCoolDownAtk5 + PauseTime < theTime.TotalGameTime)
                                     {
                                         enemyRed.Position.X -= 5;
                                         enemyRed.walkAni.Play();
@@ -1137,14 +1145,14 @@ namespace Castle_Knight
                                 }
                                 else
                                 {
-                                    if (eAtkTime5 + eDelayAtk5 < theTime.TotalGameTime)
+                                    if (eAtkTime5 + eDelayAtk5 + PauseTime < theTime.TotalGameTime)
                                     {
                                         enemyRed.atkAni.Play();
                                         enemyRed.atk = true;
 
                                         eAtkTime5 = theTime.TotalGameTime;
                                     }
-                                    if (eAtkTime5 + eCoolDownAtk5 < theTime.TotalGameTime)
+                                    if (eAtkTime5 + eCoolDownAtk5 + PauseTime < theTime.TotalGameTime)
                                     {
                                         enemyRed.walkAni.Play();
                                         enemyRed.atk = false;
@@ -1585,10 +1593,14 @@ namespace Castle_Knight
                 {
                     if (enemyBlack.atk == true)
                     {
+                        if (gamePause) { enemyBlack.atkAni.Pause(); }
+                        if (Player.died) { enemyBlack.atkAni.Pause(0, 0); }
                         enemyBlack.atkAni.DrawFrame(theBatch, enemyBlack.Position);
                     }
                     else if (enemyBlack.atk == false)
                     {
+                        if (gamePause) { enemyBlack.walkAni.Pause(); }
+                        if (Player.died) { enemyBlack.walkAni.Pause(0, 0); }
                         enemyBlack.walkAni.DrawFrame(theBatch, enemyBlack.Position);
                     }
                 }
@@ -1596,10 +1608,14 @@ namespace Castle_Knight
                 {
                     if (enemyBlack2.atk == true)
                     {
+                        if (gamePause) { enemyBlack2.atkAni.Pause(); }
+                        if (Player.died) { enemyBlack2.atkAni.Pause(0, 0); }
                         enemyBlack2.atkAni.DrawFrame(theBatch, enemyBlack2.Position);
                     }
                     else if (enemyBlack2.atk == false)
                     {
+                        if (gamePause) { enemyBlack2.walkAni.Pause(); }
+                        if (Player.died) { enemyBlack2.walkAni.Pause(0, 0); }
                         enemyBlack2.walkAni.DrawFrame(theBatch, enemyBlack2.Position);
                     }
                 }
@@ -1612,12 +1628,14 @@ namespace Castle_Knight
                     if (enemyGold.atk == true)
                     {
                         enemyGold.atkAni.Play();
+                        if (gamePause) { enemyGold.atkAni.Pause(); }
                         if (Player.died) { enemyGold.atkAni.Pause(0, 0); }
                         enemyGold.atkAni.DrawFrame(theBatch, enemyGold.Position);
                     }
                     else if (enemyGold.atk == false)
                     {
                         enemyGold.walkAni.Play();
+                        if (gamePause) { enemyGold.walkAni.Pause(); }
                         if (Player.died) { enemyGold.walkAni.Pause(0, 0); }
                         enemyGold.walkAni.DrawFrame(theBatch, enemyGold.Position);
                     }
@@ -1634,10 +1652,14 @@ namespace Castle_Knight
                     }
                     if (enemyWizard.atk == true)
                     {
+                        if (gamePause) { enemyWizard.atkAni.Pause(); }
+                        if (Player.died) { enemyWizard.atkAni.Pause(0, 0); }
                         enemyWizard.atkAni.DrawFrame(theBatch, enemyWizard.Position);
                     }
                     else if (enemyWizard.idle == true)
                     {
+                        if (gamePause) { enemyWizard.idleAni.Pause(); }
+                        if (Player.died) { enemyWizard.idleAni.Pause(0, 0); }
                         enemyWizard.idleAni.DrawFrame(theBatch, enemyWizard.Position);
                     }
                 }
@@ -1646,12 +1668,14 @@ namespace Castle_Knight
                     if (enemyRed.atk == true)
                     {
                         enemyRed.atkAni.Play();
+                        if (gamePause) { enemyRed.atkAni.Pause(); }
                         if (Player.died) { enemyRed.atkAni.Pause(0, 0); }
                         enemyRed.atkAni.DrawFrame(theBatch, enemyRed.Position);
                     }
                     else if (enemyRed.atk == false)
                     {
                         enemyRed.walkAni.Play();
+                        if (gamePause) { enemyRed.walkAni.Pause(); }
                         if (Player.died) { enemyRed.walkAni.Pause(0, 0); }
                         enemyRed.walkAni.DrawFrame(theBatch, enemyRed.Position);
                     }
@@ -1856,6 +1880,8 @@ namespace Castle_Knight
                 {
                     if (gamePause == false)
                     {
+                        lastTimePauseOff = theTime.TotalGameTime;
+
                         enemyBlack.walkAni.Pause();
                         enemyBlack.walkAni.Pause();
                         enemyBlack2.atkAni.Pause();
@@ -1879,6 +1905,9 @@ namespace Castle_Knight
                     }
                     else
                     {
+                        lastTimePauseOn = theTime.TotalGameTime;
+                        PauseTime = lastTimePauseOn - lastTimePauseOff;
+
                         enemyBlack.walkAni.Play();
                         enemyBlack.walkAni.Play();
                         enemyBlack2.atkAni.Play();
