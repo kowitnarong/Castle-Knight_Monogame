@@ -1535,7 +1535,7 @@ namespace Castle_Knight
                         enemyGold.atkAni.Play();
                         enemyGold.walkAni.Play();
 
-                        if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Resume(); }
+                        //if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Resume(); }
                         gamePause = false;
                     }
                     lastTimePause = theTime.TotalGameTime;

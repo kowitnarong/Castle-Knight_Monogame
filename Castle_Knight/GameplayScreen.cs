@@ -1926,7 +1926,7 @@ namespace Castle_Knight
                         Player.defAni.Play();
                         Player.specialAni.Play();
                         Player.specialAtkAni.Play();
-                        if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Resume(); }
+                        //if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Resume(); }
                         gamePause = false;
                     }
                     lastTimePause = theTime.TotalGameTime;
