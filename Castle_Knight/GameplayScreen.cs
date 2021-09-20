@@ -38,6 +38,8 @@ namespace Castle_Knight
         int dead_count;
         bool menuLoading = false;
         bool gamePause = false;
+        Texture2D ButtonGuide;
+        Texture2D ButtonMenu;
         Texture2D pausePic;
         Texture2D gameOver;
         Texture2D Cloud1;
@@ -284,6 +286,8 @@ namespace Castle_Knight
             MediaPlayer.MediaStateChanged -= MediaPlayer_MediaStateChanged;
             SoundEffect.MasterVolume = 0.5f;
 
+            ButtonMenu = game.Content.Load<Texture2D>("ButtonMenu");
+            ButtonGuide = game.Content.Load<Texture2D>("ButtonGuide");
             effect1.Load(game.Content, "effect1", 3, 1, 15);
             effect2.Load(game.Content, "effect2", 3, 1, 15);
             eWaveAtk = game.Content.Load<Texture2D>("goldEneAtkWave");
@@ -1385,8 +1389,8 @@ namespace Castle_Knight
                     Player.diedAni.Play();
                     enemyBlack.atkAni.Pause(0, 0);
                     enemyBlack2.atkAni.Pause(0, 0);
-                    enemyBlack.walkAni.Pause(0, 0);
                     enemyBlack2.walkAni.Pause(0, 0);
+                    enemyBlack.walkAni.Pause(0, 0);
                     enemyGold.atkAni.Pause(0, 0);
                     enemyGold.walkAni.Pause(0, 0);
                     enemyWizard.atkAni.Pause(0, 0);
@@ -1704,6 +1708,7 @@ namespace Castle_Knight
                     theBatch.Draw(pausePic, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
                     theBatch.Draw(buttonRetry, new Vector2(435 - camera.ViewMatrix.Translation.X, 180 - camera.ViewMatrix.Translation.Y), Color.White);
                     theBatch.Draw(buttonExit, new Vector2(435 - camera.ViewMatrix.Translation.X, 320 - camera.ViewMatrix.Translation.Y), Color.White);
+                    theBatch.Draw(ButtonGuide, new Vector2(860 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
                     buttonSelect.DrawFrame(theBatch, new Vector2(select_Pos.X - camera.ViewMatrix.Translation.X, select_Pos.Y - camera.ViewMatrix.Translation.Y));
                     if (soundOn)
                     {
@@ -1713,6 +1718,10 @@ namespace Castle_Knight
                     {
                         theBatch.Draw(buttonSoundOff, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
                     }
+                }
+                else if (!gamePause)
+                {
+                    theBatch.Draw(ButtonMenu, new Vector2(860 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
                 }
                 theBatch.End();
             }
@@ -1926,7 +1935,7 @@ namespace Castle_Knight
                         Player.defAni.Play();
                         Player.specialAni.Play();
                         Player.specialAtkAni.Play();
-                        //if (walkSoundInstance.State != SoundState.Playing) { walkSoundInstance.Resume(); }
+
                         gamePause = false;
                     }
                     lastTimePause = theTime.TotalGameTime;
