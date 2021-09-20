@@ -623,11 +623,11 @@ namespace Castle_Knight
                                 {
                                     if (enemyArcher.Position.X < 1200)
                                     {
-                                        if (speedArrow % 3 == 0)
+                                        if (speedArrow % 2 == 0)
                                         {
                                             Ai1WavePos.X -= 20;
                                         }
-                                        else if (speedArrow % 3 != 0)
+                                        else if (speedArrow % 2 != 0)
                                         {
                                             Ai1WavePos.X -= 8;
                                         }
