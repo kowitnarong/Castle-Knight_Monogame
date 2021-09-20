@@ -1843,7 +1843,7 @@ namespace Castle_Knight
                     Player.atkAni.Pause(0, 0);
                     Player.defAni.Pause(0, 0);
                 }
-                if (Player.lastTimeSpecial + Player.TimeDuringSAttack < theTime.TotalGameTime)
+                if (Player.lastTimeSpecial + Player.TimeDuringSAttack + PauseTime < theTime.TotalGameTime)
                 {
                     special = false;
                     special_Pos = new Vector2(500, 600);
