@@ -1706,17 +1706,46 @@ namespace Castle_Knight
                 if (gamePause && Switch == "InGame1")
                 {
                     theBatch.Draw(pausePic, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
-                    theBatch.Draw(buttonRetry, new Vector2(435 - camera.ViewMatrix.Translation.X, 180 - camera.ViewMatrix.Translation.Y), Color.White);
-                    theBatch.Draw(buttonExit, new Vector2(435 - camera.ViewMatrix.Translation.X, 320 - camera.ViewMatrix.Translation.Y), Color.White);
-                    theBatch.Draw(ButtonGuide, new Vector2(860 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
-                    buttonSelect.DrawFrame(theBatch, new Vector2(select_Pos.X - camera.ViewMatrix.Translation.X, select_Pos.Y - camera.ViewMatrix.Translation.Y));
-                    if (soundOn)
+                    if (select_Pos.Y == 185)
                     {
-                        theBatch.Draw(buttonSoundOn, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
+                        theBatch.Draw(buttonRetry, new Vector2(427 - camera.ViewMatrix.Translation.X, 175 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
                     }
-                    else if (!soundOn)
+                    else
                     {
-                        theBatch.Draw(buttonSoundOff, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
+                        theBatch.Draw(buttonRetry, new Vector2(435 - camera.ViewMatrix.Translation.X, 180 - camera.ViewMatrix.Translation.Y), Color.White);
+                    }
+                    if (select_Pos.Y == 325)
+                    {
+                        theBatch.Draw(buttonExit, new Vector2(427 - camera.ViewMatrix.Translation.X, 315 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                    }
+                    else
+                    {
+                        theBatch.Draw(buttonExit, new Vector2(435 - camera.ViewMatrix.Translation.X, 320 - camera.ViewMatrix.Translation.Y), Color.White);
+
+                    }
+                    theBatch.Draw(ButtonGuide, new Vector2(860 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
+                    buttonSelect.DrawFrame(theBatch, new Vector2(select_Pos.X - 10 - camera.ViewMatrix.Translation.X, select_Pos.Y - camera.ViewMatrix.Translation.Y));
+                    if (select_Pos.Y == 255)
+                    {
+                        if (soundOn)
+                        {
+                            theBatch.Draw(buttonSoundOn, new Vector2(427 - camera.ViewMatrix.Translation.X, 245 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                        }
+                        else if (!soundOn)
+                        {
+                            theBatch.Draw(buttonSoundOff, new Vector2(427 - camera.ViewMatrix.Translation.X, 245 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                        }
+                    }
+                    else
+                    {
+                        if (soundOn)
+                        {
+                            theBatch.Draw(buttonSoundOn, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
+                        }
+                        else if (!soundOn)
+                        {
+                            theBatch.Draw(buttonSoundOff, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
+                        }
                     }
                 }
                 else if (!gamePause)
