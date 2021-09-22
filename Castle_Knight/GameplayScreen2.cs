@@ -739,14 +739,12 @@ namespace Castle_Knight
                                             Player.WhenDefTrue(theTime, soundEffects);
 
                                             Ai1WavePos.Y = 600;
-                                            ai1_Wave = false;
                                         }
                                         else
                                         {
                                             Player.WhenDefFalse(theTime, soundEffects);
 
                                             Ai1WavePos.Y = 600;
-                                            ai1_Wave = false;
                                         }
                                     }
                                 }           
@@ -901,14 +899,12 @@ namespace Castle_Knight
                                             Player.WhenDefTrue(theTime, soundEffects);
 
                                             Ai5WavePos.Y = 600;
-                                            ai5_Wave = false;
                                         }
                                         else
                                         {
                                             Player.WhenDefFalse(theTime, soundEffects);
 
                                             Ai5WavePos.Y = 600;
-                                            ai5_Wave = false;
                                         }
                                     }
                                 }
