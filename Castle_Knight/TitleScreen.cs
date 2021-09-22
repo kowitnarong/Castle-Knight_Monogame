@@ -21,6 +21,12 @@ namespace Castle_Knight
         Texture2D buttonExit;
         Texture2D bg_mainmenu;
         Texture2D noLoadPic;
+        Texture2D BG1_1;
+        Texture2D BG1_2;
+        Texture2D BG1_3;
+        Texture2D credit;
+        Vector2[] BG1_1Pos = new Vector2[2];
+        Vector2[] BG1_2Pos = new Vector2[2];
         private AnimatedTexture p_title;
         private AnimatedTexture buttonSelect;
 
@@ -32,6 +38,7 @@ namespace Castle_Knight
 
         Vector2 select_Pos;
         bool stopPress = false;
+        bool Credit = false;
 
         private const float Rotation = 0;
         private const float Scale = 1.0f;
@@ -49,6 +56,10 @@ namespace Castle_Knight
         {
             p_title = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             buttonSelect = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
+            BG1_1 = game.Content.Load<Texture2D>("bg_level1");
+            BG1_2 = game.Content.Load<Texture2D>("bg_level1_1");
+            BG1_3 = game.Content.Load<Texture2D>("bg_level1_2");
+            credit = game.Content.Load<Texture2D>("Credit");
             bg_mainmenu = game.Content.Load<Texture2D>("gameTitle");
             noLoadPic = game.Content.Load<Texture2D>("noLoad");
             buttonStart = game.Content.Load<Texture2D>("Start");
@@ -78,8 +89,13 @@ namespace Castle_Knight
                 FileStream fc = new FileStream(filepath, FileMode.CreateNew);
                 fc.Close();
             }
-            
+
             #endregion
+
+            BG1_1Pos[0] = new Vector2(0, 0);
+            BG1_2Pos[0] = new Vector2(0, 0);
+            BG1_1Pos[1] = new Vector2(3640, 0);
+            BG1_2Pos[1] = new Vector2(3640, 0);
 
             this.game = game;
         }
@@ -90,7 +106,24 @@ namespace Castle_Knight
             p_title.UpdateFrame(elapsed);
             buttonSelect.UpdateFrame(elapsed);
 
-            if (keyboardState.IsKeyDown(Keys.Down) && stopPress == false)
+            if (keyboardState.IsKeyDown(Keys.I))
+            {
+                if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
+                {
+                    if (!Credit)
+                    {
+                        Credit = true;
+                    }
+                    else if (Credit)
+                    {
+                        Credit = false;
+                    }
+
+                    lastTimeSelect = theTime.TotalGameTime;
+                }    
+            }
+
+            if (keyboardState.IsKeyDown(Keys.Down) && stopPress == false && !Credit)
             {
                 if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
                 {
@@ -106,7 +139,7 @@ namespace Castle_Knight
                     }
                 }
             }
-            else if (keyboardState.IsKeyDown(Keys.Up) && stopPress == false)
+            else if (keyboardState.IsKeyDown(Keys.Up) && stopPress == false && !Credit)
             {
                 if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
                 {
@@ -122,7 +155,7 @@ namespace Castle_Knight
                     }
                 }
             }
-            else if (keyboardState.IsKeyDown(Keys.A) && stopPress == false)
+            else if (keyboardState.IsKeyDown(Keys.A) && stopPress == false && !Credit)
             {
                 stopPress = true;
                 soundEffects.Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
@@ -194,17 +227,71 @@ namespace Castle_Knight
                 }
             }
 
+            BG1_1Pos[0].X -= 1 * 0.4f;
+            BG1_2Pos[0].X -= 1 * 0.6f;
+            BG1_1Pos[1].X -= 1 * 0.4f;
+            BG1_2Pos[1].X -= 1 * 0.6f;
+            if (BG1_1Pos[0].X <= -3640)
+            {
+                BG1_1Pos[0].X = 3640;
+            }
+            if (BG1_2Pos[0].X <= -3640)
+            {
+                BG1_2Pos[0].X = 3640;
+            }
+            if (BG1_1Pos[1].X <= -3640)
+            {
+                BG1_1Pos[1].X = 3640;
+            }
+            if (BG1_2Pos[1].X <= -3640)
+            {
+                BG1_2Pos[1].X = 3640;
+            }
+
             base.Update(theTime);
         }
         public override void Draw(SpriteBatch theBatch, GameTime theTime)
         {
             theBatch.Begin();
-            theBatch.Draw(bg_mainmenu, new Vector2(0, 0), Color.White);
-            theBatch.Draw(buttonStart, new Vector2(230, 200), Color.White);
-            theBatch.Draw(buttonLoad, new Vector2(230, 260), Color.White);
-            theBatch.Draw(buttonExit, new Vector2(230, 320), Color.White);
-            buttonSelect.DrawFrame(theBatch, select_Pos);
-            p_title.DrawFrame(theBatch, new Vector2(560, 80));
+            theBatch.Draw(BG1_1, BG1_1Pos[0], Color.White);
+            theBatch.Draw(BG1_2, BG1_2Pos[0], Color.White);
+            theBatch.Draw(BG1_3, new Vector2(0, 0), Color.White);
+            theBatch.Draw(BG1_1, BG1_1Pos[1], Color.White);
+            theBatch.Draw(BG1_2, BG1_2Pos[1], Color.White);
+            if (Credit)
+            {
+                theBatch.Draw(credit, new Vector2(0, 0), Color.White);
+            }
+            else if (!Credit)
+            {
+                theBatch.Draw(bg_mainmenu, new Vector2(0, 0), Color.White);
+                if (select_Pos.Y == 195)
+                {
+                    theBatch.Draw(buttonStart, new Vector2(225, 195), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                }
+                else
+                {
+                    theBatch.Draw(buttonStart, new Vector2(230, 200), Color.White);
+                }
+                if (select_Pos.Y == 255)
+                {
+                    theBatch.Draw(buttonLoad, new Vector2(225, 255), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                }
+                else
+                {
+                    theBatch.Draw(buttonLoad, new Vector2(230, 260), Color.White);
+                }
+                if (select_Pos.Y == 315)
+                {
+                    theBatch.Draw(buttonExit, new Vector2(225, 315), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                }
+                else
+                {
+                    theBatch.Draw(buttonExit, new Vector2(230, 320), Color.White);
+                }
+                buttonSelect.DrawFrame(theBatch, select_Pos);
+                p_title.DrawFrame(theBatch, new Vector2(560, 95));
+            }
             if (noLoad == true)
             {
                 theBatch.Draw(noLoadPic, new Vector2(0, 0), Color.White);
