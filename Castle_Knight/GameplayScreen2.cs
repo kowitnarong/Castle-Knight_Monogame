@@ -1374,11 +1374,30 @@ namespace Castle_Knight
                     }
                 }
             }
-        
 
-                #region DiedPlayer
+            if (Player.Position.X >= 3600)
+            {
+                {
+                    if (walkSoundInstance.State != SoundState.Stopped)
+                    {
+                        walkSoundInstance.Stop();
+                    }
+                }
+                string filepath = Path.Combine(@"Content\data.txt");
+                FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(fs);
+                if (Switch == "InGame2")
+                { sw.WriteLine("InGame3"); }
+                sw.Flush();
+                sw.Close();
+                MediaPlayer.MediaStateChanged += MediaPlayer_MediaStateChanged;
+                resetValue = false;
+                ScreenEvent.Invoke(game.mGameplayScreen3, new EventArgs());
+            }
 
-                if (!devMode)
+            #region DiedPlayer
+
+            if (!devMode)
                 {
                     if (Player.hp <= 0 && Player.died == false)
                     {

@@ -247,6 +247,11 @@ namespace Castle_Knight
                         ScreenEvent.Invoke(game.mGameplayScreen2, new EventArgs());
                         return;
                     }
+                    else if (loadingText == "InGame3")
+                    {
+                        ScreenEvent.Invoke(game.mGameplayScreen3, new EventArgs());
+                        return;
+                    }
                     else
                     {
                         noLoad = true;
