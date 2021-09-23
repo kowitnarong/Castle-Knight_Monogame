@@ -55,7 +55,6 @@ namespace Castle_Knight
         Vector2 select_Pos;
         int select = 0;
         bool stopPress = false;
-        bool soundOn = true;
 
         // Sound
         Song bgSong2;
@@ -284,7 +283,6 @@ namespace Castle_Knight
 
             bgSong2 = game.Content.Load<Song>("BackgroundLevel2");
             MediaPlayer.IsRepeating = true;
-            SoundEffect.MasterVolume = 0.5f;
 
             ButtonGuide = game.Content.Load<Texture2D>("ButtonGuide");
             ButtonMenu = game.Content.Load<Texture2D>("ButtonMenu");
@@ -429,8 +427,6 @@ namespace Castle_Knight
             PauseTime = TimeSpan.FromMilliseconds(0);
             bg2Song = false;
             select = 0;
-            soundOn = true;
-            SoundEffect.MasterVolume = 0.5f;
             gamePause = false;
             arrowOn = false;
             arrowOn5 = false;
@@ -485,8 +481,18 @@ namespace Castle_Knight
                 if (!bg2Song)
                 {
                     MediaPlayer.Play(bgSong2);
-                    MediaPlayer.IsMuted = false;
                     bg2Song = true;
+                }
+                if (Game1.soundOn)
+                {
+                    MediaPlayer.IsMuted = false;
+                    SoundEffect.MasterVolume = 0.5f;
+                }
+                else if (!Game1.soundOn)
+                {
+                    MediaPlayer.IsMuted = true;
+                    SoundEffect.MasterVolume = 0f;
+                    if (walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
                 }
 
                 // Key Pause
@@ -495,6 +501,11 @@ namespace Castle_Knight
                 {
                     if (!Player.died)
                     {
+                        // Time Pause
+                        if (lastTimePauseOn + PauseTime < theTime.TotalGameTime)
+                        {
+                            PauseTime = TimeSpan.FromMilliseconds(0);
+                        }
                         #region PlayerHeartPos
                         // Player heart
                         for (int i = 0; i < 5; i++)
@@ -751,6 +762,7 @@ namespace Castle_Knight
                             }
                             if (enemyArcher.atk == true)
                             {
+                                enemyArcher.atkAni.Play();
                                 if (enemyArcher.Position.X < 1400)
                                 {
                                     if (enemyArcher.atkAni.Frame >= 4 && enemyArcher.atkAni.Frame <= 6) { enemyArcher.Position.X += 8; }
@@ -963,12 +975,6 @@ namespace Castle_Knight
 
                         if (Player.died == false)
                         {
-                            // Time Pause
-                            if (lastTimePauseOn + PauseTime < theTime.TotalGameTime)
-                            {
-                                PauseTime = TimeSpan.FromMilliseconds(0);
-                            }
-
                             // Enemy 1
                             if (!enemyArcher.died)
                             {
@@ -977,6 +983,12 @@ namespace Castle_Knight
                                 {
                                     if (enemyArcher.Position.X - Player.Position.X < 600)
                                     {
+                                        if (eAtkTime1 + eCoolDownAtk1 + PauseTime < theTime.TotalGameTime)
+                                        {
+                                            enemyArcher.atk = false;
+                                            enemyArcher.idle = true;
+                                            enemyArcher.atkAni.Pause(0, 0);
+                                        }
                                         if (eAtkTime1 + eDelayAtk1 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyArcher.atkAni.Play();
@@ -989,12 +1001,6 @@ namespace Castle_Knight
 
                                             AttackWave1 = theTime.TotalGameTime;
                                             eAtkTime1 = theTime.TotalGameTime;
-                                        }
-                                        else if (eAtkTime1 + eCoolDownAtk1 + PauseTime < theTime.TotalGameTime)
-                                        {
-                                            enemyArcher.atk = false;
-                                            enemyArcher.idle = true;
-                                            enemyArcher.atkAni.Pause(0, 0);
                                         }
                                         if (AttackWave1 + DelayAttackWave1 + PauseTime < theTime.TotalGameTime)
                                         {
@@ -1678,11 +1684,11 @@ namespace Castle_Knight
                     theBatch.Draw(buttonExit, new Vector2(435 - camera.ViewMatrix.Translation.X, 320 - camera.ViewMatrix.Translation.Y), Color.White);
                     theBatch.Draw(ButtonGuide, new Vector2(860 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
                     buttonSelect.DrawFrame(theBatch, new Vector2(select_Pos.X - camera.ViewMatrix.Translation.X, select_Pos.Y - camera.ViewMatrix.Translation.Y));
-                    if (soundOn)
+                    if (Game1.soundOn)
                     {
                         theBatch.Draw(buttonSoundOn, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
                     }
-                    else if (!soundOn)
+                    else if (!Game1.soundOn)
                     {
                         theBatch.Draw(buttonSoundOff, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
                     }
@@ -1984,23 +1990,18 @@ namespace Castle_Knight
                     }
                     else if (select == 2)
                     {
-                        if (soundOn)
+                        if (Game1.soundOn)
                         {
-                            MediaPlayer.IsMuted = true;
-                            SoundEffect.MasterVolume = 0f;
-                            if(walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
                             stopPress = false;
-                            soundOn = false;
+                            Game1.soundOn = false;
                             select = 0;
 
                             lastTimeSelect = theTime.TotalGameTime;
                         }
-                        else if (!soundOn)
+                        else if (!Game1.soundOn)
                         {
-                            MediaPlayer.IsMuted = false;
-                            SoundEffect.MasterVolume = 0.5f;
                             stopPress = false;
-                            soundOn = true;
+                            Game1.soundOn = true;
                             select = 0;
 
                             lastTimeSelect = theTime.TotalGameTime;

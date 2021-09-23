@@ -25,6 +25,8 @@ namespace Castle_Knight
         Texture2D BG1_2;
         Texture2D BG1_3;
         Texture2D credit;
+        Texture2D buttonSoundOn;
+        Texture2D buttonSoundOff;
         Vector2[] BG1_1Pos = new Vector2[2];
         Vector2[] BG1_2Pos = new Vector2[2];
         private AnimatedTexture p_title;
@@ -60,6 +62,8 @@ namespace Castle_Knight
             BG1_2 = game.Content.Load<Texture2D>("bg_level1_1");
             BG1_3 = game.Content.Load<Texture2D>("bg_level1_2");
             credit = game.Content.Load<Texture2D>("Credit");
+            buttonSoundOn = game.Content.Load<Texture2D>("sound1");
+            buttonSoundOff = game.Content.Load<Texture2D>("sound2");
             bg_mainmenu = game.Content.Load<Texture2D>("gameTitle");
             noLoadPic = game.Content.Load<Texture2D>("noLoad");
             buttonStart = game.Content.Load<Texture2D>("Start");
@@ -94,8 +98,8 @@ namespace Castle_Knight
 
             BG1_1Pos[0] = new Vector2(0, 0);
             BG1_2Pos[0] = new Vector2(0, 0);
-            BG1_1Pos[1] = new Vector2(3640, 0);
-            BG1_2Pos[1] = new Vector2(3640, 0);
+            BG1_1Pos[1] = new Vector2(3680, 0);
+            BG1_2Pos[1] = new Vector2(3680, 0);
 
             this.game = game;
         }
@@ -105,6 +109,17 @@ namespace Castle_Knight
             keyboardState = Keyboard.GetState();
             p_title.UpdateFrame(elapsed);
             buttonSelect.UpdateFrame(elapsed);
+
+            if (Game1.soundOn)
+            {
+                MediaPlayer.IsMuted = false;
+                SoundEffect.MasterVolume = 0.5f;
+            }
+            else if (!Game1.soundOn)
+            {
+                MediaPlayer.IsMuted = true;
+                SoundEffect.MasterVolume = 0f;
+            }
 
             if (keyboardState.IsKeyDown(Keys.I))
             {
@@ -120,7 +135,25 @@ namespace Castle_Knight
                     }
 
                     lastTimeSelect = theTime.TotalGameTime;
-                }    
+                }
+            }
+            else if (keyboardState.IsKeyDown(Keys.S))
+            {
+                if (lastTimeSelect + intervalBetweenSelect < theTime.TotalGameTime)
+                {
+                    if (Game1.soundOn)
+                    {
+                        Game1.soundOn = false;
+                        select = 0;
+
+                    }
+                    else if (!Game1.soundOn)
+                    {
+                        Game1.soundOn = true;
+                    }
+
+                    lastTimeSelect = theTime.TotalGameTime;
+                }
             }
 
             if (keyboardState.IsKeyDown(Keys.Down) && stopPress == false && !Credit)
@@ -231,21 +264,21 @@ namespace Castle_Knight
             BG1_2Pos[0].X -= 1 * 0.6f;
             BG1_1Pos[1].X -= 1 * 0.4f;
             BG1_2Pos[1].X -= 1 * 0.6f;
-            if (BG1_1Pos[0].X <= -3640)
+            if (BG1_1Pos[0].X <= -3680)
             {
-                BG1_1Pos[0].X = 3640;
+                BG1_1Pos[0].X = 3680;
             }
-            if (BG1_2Pos[0].X <= -3640)
+            if (BG1_2Pos[0].X <= -3680)
             {
-                BG1_2Pos[0].X = 3640;
+                BG1_2Pos[0].X = 3680;
             }
-            if (BG1_1Pos[1].X <= -3640)
+            if (BG1_1Pos[1].X <= -3680)
             {
-                BG1_1Pos[1].X = 3640;
+                BG1_1Pos[1].X = 3680;
             }
-            if (BG1_2Pos[1].X <= -3640)
+            if (BG1_2Pos[1].X <= -3680)
             {
-                BG1_2Pos[1].X = 3640;
+                BG1_2Pos[1].X = 3680;
             }
 
             base.Update(theTime);
@@ -254,10 +287,10 @@ namespace Castle_Knight
         {
             theBatch.Begin();
             theBatch.Draw(BG1_1, BG1_1Pos[0], Color.White);
-            theBatch.Draw(BG1_2, BG1_2Pos[0], Color.White);
-            theBatch.Draw(BG1_3, new Vector2(0, 0), Color.White);
             theBatch.Draw(BG1_1, BG1_1Pos[1], Color.White);
             theBatch.Draw(BG1_2, BG1_2Pos[1], Color.White);
+            theBatch.Draw(BG1_2, BG1_2Pos[0], Color.White);
+            theBatch.Draw(BG1_3, new Vector2(0, 0), Color.White);
             if (Credit)
             {
                 theBatch.Draw(credit, new Vector2(0, 0), Color.White);
@@ -265,6 +298,14 @@ namespace Castle_Knight
             else if (!Credit)
             {
                 theBatch.Draw(bg_mainmenu, new Vector2(0, 0), Color.White);
+                if (Game1.soundOn)
+                {
+                    theBatch.Draw(buttonSoundOn, new Vector2(10, 10), Color.White);
+                }
+                else if (!Game1.soundOn)
+                {
+                    theBatch.Draw(buttonSoundOff, new Vector2(10, 10), Color.White);
+                }
                 if (select_Pos.Y == 195)
                 {
                     theBatch.Draw(buttonStart, new Vector2(225, 195), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);

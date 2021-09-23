@@ -19,6 +19,8 @@ namespace Castle_Knight
         public TitleScreen mTitleScreen;
         public screen mCurrentScreen;
 
+        public static bool soundOn = true;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
