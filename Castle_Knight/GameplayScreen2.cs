@@ -502,7 +502,7 @@ namespace Castle_Knight
                     if (!Player.died)
                     {
                         // Time Pause
-                        if (lastTimePauseOn + TimeSpan.FromMilliseconds(3000) < theTime.TotalGameTime)
+                        if (lastTimePauseOn + TimeSpan.FromMilliseconds(2200) < theTime.TotalGameTime)
                         {
                             PauseTime = TimeSpan.FromMilliseconds(0);
                         }
