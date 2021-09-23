@@ -512,6 +512,11 @@ namespace Castle_Knight
                     if (!Player.died)
                     {
                         // Time Pause
+                        if (lastTimePauseOn + TimeSpan.FromMilliseconds(3000) < theTime.TotalGameTime)
+                        {
+                            PauseTime = TimeSpan.FromMilliseconds(0);
+                        }
+
                         #region PlayerHeartPos
                         // Player heart
                         for (int i = 0; i < 5; i++)
@@ -968,14 +973,12 @@ namespace Castle_Knight
                                             enemyBlack.atk = false;
                                             enemyBlack.Position.X -= 1;
                                             enemyBlack.atkAni.Pause(0, 0);
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                         }
                                         else if (eAtkTime + eCoolDownAtk + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyBlack.Position.X -= 1;
                                             enemyBlack.walkAni.Play();
                                             enemyBlack.atk = false;
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                         }
                                     }
                                     else
@@ -985,14 +988,12 @@ namespace Castle_Knight
                                         {
                                             enemyBlack.atk = true;
 
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                             eAtkTime = theTime.TotalGameTime;
                                         }
                                         if (eAtkTime + eCoolDownAtk + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyBlack.walkAni.Play();
                                             enemyBlack.atk = false;
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                         }
                                     }
                                 }
@@ -1011,14 +1012,12 @@ namespace Castle_Knight
                                             enemyBlack2.atk = false;
                                             enemyBlack2.Position.X -= 2;
                                             enemyBlack2.atkAni.Pause(0, 0);
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                         }
                                         else if (eAtkTime2 + eCoolDownAtk2 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyBlack2.Position.X -= 2;
                                             enemyBlack2.walkAni.Play();
                                             enemyBlack2.atk = false;
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                         }
                                     }
                                     else
@@ -1028,14 +1027,12 @@ namespace Castle_Knight
                                         {
                                             enemyBlack2.atk = true;
 
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                             eAtkTime2 = theTime.TotalGameTime;
                                         }
                                         if (eAtkTime2 + eCoolDownAtk2 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyBlack2.walkAni.Play();
                                             enemyBlack2.atk = false;
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                         }
                                     }
                                 }
@@ -1056,14 +1053,12 @@ namespace Castle_Knight
                                             ai3_Use = false;
                                             AttackWave3 = theTime.TotalGameTime;
                                             eAtkTime3 = theTime.TotalGameTime;
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                         }
                                         else if (eAtkTime3 + eCoolDownAtk3 + PauseTime < theTime.TotalGameTime)
                                         {
                                             enemyGold.Position.X -= 2;
                                             enemyGold.walkAni.Play();
                                             enemyGold.atk = false;
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                         }
                                     }
                                     else if (enemyGold.Position.X - Player.Position.X >= 61 && enemyGold.Position.X - Player.Position.X < 120)
@@ -1077,7 +1072,6 @@ namespace Castle_Knight
                                             enemyGold.walkAni.Play();
                                             enemyGold.Position.X -= 1;
                                             enemyGold.atk = false;
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                         }
                                     }
                                     else if (enemyGold.Position.X - Player.Position.X < 61)
@@ -1088,7 +1082,6 @@ namespace Castle_Knight
                                             enemyGold.atkAni.Play();
                                             enemyGold.atk = true;
 
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                             eAtkTime3 = theTime.TotalGameTime;
                                         }
                                         if (eAtkTime3 + eCoolDownAtk3 + PauseTime < theTime.TotalGameTime)
@@ -1097,7 +1090,6 @@ namespace Castle_Knight
                                             enemyGold.walkAni.Play();
                                             enemyGold.Position.X -= 1;
                                             enemyGold.atk = false;
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                         }
                                     }
                                 }
@@ -1106,7 +1098,6 @@ namespace Castle_Knight
                             {
                                 ai3_Wave = false;
                                 Ai3WavePos.Y = 600;
-                                PauseTime = TimeSpan.FromMilliseconds(0);
                             }
 
                             // Enemy 4
@@ -1123,7 +1114,6 @@ namespace Castle_Knight
                                             enemyWizard.atk = true;
                                             ai4_Fireball = true;
                                             ai4_Use = false;
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
 
                                             AttackWave4 = theTime.TotalGameTime;
                                             eAtkTime4 = theTime.TotalGameTime;
@@ -1132,7 +1122,6 @@ namespace Castle_Knight
                                         {
                                             enemyWizard.atk = false;
                                             enemyWizard.idle = true;
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                         }
                                         if (AttackWave4 + DelayAttackWave4 + PauseTime < theTime.TotalGameTime)
                                         {
@@ -1143,7 +1132,6 @@ namespace Castle_Knight
                                                 ai4_bigFireball = false;
                                             }
                                             Ai4FirePos.Y = 600;
-                                            PauseTime = TimeSpan.FromMilliseconds(0);
                                         }
                                     }
                                 }
@@ -1160,14 +1148,12 @@ namespace Castle_Knight
                                         enemyRed.atk = false;
                                         enemyRed.Position.X -= 5;
                                         enemyRed.atkAni.Pause(0, 0);
-                                        PauseTime = TimeSpan.FromMilliseconds(0);
                                     }
                                     else if (eAtkTime5 + eCoolDownAtk5 + PauseTime < theTime.TotalGameTime)
                                     {
                                         enemyRed.Position.X -= 5;
                                         enemyRed.walkAni.Play();
                                         enemyRed.atk = false;
-                                        PauseTime = TimeSpan.FromMilliseconds(0);
                                     }
                                 }
                                 else
@@ -1177,7 +1163,6 @@ namespace Castle_Knight
                                         enemyRed.atkAni.Play();
                                         enemyRed.atk = true;
 
-                                        PauseTime = TimeSpan.FromMilliseconds(0);
                                         eAtkTime5 = theTime.TotalGameTime;
                                     }
                                     if (eAtkTime5 + eCoolDownAtk5 + PauseTime < theTime.TotalGameTime)
@@ -1185,7 +1170,6 @@ namespace Castle_Knight
                                         enemyRed.walkAni.Play();
                                         enemyRed.atk = false;
                                         enemyRed.atkAni.Pause(0, 0);
-                                        PauseTime = TimeSpan.FromMilliseconds(0);
                                     }
                                 }
                             }
@@ -1931,7 +1915,6 @@ namespace Castle_Knight
                     special = false;
                     special_Pos = new Vector2(500, 600);
                     Player.specialAtkAni.Pause(0, 0);
-                    PauseTime = TimeSpan.FromMilliseconds(0);
                 }
             }
         }
