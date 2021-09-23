@@ -16,6 +16,7 @@ namespace Castle_Knight
 
         public GameplayScreen mGameplayScreen;
         public GameplayScreen2 mGameplayScreen2;
+        public GameplayScreen3 mGameplayScreen3;
         public TitleScreen mTitleScreen;
         public screen mCurrentScreen;
 
@@ -43,6 +44,7 @@ namespace Castle_Knight
 
             mGameplayScreen = new GameplayScreen(this, new EventHandler(GameplayScreenEvent));
             mGameplayScreen2 = new GameplayScreen2(this, new EventHandler(GameplayScreenEvent2));
+            mGameplayScreen3 = new GameplayScreen3(this, new EventHandler(GameplayScreenEvent3));
             mTitleScreen = new TitleScreen(this, new EventHandler(GameplayScreenEvent));
             mCurrentScreen = mTitleScreen;
 
@@ -75,6 +77,10 @@ namespace Castle_Knight
             mCurrentScreen = (screen)obj;
         }
         public void GameplayScreenEvent2(object obj, EventArgs e)
+        {
+            mCurrentScreen = (screen)obj;
+        }
+        public void GameplayScreenEvent3(object obj, EventArgs e)
         {
             mCurrentScreen = (screen)obj;
         }

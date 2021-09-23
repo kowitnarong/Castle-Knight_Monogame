@@ -112,7 +112,7 @@ namespace Castle_Knight
 
             if (Game1.soundOn)
             {
-                MediaPlayer.IsMuted = false;
+                MediaPlayer.IsMuted = true;
                 SoundEffect.MasterVolume = 0.5f;
             }
             else if (!Game1.soundOn)
@@ -245,6 +245,11 @@ namespace Castle_Knight
                     else if (loadingText == "InGame2")
                     {
                         ScreenEvent.Invoke(game.mGameplayScreen2, new EventArgs());
+                        return;
+                    }
+                    else if (loadingText == "InGame3")
+                    {
+                        ScreenEvent.Invoke(game.mGameplayScreen3, new EventArgs());
                         return;
                     }
                     else
