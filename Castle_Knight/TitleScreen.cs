@@ -112,7 +112,7 @@ namespace Castle_Knight
 
             if (Game1.soundOn)
             {
-                MediaPlayer.IsMuted = false;
+                MediaPlayer.IsMuted = true;
                 SoundEffect.MasterVolume = 0.5f;
             }
             else if (!Game1.soundOn)
