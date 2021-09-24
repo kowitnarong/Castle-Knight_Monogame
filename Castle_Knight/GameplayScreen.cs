@@ -1703,9 +1703,11 @@ namespace Castle_Knight
                 #endregion
 
                 // effect1
-
+                if (!Player.died)
+                {
                     effect2.DrawFrame(theBatch, effect2_Pos);
                     effect1.DrawFrame(theBatch, effect1_Pos);
+                }
 
                 string strDead = "Dead = " + dead_count;
                 string strDevMode = "DevMode";
