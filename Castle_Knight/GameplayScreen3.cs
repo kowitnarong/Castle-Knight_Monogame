@@ -157,8 +157,8 @@ namespace Castle_Knight
         private TimeSpan AttackWave2;
 
 
-        private TimeSpan eDelayAtk3 = TimeSpan.FromMilliseconds(2500);
-        private static readonly TimeSpan eCoolDownAtk3 = TimeSpan.FromMilliseconds(390);
+        private TimeSpan eDelayAtk3 = TimeSpan.FromMilliseconds(3200);
+        private static readonly TimeSpan eCoolDownAtk3 = TimeSpan.FromMilliseconds(300);
         private TimeSpan eAtkTime3;
 
         #endregion
@@ -303,10 +303,10 @@ namespace Castle_Knight
             enemyArcherR.idleAni.Load(game.Content, "Archer_idle2", Frames, FramesRow, FramesPerSec);
             eWaveAtk2 = game.Content.Load<Texture2D>("Arrow2");
             enemyBoss.walkAni.Load(game.Content, "King_walk", e_walk_Frames, e_walk_FramesRow, e_walk_FramesPerSec);
-            enemyBoss.atkAni.Load(game.Content, "King_atk", 8, e_atk_FramesRow, 16);
+            enemyBoss.atkAni.Load(game.Content, "King_atk", 8, e_atk_FramesRow, 12);
             enemyBoss.idleAni.Load(game.Content, "King_idle", Frames, FramesRow, FramesPerSec);
             walkSheid.Load(game.Content, "King_walk_S", e_walk_Frames, e_walk_FramesRow, e_walk_FramesPerSec);
-            atkSheid.Load(game.Content, "King_atk_S", 8, e_atk_FramesRow, 16);
+            atkSheid.Load(game.Content, "King_atk_S", 8, e_atk_FramesRow, 12);
             idleSheid.Load(game.Content, "King_idle_S", Frames, FramesRow, FramesPerSec);
 
             buttonRetry = game.Content.Load<Texture2D>("RetryButton");
@@ -330,11 +330,11 @@ namespace Castle_Knight
 
             potion_Ena[0] = false;
             potion_Use[0] = false;
-            potion_Pos[0] = new Vector2(700, 390);
+            potion_Pos[0] = new Vector2(600, 390);
 
             potion_Ena[1] = false;
             potion_Use[1] = false;
-            potion_Pos[1] = new Vector2(2200, 390);
+            potion_Pos[1] = new Vector2(1100, 390);
 
             select_Pos = new Vector2(340, 185);
 
@@ -424,8 +424,8 @@ namespace Castle_Knight
             enemyArcherR.died = false;
             enemyBoss.died = false;
             speedArrow2 = 0;
-            potion_Pos[0] = new Vector2(700, 390);
-            potion_Pos[1] = new Vector2(2200, 390);
+            potion_Pos[0] = new Vector2(600, 390);
+            potion_Pos[1] = new Vector2(1100, 390);
             potion_Ena[0] = false;
             potion_Use[0] = false;
             potion_Ena[1] = false;
@@ -515,7 +515,7 @@ namespace Castle_Knight
                         charPotion[1] = new Rectangle((int)potion_Pos[1].X, (int)potion_Pos[1].Y, 32, 32);
                         enemyGold.charBlock = new Rectangle((int)enemyGold.Position.X + 64, (int)enemyGold.Position.Y, 32, 160);
                         enemyArcherR.charBlock = new Rectangle((int)enemyArcherR.Position.X + 18, (int)enemyArcherR.Position.Y, 32, 160);
-                        enemyBoss.charBlock = new Rectangle((int)enemyBoss.Position.X + 146, (int)enemyBoss.Position.Y, 281, 256);
+                        enemyBoss.charBlock = new Rectangle((int)enemyBoss.Position.X + 127, (int)enemyBoss.Position.Y, 281, 256);
                         Rectangle blockEnemy1Wave;
                         Rectangle blockEnemy2Wave;
 
@@ -781,13 +781,13 @@ namespace Castle_Knight
                         // Enemy 3
                         if (enemyBoss.atk == true && !enemyBoss.died && enemyGold.died && enemyArcherR.died)
                         {
-                            if (sheidCount % 4 == 0)
+                            if (sheidCount % 5 == 0)
                             {
-                                enemyBoss.charBlock = new Rectangle((int)enemyBoss.Position.X + 146, (int)enemyBoss.Position.Y, 281, 256);
+                                enemyBoss.charBlock = new Rectangle((int)enemyBoss.Position.X + 127, (int)enemyBoss.Position.Y, 281, 256);
                                 enemyBoss.Position.X += 7;
                                 Sheid = true;
                             }
-                            else if (sheidCount % 4 != 0)
+                            else if (sheidCount % 5 != 0)
                             {
                                 enemyBoss.charBlock = new Rectangle((int)enemyBoss.Position.X + 18, (int)enemyBoss.Position.Y, 281, 256);
                                 if (Player.charBlock.Intersects(enemyBoss.charBlock) && enemyBoss.died == false)
@@ -807,7 +807,7 @@ namespace Castle_Knight
                         {
                             if (enemyBoss.died == false)
                             {
-                                enemyBoss.charBlock = new Rectangle((int)enemyBoss.Position.X + 146, (int)enemyBoss.Position.Y, 281, 256);
+                                enemyBoss.charBlock = new Rectangle((int)enemyBoss.Position.X + 127, (int)enemyBoss.Position.Y, 281, 256);
                                 if (Player.charBlock.Intersects(enemyBoss.charBlock) && enemyBoss.died == false)
                                 {
                                     if (!Player.atk)
@@ -817,7 +817,10 @@ namespace Castle_Knight
                                 }
                             }
                         }
-
+                        if (enemyBoss.Position.X >= 1780)
+                        {
+                            enemyBoss.Position.X -= 7;
+                        }
 
                         if (Player.died == false)
                         {
@@ -929,19 +932,28 @@ namespace Castle_Knight
 
                             if (enemyGold.died && enemyArcherR.died && !enemyBoss.died)
                             {
-                                if (enemyBoss.Position.X - Player.Position.X >= 61)
+                                if (enemyBoss.Position.X - Player.Position.X >= 50)
                                 {
                                     if (eAtkTime3 + eDelayAtk3 + PauseTime < theTime.TotalGameTime)
                                     {
                                         enemyBoss.walkAni.Play();
+                                        walkSheid.Play();
                                         enemyBoss.atk = false;
                                         enemyBoss.Position.X -= 0.5f;
-                                        enemyBoss.atkAni.Pause(0, 0);
+                                        if (enemyBoss.atkAni.Frame == 8)
+                                        {
+                                            enemyBoss.atkAni.Pause(8, 0);
+                                        }
+                                        if (atkSheid.Frame == 8)
+                                        {
+                                            atkSheid.Pause(8, 0);
+                                        }
                                     }
                                     else if (eAtkTime3 + eCoolDownAtk3 + PauseTime2 < theTime.TotalGameTime)
                                     {
                                         enemyBoss.Position.X -= 0.5f;
                                         enemyBoss.walkAni.Play();
+                                        walkSheid.Play();
                                         enemyBoss.atk = false;
                                     }
                                 }
@@ -949,17 +961,28 @@ namespace Castle_Knight
                                 {
                                     if (eAtkTime3 + eDelayAtk3 + PauseTime < theTime.TotalGameTime)
                                     {
-                                        enemyBoss.atkAni.Play();
                                         sheidCount += 1;
+                                        atkSheid.Stop();
+                                        enemyBoss.atkAni.Stop();
                                         enemyBoss.atk = true;
+                                        atkSheid.Play();
+                                        enemyBoss.atkAni.Play();
 
                                         eAtkTime3 = theTime.TotalGameTime;
                                     }
                                     if (eAtkTime3 + eCoolDownAtk3 + PauseTime2 < theTime.TotalGameTime)
                                     {
                                         enemyBoss.walkAni.Play();
+                                        walkSheid.Play();
                                         enemyBoss.atk = false;
-                                        enemyBoss.atkAni.Pause(0, 0);
+                                        if (enemyBoss.atkAni.Frame == 8)
+                                        {
+                                            enemyBoss.atkAni.Pause(8, 0);
+                                        }
+                                        if (atkSheid.Frame == 8)
+                                        {
+                                            atkSheid.Pause(8, 0);
+                                        }
                                     }
                                 }
                             }
@@ -988,7 +1011,7 @@ namespace Castle_Knight
                             {
                                 if (enemyBoss.knockBack == true)
                                 {
-                                    enemyBoss.Position.X += 4;
+                                    enemyBoss.Position.X += 6;
                                     enemyBoss.Position.Y -= 4;
                                 }
                                 else
@@ -1014,7 +1037,14 @@ namespace Castle_Knight
                             enemyGold.walkAni.Pause(0, 0);
                             enemyArcherR.atkAni.Pause(0, 0);
                             enemyArcherR.idleAni.Pause(0, 0);
-                            enemyBoss.atkAni.Pause(0, 0);
+                            if (enemyBoss.atkAni.Frame == 8)
+                            {
+                                enemyBoss.atkAni.Pause(8, 0);
+                            }
+                            if (atkSheid.Frame == 8)
+                            {
+                                atkSheid.Pause(8, 0);
+                            }
                             enemyBoss.walkAni.Pause(0, 0);
                         }
 
@@ -1131,7 +1161,7 @@ namespace Castle_Knight
                         }
                         #endregion
 
-                        if (Player.Position.X >= 1978)
+                        if (Player.Position.X >= 1956)
                         {
                             Player.Position.X -= 2;
                         }
@@ -1160,7 +1190,14 @@ namespace Castle_Knight
                     enemyGold.walkAni.Pause(0, 0);
                     enemyArcherR.atkAni.Pause(0, 0);
                     enemyArcherR.idleAni.Pause(0, 0);
-                    enemyBoss.atkAni.Pause(0, 0);
+                    if (enemyBoss.atkAni.Frame == 8)
+                    {
+                        enemyBoss.atkAni.Pause(8, 0);
+                    }
+                    if (atkSheid.Frame == 8)
+                    {
+                        atkSheid.Pause(8, 0);
+                    }
                     enemyBoss.walkAni.Pause(0, 0);
                     enemyBoss.idleAni.Pause(0, 0);
 
@@ -1391,9 +1428,11 @@ namespace Castle_Knight
                     }
                     else if (enemyBoss.atk == true)
                     {
-                        enemyBoss.atkAni.Play();
                         if (gamePause) { enemyBoss.atkAni.Pause(); }
-                        if (Player.died) { enemyBoss.atkAni.Pause(0, 0); }
+                        if (Player.died && enemyBoss.atkAni.Frame >= 8)
+                        {
+                            enemyBoss.atkAni.Pause(8, 0);
+                        }
                         enemyBoss.atkAni.DrawFrame(theBatch, enemyBoss.Position);
                     }
                     else if (enemyBoss.atk == false && enemyGold.died && enemyArcherR.died)
@@ -1414,18 +1453,19 @@ namespace Castle_Knight
                         if (Player.died) { idleSheid.Pause(0, 0); }
                         idleSheid.DrawFrame(theBatch, enemyBoss.Position);
                     }
-                    else if (enemyBoss.atk && sheidCount % 4 == 0)
+                    else if (enemyBoss.atk && sheidCount % 5 == 0)
                     {
-                        walkSheid.Play();
                         if (gamePause) { walkSheid.Pause(); }
                         if (Player.died) { walkSheid.Pause(0, 0); }
                         walkSheid.DrawFrame(theBatch, enemyBoss.Position);
                     }
-                    else if (enemyBoss.atk && sheidCount % 4 != 0)
+                    else if (enemyBoss.atk && sheidCount % 5 != 0)
                     {
-                        atkSheid.Play();
                         if (gamePause) { atkSheid.Pause(); }
-                        if (Player.died) { atkSheid.Pause(0, 0); }
+                        if (Player.died && atkSheid.Frame >= 8)
+                        {
+                            atkSheid.Pause(8, 0);
+                        }
                         atkSheid.DrawFrame(theBatch, enemyBoss.Position);
                     }
                     else if (enemyBoss.atk == false && enemyGold.died && enemyArcherR.died)
