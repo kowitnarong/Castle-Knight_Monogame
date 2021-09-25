@@ -1371,7 +1371,6 @@ namespace Castle_Knight
                     Player.walkAni.Pause(0, 0);
                     Player.idleAni.Pause(0, 0);
                     Player.diedAni.DrawFrame(theBatch, Player.Position);
-                    theBatch.Draw(gameOver, new Vector2(350 - camera.ViewMatrix.Translation.X, 120 - camera.ViewMatrix.Translation.Y), Color.White);
                 }
                 #endregion
 
@@ -1482,6 +1481,10 @@ namespace Castle_Knight
                 if (!Player.died)
                 {
                     effect1.DrawFrame(theBatch, effect1_Pos);
+                }
+                if (Player.died)
+                {
+                    theBatch.Draw(gameOver, new Vector2(350 - camera.ViewMatrix.Translation.X, 120 - camera.ViewMatrix.Translation.Y), Color.White);
                 }
 
                 string strDead = "Dead = " + dead_count;
