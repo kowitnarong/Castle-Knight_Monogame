@@ -89,6 +89,30 @@ namespace Castle_Knight
             }
         }
 
+        public void PlayerKnockBack2(GameTime gameTime)
+        {
+            if (knockBack == true)
+            {
+                Position.X -= 20;
+                Position.Y -= 8;
+            }
+            else
+            {
+                if (Position.Y < 255)
+                {
+                    Position.Y += 4;
+                }
+                if (Position.Y > 255)
+                {
+                    Position.Y = 255;
+                }
+            }
+            if (lastTimeKnockBack + DelayKnockBack < gameTime.TotalGameTime)
+            {
+                knockBack = false;
+            }
+        }
+
         public void WhenDefTrue(GameTime gameTime, List<SoundEffect> sounds)
         {
             if (lastTimeKnockBack + DelayKnockBack < gameTime.TotalGameTime && lastTimeHp + DelayHp < gameTime.TotalGameTime)
