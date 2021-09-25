@@ -599,6 +599,15 @@ namespace Castle_Knight
                                     if (SwordHit.State != SoundState.Playing) { SwordHit.Play(); }
 
                                     enemyBoss.lastTimeKnockBack = theTime.TotalGameTime;
+                                    if (!Sheid)
+                                    {
+                                        if (enemyBoss.lastTimeHp + enemyBoss.DelayHp < theTime.TotalGameTime)
+                                        {
+                                            enemyBoss.hp -= 1;
+
+                                            enemyBoss.lastTimeHp = theTime.TotalGameTime;
+                                        }
+                                    }
                                 }
                             }
                         }
