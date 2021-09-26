@@ -172,12 +172,13 @@ namespace Castle_Knight
 
         // time chat
         private static readonly TimeSpan delayChat  = TimeSpan.FromMilliseconds(5000);
+        private static readonly TimeSpan _delayChat = TimeSpan.FromMilliseconds(10000);
         private TimeSpan lasttimeChat;
 
-        private static readonly TimeSpan delayfinish = TimeSpan.FromMilliseconds(1500);
+        private static readonly TimeSpan delayfinish = TimeSpan.FromMilliseconds(2500);
         private TimeSpan lasttimeFinish;
 
-        private static readonly TimeSpan delayfinish2 = TimeSpan.FromMilliseconds(1500);
+        private static readonly TimeSpan delayfinish2 = TimeSpan.FromMilliseconds(5000);
         private TimeSpan lasttimeFinish2;
 
         // Enemy time
@@ -444,7 +445,6 @@ namespace Castle_Knight
             PauseTime = TimeSpan.FromMilliseconds(0);
             PauseTime2 = TimeSpan.FromMilliseconds(0);
             gamefinish = false;
-            text = 1;
             bg2Song = false;
             Sheid = true;
             sheidCount = 0;
@@ -505,35 +505,28 @@ namespace Castle_Knight
                     if (walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
                 }
 
+                if (gamefinish)
+                {
+                    MediaPlayer.IsMuted = true;
+                    Player.stop_move = true;
+                    if (text == 7 && lasttimeFinish + delayfinish < theTime.TotalGameTime)
+                    {
+                        ChatOn = true;
+                    }
+                    if (text == 8 && gamefinish && lasttimeChat + _delayChat < theTime.TotalGameTime)
+                    {
+                        resetValue = false;
+                        MediaPlayer.IsMuted = false;
+                        ChatOn = false;
+                        text = 7;
+                        ScreenEvent.Invoke(game.mTitleScreen, new EventArgs());
+                    }
+                }
+
                 // Key Pause
                 GameKeyPause(theTime);
                 if (gamePause == false)
                 {
-                    if (gamefinish && lasttimeFinish + delayfinish < theTime.TotalGameTime)
-                    {
-                        MediaPlayer.IsMuted = true;
-                        Player.stop_move = true;
-                        text = 7;
-                        if (Player.diedAni.Frame == 4)
-                        {
-                            ChatOn = true;
-                        }
-                        if (text == 8 && gamefinish)
-                        {
-                            enemyBoss.died = false;
-                            enemyBoss.Position = new Vector2(1530, 159);
-                            enemyGold.died = false;
-
-                            lasttimeFinish2 = theTime.TotalGameTime;
-
-                            if (lasttimeFinish2 + delayfinish2 < theTime.TotalGameTime)
-                            {
-                                ScreenEvent.Invoke(game.mTitleScreen, new EventArgs());
-                                resetValue = false;
-                                MediaPlayer.IsMuted = false;
-                            }
-                        }
-                    }
                     if (!Player.died)
                     {
                         // Time Pause
@@ -849,13 +842,13 @@ namespace Castle_Knight
                         // Enemy 3
                         if (enemyBoss.atk == true && !enemyBoss.died && enemyGold.died && enemyArcherR.died)
                         {
-                            if (sheidCount % 4 == 0)
+                            if (sheidCount % 3 == 0)
                             {
                                 enemyBoss.charBlock = new Rectangle((int)enemyBoss.Position.X + 127, (int)enemyBoss.Position.Y, 281, 256);
                                 enemyBoss.Position.X += 7;
                                 Sheid = true;
                             }
-                            else if (sheidCount % 4 != 0)
+                            else if (sheidCount % 3 != 0)
                             {
                                 enemyBoss.charBlock = new Rectangle((int)enemyBoss.Position.X + 18, (int)enemyBoss.Position.Y, 281, 256);
                                 if (Player.charBlock.Intersects(enemyBoss.charBlock) && enemyBoss.died == false)
@@ -1134,15 +1127,16 @@ namespace Castle_Knight
                         }
                         if (enemyBoss.hp <= 0)
                         {
+                            if (!gamefinish)
+                            {
+                                lasttimeFinish = theTime.TotalGameTime;
+                                gamefinish = true;
+                            }
                             enemyBoss.died = true;
                             enemyBoss.atk = false;
                             enemyBoss.atkAni.Pause(0, 0);
                             enemyBoss.walkAni.Pause(0, 0);
-
-                            lasttimeFinish = theTime.TotalGameTime;
-                            gamefinish = true;
                         }
-
                         if (ChatOn)
                         {
                             gamePause = true;
@@ -1301,25 +1295,25 @@ namespace Castle_Knight
                         {
                             ChatOn = false;
                             gamePause = false;
+                            text += 1;
 
                             lasttimeChat = theTime.TotalGameTime;
                         }
                         else if (text == 7)
                         {
-                            messages.Add(new DisplayMessage("Devil: You did your job very well, my brother. \nWell, I give you strength and I will rule you for my great goal. \nYou will sleep well. \n\nPlayer: yes sir", TimeSpan.FromSeconds(10.0), new Vector2
+                            messages.Add(new DisplayMessage("Devil: You did your job very well, my brother. \n      Well, I give you strength and I will rule you for my great goal. \n       You will sleep well. \n\nPlayer: Yes sir", TimeSpan.FromSeconds(10.0), new Vector2
                                 (50 - camera.ViewMatrix.Translation.X, 60 + messages.Count * 30 - camera.ViewMatrix.Translation.Y), Color.White));
-                            text += 1;
-
-                            _text = "Finish";
                             text = 8;
+
+                            _text = "F";
+
                             lasttimeChat = theTime.TotalGameTime;
                         }
-                        else if (text == 8)
+                        else if (text == 8 && lasttimeChat + _delayChat < theTime.TotalGameTime)
                         {
+                            lasttimeFinish2 = theTime.TotalGameTime;
                             ChatOn = false;
                             gamePause = false;
-
-                            lasttimeChat = theTime.TotalGameTime;
                         }
                     }                
                 }
@@ -1467,7 +1461,7 @@ namespace Castle_Knight
                 #endregion
 
                 #region PlayerDraw
-                if (Player.died == false)
+                if (Player.died == false && !gamefinish)
                 {
                     if (!Player.getHit)
                     {
@@ -1519,7 +1513,7 @@ namespace Castle_Knight
                         }
                     }
                 }
-                else
+                else if (Player.died && text != 8)
                 {
                     Player.atkAni.Pause(0, 0);
                     Player.defAni.Pause(0, 0);
@@ -1529,6 +1523,17 @@ namespace Castle_Knight
                     Player.idleAni.Pause(0, 0);
                     Player.diedAni.DrawFrame(theBatch, Player.Position);
                 }
+                else if (!Player.died && text != 8 && gamefinish)
+                {
+                    Player.atkAni.Pause(0, 0);
+                    Player.defAni.Pause(0, 0);
+                    Player.specialAni.Pause(0, 0);
+                    Player.specialAtkAni.Pause(0, 0);
+                    Player.walkAni.Pause(0, 0);
+                    Player.idleAni.Pause(0, 0);
+                    Player.diedAni.DrawFrame(theBatch, Player.Position);
+                }
+
                 #endregion
 
                 #region EnemyDraw
@@ -1608,13 +1613,13 @@ namespace Castle_Knight
                         if (Player.died) { idleSheid.Pause(0, 0); }
                         idleSheid.DrawFrame(theBatch, enemyBoss.Position);
                     }
-                    else if (enemyBoss.atk && sheidCount % 4 == 0)
+                    else if (enemyBoss.atk && sheidCount % 3 == 0)
                     {
                         if (gamePause) { walkSheid.Pause(); }
                         if (Player.died) { walkSheid.Pause(0, 0); }
                         walkSheid.DrawFrame(theBatch, enemyBoss.Position);
                     }
-                    else if (enemyBoss.atk && sheidCount % 4 != 0)
+                    else if (enemyBoss.atk && sheidCount % 3 != 0)
                     {
                         if (gamePause) { atkSheid.Pause(); }
                         if (Player.died && atkSheid.Frame >= 8)
@@ -1642,6 +1647,7 @@ namespace Castle_Knight
                 {
                     theBatch.Draw(gameOver, new Vector2(350 - camera.ViewMatrix.Translation.X, 120 - camera.ViewMatrix.Translation.Y), Color.White);
                 }
+
 
                 string strDead = "Dead = " + dead_count;
                 string strDevMode = "DevMode";
@@ -1685,21 +1691,10 @@ namespace Castle_Knight
                     theBatch.Draw(bChat, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
                     DrawMessages(theBatch);
                 }
-                else if (gamePause && ChatOn && _text == "Finish")
+                else if (gamePause && ChatOn && _text == "F")
                 {
                     theBatch.Draw(fChat, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
                     DrawMessages(theBatch);
-                }
-
-                if (gamefinish && lasttimeFinish + delayfinish < theTime.TotalGameTime)
-                {
-                    Player.atkAni.Pause(0, 0);
-                    Player.defAni.Pause(0, 0);
-                    Player.specialAni.Pause(0, 0);
-                    Player.specialAtkAni.Pause(0, 0);
-                    Player.walkAni.Pause(0, 0);
-                    Player.idleAni.Pause(0, 0);
-                    Player.diedAni.DrawFrame(theBatch, Player.Position);
                 }
 
                 theBatch.End();
@@ -1920,6 +1915,10 @@ namespace Castle_Knight
                     }
                     lastTimePause = theTime.TotalGameTime;
                 }
+            }
+            if (devMode)
+            {
+                Player.SpeCount = 4;
             }
             if (lastTimePause + intervalBetweenPause < theTime.TotalGameTime)
             {
