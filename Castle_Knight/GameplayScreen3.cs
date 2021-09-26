@@ -518,9 +518,10 @@ namespace Castle_Knight
                         {
                             ChatOn = true;
                         }
-                        if (text == 6 && gamefinish)
+                        if (text == 8 && gamefinish)
                         {
                             enemyBoss.died = false;
+                            enemyBoss.Position = new Vector2(1530, 159);
                             enemyGold.died = false;
 
                             lasttimeFinish2 = theTime.TotalGameTime;
@@ -529,6 +530,7 @@ namespace Castle_Knight
                             {
                                 ScreenEvent.Invoke(game.mTitleScreen, new EventArgs());
                                 resetValue = false;
+                                MediaPlayer.IsMuted = false;
                             }
                         }
                     }
@@ -1309,7 +1311,14 @@ namespace Castle_Knight
                             text += 1;
 
                             _text = "Finish";
-                            text = 6;
+                            text = 8;
+                            lasttimeChat = theTime.TotalGameTime;
+                        }
+                        else if (text == 8)
+                        {
+                            ChatOn = false;
+                            gamePause = false;
+
                             lasttimeChat = theTime.TotalGameTime;
                         }
                     }                
@@ -1855,7 +1864,7 @@ namespace Castle_Knight
             keyboardState = Keyboard.GetState();
             if (lastTimePause + intervalBetweenPause < theTime.TotalGameTime)
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !Player.died)
+                if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !Player.died && !ChatOn)
                 {
                     if (gamePause == false)
                     {
