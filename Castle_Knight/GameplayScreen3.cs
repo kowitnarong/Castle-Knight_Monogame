@@ -107,6 +107,7 @@ namespace Castle_Knight
 
         // ฉาก
         private AnimatedTexture Touch;
+        private AnimatedTexture Fire;
 
         bool batMove = false;
         bool batMove2 = false;
@@ -176,7 +177,7 @@ namespace Castle_Knight
 
         // Bat Pos
         private Vector2 Bat_Pos = new Vector2(450, 80);
-        private Vector2 Bat2_Pos = new Vector2(1450, 80);
+        private Vector2 Bat2_Pos = new Vector2(850, 80);
 
         // Special atk
         private Vector2 special_Pos = new Vector2(500, 600);
@@ -244,6 +245,7 @@ namespace Castle_Knight
             idleSheid = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
 
             Touch = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
+            Fire = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             effect1 = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
             Bat = new AnimatedTexture(Vector2.Zero, Rotation, Scale, Depth);
 
@@ -318,6 +320,7 @@ namespace Castle_Knight
             Player.walkAni.Pause();
 
             Touch.Load(game.Content, "Touch", 9, 1, 5);
+            Fire.Load(game.Content, "Fire", 3, 1, 6);
 
             #endregion
 
@@ -781,13 +784,13 @@ namespace Castle_Knight
                         // Enemy 3
                         if (enemyBoss.atk == true && !enemyBoss.died && enemyGold.died && enemyArcherR.died)
                         {
-                            if (sheidCount % 5 == 0)
+                            if (sheidCount % 4 == 0)
                             {
                                 enemyBoss.charBlock = new Rectangle((int)enemyBoss.Position.X + 127, (int)enemyBoss.Position.Y, 281, 256);
                                 enemyBoss.Position.X += 7;
                                 Sheid = true;
                             }
-                            else if (sheidCount % 5 != 0)
+                            else if (sheidCount % 4 != 0)
                             {
                                 enemyBoss.charBlock = new Rectangle((int)enemyBoss.Position.X + 18, (int)enemyBoss.Position.Y, 281, 256);
                                 if (Player.charBlock.Intersects(enemyBoss.charBlock) && enemyBoss.died == false)
@@ -1135,6 +1138,7 @@ namespace Castle_Knight
                                 batMove2 = false;
                             }
                         }
+
                         #endregion
 
                         #region Visible When GetHit
@@ -1161,7 +1165,7 @@ namespace Castle_Knight
                         }
                         #endregion
 
-                        if (Player.Position.X >= 1956)
+                        if (Player.Position.X >= 1900)
                         {
                             Player.Position.X -= 2;
                         }
@@ -1248,10 +1252,15 @@ namespace Castle_Knight
                 theBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.ViewMatrix);
                 theBatch.Draw(BG1_1, new Vector2(0 - camera.ViewMatrix.Translation.X * 0.65f, 0), Color.White);
                 theBatch.Draw(BG1_2, new Vector2(0, 0), Color.White);
-                Touch.DrawFrame(theBatch, new Vector2(550 - camera.ViewMatrix.Translation.X * 0.65f, 100));
-                Touch.DrawFrame(theBatch, new Vector2(1550 - camera.ViewMatrix.Translation.X * 0.65f, 100));
+                Touch.DrawFrame(theBatch, new Vector2(65 - camera.ViewMatrix.Translation.X * 0.65f, 100));
+                Touch.DrawFrame(theBatch, new Vector2(385 - camera.ViewMatrix.Translation.X * 0.65f, 100));
+                Touch.DrawFrame(theBatch, new Vector2(705- camera.ViewMatrix.Translation.X * 0.65f, 100));
+                Touch.DrawFrame(theBatch, new Vector2(1025- camera.ViewMatrix.Translation.X * 0.65f, 100));
                 Bat.DrawFrame(theBatch, new Vector2(Bat_Pos.X - camera.ViewMatrix.Translation.X * 0.65f, Bat_Pos.Y - camera.ViewMatrix.Translation.Y));
                 Bat.DrawFrame(theBatch, new Vector2(Bat2_Pos.X - camera.ViewMatrix.Translation.X * 0.65f, Bat2_Pos.Y - camera.ViewMatrix.Translation.Y));
+                Fire.DrawFrame(theBatch, new Vector2(1480, 228));
+                Fire.DrawFrame(theBatch, new Vector2(1730, 228));
+
 
                 // Potion
                 if (potion_Ena[0] == true && potion_Use[0] == false)
@@ -1452,13 +1461,13 @@ namespace Castle_Knight
                         if (Player.died) { idleSheid.Pause(0, 0); }
                         idleSheid.DrawFrame(theBatch, enemyBoss.Position);
                     }
-                    else if (enemyBoss.atk && sheidCount % 5 == 0)
+                    else if (enemyBoss.atk && sheidCount % 4 == 0)
                     {
                         if (gamePause) { walkSheid.Pause(); }
                         if (Player.died) { walkSheid.Pause(0, 0); }
                         walkSheid.DrawFrame(theBatch, enemyBoss.Position);
                     }
-                    else if (enemyBoss.atk && sheidCount % 5 != 0)
+                    else if (enemyBoss.atk && sheidCount % 4 != 0)
                     {
                         if (gamePause) { atkSheid.Pause(); }
                         if (Player.died && atkSheid.Frame >= 8)
@@ -1564,6 +1573,7 @@ namespace Castle_Knight
             buttonSelect.UpdateFrame(Elapsed);
             effect1.UpdateFrame(Elapsed);
             Bat.UpdateFrame(Elapsed);
+            Fire.UpdateFrame(Elapsed);
 
             loading.UpdateFrame(Elapsed);
         }
