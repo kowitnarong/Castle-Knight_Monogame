@@ -157,7 +157,7 @@ namespace Castle_Knight
         private TimeSpan AttackWave2;
 
 
-        private TimeSpan eDelayAtk3 = TimeSpan.FromMilliseconds(3200);
+        private TimeSpan eDelayAtk3 = TimeSpan.FromMilliseconds(2800);
         private static readonly TimeSpan eCoolDownAtk3 = TimeSpan.FromMilliseconds(300);
         private TimeSpan eAtkTime3;
 
