@@ -14,6 +14,26 @@ namespace Castle_Knight
 {
     public class GameplayScreen3 : screen
     {
+        struct DisplayMessage
+        {
+            public string Message;
+            public TimeSpan DisplayTime;
+            public int CurentIndex;
+            public Vector2 Position;
+            public string DrawnMessage;
+            public Color DrawColor;
+            public DisplayMessage(string message, TimeSpan displayTime, Vector2 position, Color color)
+            {
+                Message = message;
+                DisplayTime = displayTime;
+                CurentIndex = 0;
+                Position = position;
+                DrawnMessage = string.Empty;
+                DrawColor = color;
+            }
+        }
+        List<DisplayMessage> messages = new List<DisplayMessage>();
+
         bool resetValue = false;
 
         Player Player = new Player();
@@ -43,6 +63,12 @@ namespace Castle_Knight
         int potion_Count = 0;
         private AnimatedTexture loading;
         private AnimatedTexture effect1;
+        Texture2D pChat;
+        Texture2D bChat;
+        Texture2D fChat;
+        bool ChatOn = true;
+        int text = 1;
+        string _text;
 
         Texture2D buttonRetry;
         Texture2D buttonSoundOn;
@@ -108,6 +134,7 @@ namespace Castle_Knight
         // ฉาก
         private AnimatedTexture Touch;
         private AnimatedTexture Fire;
+        bool gamefinish = false;
 
         bool batMove = false;
         bool batMove2 = false;
@@ -143,8 +170,17 @@ namespace Castle_Knight
         private static readonly TimeSpan effectfadeOut = TimeSpan.FromMilliseconds(30);
         private TimeSpan lasttimeEffect;
 
-        // Enemy time
+        // time chat
+        private static readonly TimeSpan delayChat  = TimeSpan.FromMilliseconds(5000);
+        private TimeSpan lasttimeChat;
 
+        private static readonly TimeSpan delayfinish = TimeSpan.FromMilliseconds(1500);
+        private TimeSpan lasttimeFinish;
+
+        private static readonly TimeSpan delayfinish2 = TimeSpan.FromMilliseconds(1500);
+        private TimeSpan lasttimeFinish2;
+
+        // Enemy time
         private TimeSpan eDelayAtk1 = TimeSpan.FromMilliseconds(1650);
         private static readonly TimeSpan eCoolDownAtk1 = TimeSpan.FromMilliseconds(400);
         private TimeSpan eAtkTime1;
@@ -156,7 +192,6 @@ namespace Castle_Knight
         private TimeSpan eAtkTime2;
         private static readonly TimeSpan DelayAttackWave2 = TimeSpan.FromMilliseconds(1600);
         private TimeSpan AttackWave2;
-
 
         private TimeSpan eDelayAtk3 = TimeSpan.FromMilliseconds(2800);
         private static readonly TimeSpan eCoolDownAtk3 = TimeSpan.FromMilliseconds(300);
@@ -322,6 +357,9 @@ namespace Castle_Knight
             Touch.Load(game.Content, "Touch", 9, 1, 5);
             Fire.Load(game.Content, "Fire", 3, 1, 6);
 
+            pChat = game.Content.Load<Texture2D>("playerChat");
+            bChat = game.Content.Load<Texture2D>("bossChat");
+            fChat = game.Content.Load<Texture2D>("FinishChat");
             #endregion
 
             game.IsMouseVisible = true;
@@ -405,6 +443,8 @@ namespace Castle_Knight
 
             PauseTime = TimeSpan.FromMilliseconds(0);
             PauseTime2 = TimeSpan.FromMilliseconds(0);
+            gamefinish = false;
+            text = 1;
             bg2Song = false;
             Sheid = true;
             sheidCount = 0;
@@ -469,6 +509,29 @@ namespace Castle_Knight
                 GameKeyPause(theTime);
                 if (gamePause == false)
                 {
+                    if (gamefinish && lasttimeFinish + delayfinish < theTime.TotalGameTime)
+                    {
+                        MediaPlayer.IsMuted = true;
+                        Player.stop_move = true;
+                        text = 7;
+                        if (Player.diedAni.Frame == 4)
+                        {
+                            ChatOn = true;
+                        }
+                        if (text == 6 && gamefinish)
+                        {
+                            enemyBoss.died = false;
+                            enemyGold.died = false;
+
+                            lasttimeFinish2 = theTime.TotalGameTime;
+
+                            if (lasttimeFinish2 + delayfinish2 < theTime.TotalGameTime)
+                            {
+                                ScreenEvent.Invoke(game.mTitleScreen, new EventArgs());
+                                resetValue = false;
+                            }
+                        }
+                    }
                     if (!Player.died)
                     {
                         // Time Pause
@@ -1073,8 +1136,15 @@ namespace Castle_Knight
                             enemyBoss.atk = false;
                             enemyBoss.atkAni.Pause(0, 0);
                             enemyBoss.walkAni.Pause(0, 0);
+
+                            lasttimeFinish = theTime.TotalGameTime;
+                            gamefinish = true;
                         }
 
+                        if (ChatOn)
+                        {
+                            gamePause = true;
+                        }
                         #region Check
                         // Potion
                         if (potion_Count >= 1) { potion_Count = 1; }
@@ -1177,6 +1247,75 @@ namespace Castle_Knight
                         camera.Update(Camera_Pos);
                     }
                 }
+                if (ChatOn)
+                {
+                    if (lasttimeChat + delayChat < theTime.TotalGameTime)
+                    {
+                        if (text == 1)
+                        {
+                            messages.Add(new DisplayMessage("Where is my brother? Bring my brother back.", TimeSpan.FromSeconds(5.0), new Vector2
+                                (290 - camera.ViewMatrix.Translation.X, 310 + messages.Count * 30 - camera.ViewMatrix.Translation.Y), Color.White));
+                            text += 1;
+                            _text = "P";
+                            lasttimeChat = theTime.TotalGameTime;
+                        }
+                        else if (text == 2)
+                        {
+                            messages.Add(new DisplayMessage("Oh I understand. You are no different from me.", TimeSpan.FromSeconds(5.0), new Vector2
+                                (50 - camera.ViewMatrix.Translation.X, 310 + messages.Count * 30 - camera.ViewMatrix.Translation.Y), Color.White));
+                            text += 1;
+
+                            _text = "B";
+                            lasttimeChat = theTime.TotalGameTime;
+                        }
+                        else if (text == 3)
+                        {
+                            messages.Add(new DisplayMessage("You don't seem to remember anything, right? \nI'm just waiting for you.", TimeSpan.FromSeconds(5.0), new Vector2
+                                (50 - camera.ViewMatrix.Translation.X, 310 + messages.Count * 30 - camera.ViewMatrix.Translation.Y), Color.White));
+                            text += 1;
+
+                            _text = "B";
+                            lasttimeChat = theTime.TotalGameTime;
+                        }
+                        else if (text == 4)
+                        {
+                            messages.Add(new DisplayMessage("If you want to know where your brother.", TimeSpan.FromSeconds(5.0), new Vector2
+                                (50 - camera.ViewMatrix.Translation.X, 310 + messages.Count * 30 - camera.ViewMatrix.Translation.Y), Color.White));
+                            text += 1;
+
+                            _text = "B";
+                            lasttimeChat = theTime.TotalGameTime;
+                        }
+                        else if (text == 5)
+                        {
+                            messages.Add(new DisplayMessage("Ask yourself or you can kill me first. Come in.", TimeSpan.FromSeconds(5.0), new Vector2
+                                (50 - camera.ViewMatrix.Translation.X, 310 + messages.Count * 30 - camera.ViewMatrix.Translation.Y), Color.White));
+                            text += 1;
+
+                            _text = "B";
+                            lasttimeChat = theTime.TotalGameTime;
+                        }
+                        else if (text == 6)
+                        {
+                            ChatOn = false;
+                            gamePause = false;
+
+                            lasttimeChat = theTime.TotalGameTime;
+                        }
+                        else if (text == 7)
+                        {
+                            messages.Add(new DisplayMessage("Devil: You did your job very well, my brother. \nWell, I give you strength and I will rule you for my great goal. \nYou will sleep well. \n\nPlayer: yes sir", TimeSpan.FromSeconds(10.0), new Vector2
+                                (50 - camera.ViewMatrix.Translation.X, 60 + messages.Count * 30 - camera.ViewMatrix.Translation.Y), Color.White));
+                            text += 1;
+
+                            _text = "Finish";
+                            text = 6;
+                            lasttimeChat = theTime.TotalGameTime;
+                        }
+                    }                
+                }
+
+                UpdateMessages(theTime);
             }
 
             #region DiedPlayer
@@ -1251,11 +1390,11 @@ namespace Castle_Knight
             {
                 theBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.ViewMatrix);
                 theBatch.Draw(BG1_1, new Vector2(0 - camera.ViewMatrix.Translation.X * 0.65f, 0), Color.White);
-                theBatch.Draw(BG1_2, new Vector2(0, 0), Color.White);
                 Touch.DrawFrame(theBatch, new Vector2(65 - camera.ViewMatrix.Translation.X * 0.65f, 100));
                 Touch.DrawFrame(theBatch, new Vector2(385 - camera.ViewMatrix.Translation.X * 0.65f, 100));
-                Touch.DrawFrame(theBatch, new Vector2(705- camera.ViewMatrix.Translation.X * 0.65f, 100));
-                Touch.DrawFrame(theBatch, new Vector2(1025- camera.ViewMatrix.Translation.X * 0.65f, 100));
+                Touch.DrawFrame(theBatch, new Vector2(705 - camera.ViewMatrix.Translation.X * 0.65f, 100));
+                Touch.DrawFrame(theBatch, new Vector2(1025 - camera.ViewMatrix.Translation.X * 0.65f, 100));
+                theBatch.Draw(BG1_2, new Vector2(0, 0), Color.White);
                 Bat.DrawFrame(theBatch, new Vector2(Bat_Pos.X - camera.ViewMatrix.Translation.X * 0.65f, Bat_Pos.Y - camera.ViewMatrix.Translation.Y));
                 Bat.DrawFrame(theBatch, new Vector2(Bat2_Pos.X - camera.ViewMatrix.Translation.X * 0.65f, Bat2_Pos.Y - camera.ViewMatrix.Translation.Y));
                 Fire.DrawFrame(theBatch, new Vector2(1480, 228));
@@ -1453,7 +1592,6 @@ namespace Castle_Knight
                 }
                 else if (!enemyBoss.died && Sheid)
                 {
-
                     if (!enemyGold.died || !enemyArcherR.died)
                     {
                         idleSheid.Play();
@@ -1507,7 +1645,7 @@ namespace Castle_Knight
                     theBatch.DrawString(ArialFont, strDevMode, new Vector2(880 - camera.ViewMatrix.Translation.X, 435 - camera.ViewMatrix.Translation.Y), Color.Red);
                 }
 
-                if (gamePause && Switch == "InGame3")
+                if (gamePause && Switch == "InGame3" && !ChatOn)
                 {
                     theBatch.Draw(pausePic, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
                     theBatch.Draw(pausePic, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
@@ -1524,10 +1662,37 @@ namespace Castle_Knight
                         theBatch.Draw(buttonSoundOff, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
                     }
                 }
-                else if (!gamePause)
+                else if (!gamePause && !ChatOn)
                 {
                     theBatch.Draw(ButtonMenu, new Vector2(860 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
                 }
+                else if (gamePause && ChatOn && _text == "P")
+                {
+                    theBatch.Draw(pChat, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
+                    DrawMessages(theBatch);
+                }
+                else if (gamePause && ChatOn && _text == "B")
+                {
+                    theBatch.Draw(bChat, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
+                    DrawMessages(theBatch);
+                }
+                else if (gamePause && ChatOn && _text == "Finish")
+                {
+                    theBatch.Draw(fChat, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
+                    DrawMessages(theBatch);
+                }
+
+                if (gamefinish && lasttimeFinish + delayfinish < theTime.TotalGameTime)
+                {
+                    Player.atkAni.Pause(0, 0);
+                    Player.defAni.Pause(0, 0);
+                    Player.specialAni.Pause(0, 0);
+                    Player.specialAtkAni.Pause(0, 0);
+                    Player.walkAni.Pause(0, 0);
+                    Player.idleAni.Pause(0, 0);
+                    Player.diedAni.DrawFrame(theBatch, Player.Position);
+                }
+
                 theBatch.End();
             }
             if (menuLoading == true)
@@ -1762,7 +1927,7 @@ namespace Castle_Knight
                     lastTimePause = theTime.TotalGameTime;
                 }
             }
-            if (gamePause)
+            if (gamePause && !ChatOn)
             {
                 if (keyboardState.IsKeyDown(Keys.Down) && stopPress == false)
                 {
@@ -1857,6 +2022,43 @@ namespace Castle_Knight
                         swDead.Flush();
                         swDead.Close();
                         game.Exit();
+                    }
+                }
+            }
+        }
+
+        void UpdateMessages(GameTime gameTime)
+        {
+            if (messages.Count > 0)
+            {
+                for (int i = 0; i < messages.Count; i++)
+                {
+                    DisplayMessage dm = messages[i];
+                    dm.DisplayTime -= gameTime.ElapsedGameTime;
+                    if(dm.DisplayTime <= TimeSpan.Zero)
+                    {
+                        messages.RemoveAt(i);
+                    }
+                    else
+                    {
+                        messages[i] = dm;
+                    }
+                }
+            }
+        }
+        void DrawMessages(SpriteBatch theBatch)
+        {
+            if (messages.Count > 0)
+            {
+                for (int i = 0; i < messages.Count; i++)
+                {
+                    DisplayMessage dm = messages[i];
+                    dm.DrawnMessage += dm.Message[dm.CurentIndex].ToString();
+                    theBatch.DrawString(ArialFont, dm.DrawnMessage, dm.Position, dm.DrawColor);
+                    if (dm.CurentIndex != dm.Message.Length - 1)
+                    {
+                        dm.CurentIndex++;
+                        messages[i] = dm;
                     }
                 }
             }
