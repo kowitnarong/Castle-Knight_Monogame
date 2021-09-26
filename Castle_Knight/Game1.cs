@@ -21,6 +21,10 @@ namespace Castle_Knight
         public screen mCurrentScreen;
 
         public static bool soundOn = true;
+        public static bool MusicOn = true;
+        public static bool SFXOn = true;
+        public static string State = "Title";
+        public static bool BackMenu = false;
 
         public Game1()
         {
@@ -43,8 +47,8 @@ namespace Castle_Knight
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             mGameplayScreen = new GameplayScreen(this, new EventHandler(GameplayScreenEvent));
-            mGameplayScreen2 = new GameplayScreen2(this, new EventHandler(GameplayScreenEvent2));
-            mGameplayScreen3 = new GameplayScreen3(this, new EventHandler(GameplayScreenEvent3));
+            mGameplayScreen2 = new GameplayScreen2(this, new EventHandler(GameplayScreenEvent));
+            mGameplayScreen3 = new GameplayScreen3(this, new EventHandler(GameplayScreenEvent));
             mTitleScreen = new TitleScreen(this, new EventHandler(GameplayScreenEvent));
             mCurrentScreen = mTitleScreen;
 
@@ -66,21 +70,13 @@ namespace Castle_Knight
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.White);
 
             mCurrentScreen.Draw(spriteBatch , gameTime);
             
             base.Draw(gameTime);
         }
         public void GameplayScreenEvent(object obj, EventArgs e)
-        {
-            mCurrentScreen = (screen)obj;
-        }
-        public void GameplayScreenEvent2(object obj, EventArgs e)
-        {
-            mCurrentScreen = (screen)obj;
-        }
-        public void GameplayScreenEvent3(object obj, EventArgs e)
         {
             mCurrentScreen = (screen)obj;
         }
