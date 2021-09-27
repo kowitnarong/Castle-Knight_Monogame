@@ -43,7 +43,7 @@ namespace Castle_Knight
         bool Credit = false;
 
         int mAlphaValue = 1;
-        int mFadeIncrement = 3;
+        int mFadeIncrement = 8;
         double mFadeDelay = .035;
 
         Texture2D logo;
@@ -109,8 +109,8 @@ namespace Castle_Knight
 
             BG1_1Pos[0] = new Vector2(0, 0);
             BG1_2Pos[0] = new Vector2(0, 0);
-            BG1_1Pos[1] = new Vector2(3680, 0);
-            BG1_2Pos[1] = new Vector2(3680, 0);
+            BG1_1Pos[1] = new Vector2(3678, 0);
+            BG1_2Pos[1] = new Vector2(3678, 0);
 
             this.game = game;
         }
@@ -124,7 +124,7 @@ namespace Castle_Knight
                 logoOn = true;
             }
 
-            if (logoOn && lastTimeLogo + TimeSpan.FromSeconds(5.0) < theTime.TotalGameTime)
+            if (logoOn && lastTimeLogo + TimeSpan.FromSeconds(2.5) < theTime.TotalGameTime)
             {
                 mFadeDelay -= theTime.ElapsedGameTime.TotalSeconds;
                 if (mFadeDelay <= 0)
@@ -150,7 +150,7 @@ namespace Castle_Knight
                     }
                 }
             }
-            if (logoOn && lastTimeLogo + TimeSpan.FromSeconds(10.0) < theTime.TotalGameTime)
+            if (logoOn && lastTimeLogo + TimeSpan.FromSeconds(5.0) < theTime.TotalGameTime)
             {
                 logoOn = false;
                 Title = true;
@@ -323,19 +323,19 @@ namespace Castle_Knight
                 BG1_2Pos[1].X -= 1 * 0.6f;
                 if (BG1_1Pos[0].X <= -3680)
                 {
-                    BG1_1Pos[0].X = 3680;
+                    BG1_1Pos[0].X = 3678;
                 }
                 if (BG1_2Pos[0].X <= -3680)
                 {
-                    BG1_2Pos[0].X = 3680;
+                    BG1_2Pos[0].X = 3678;
                 }
                 if (BG1_1Pos[1].X <= -3680)
                 {
-                    BG1_1Pos[1].X = 3680;
+                    BG1_1Pos[1].X = 3678;
                 }
                 if (BG1_2Pos[1].X <= -3680)
                 {
-                    BG1_2Pos[1].X = 3680;
+                    BG1_2Pos[1].X = 3678;
                 }
             }
 
