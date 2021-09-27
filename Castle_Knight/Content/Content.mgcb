@@ -608,6 +608,18 @@
 /processorParam:TextureFormat=Color
 /build:loadScreen.png
 
+#begin Logo_game.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Logo_game.png
+
 #begin Map1.png
 /importer:TextureImporter
 /processor:TextureProcessor

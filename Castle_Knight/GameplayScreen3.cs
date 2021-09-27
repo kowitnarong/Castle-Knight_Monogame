@@ -69,6 +69,9 @@ namespace Castle_Knight
         bool ChatOn = true;
         int text = 1;
         string _text;
+        int mAlphaValue = 1;
+        int mFadeIncrement = 5;
+        double mFadeDelay = .035;
 
         Texture2D buttonRetry;
         Texture2D buttonSoundOn;
@@ -106,9 +109,6 @@ namespace Castle_Knight
         KeyboardState old_keyboardState;
 
         Camera camera = new Camera();
-
-        // Ai
-        Random r = new Random();
 
         // Ai1
         Texture2D eWaveAtk1;
@@ -172,14 +172,11 @@ namespace Castle_Knight
 
         // time chat
         private static readonly TimeSpan delayChat  = TimeSpan.FromMilliseconds(5000);
-        private static readonly TimeSpan _delayChat = TimeSpan.FromMilliseconds(10000);
+        private static readonly TimeSpan _delayChat = TimeSpan.FromMilliseconds(15000);
         private TimeSpan lasttimeChat;
 
         private static readonly TimeSpan delayfinish = TimeSpan.FromMilliseconds(2500);
         private TimeSpan lasttimeFinish;
-
-        private static readonly TimeSpan delayfinish2 = TimeSpan.FromMilliseconds(5000);
-        private TimeSpan lasttimeFinish2;
 
         // Enemy time
         private TimeSpan eDelayAtk1 = TimeSpan.FromMilliseconds(1650);
@@ -194,7 +191,7 @@ namespace Castle_Knight
         private static readonly TimeSpan DelayAttackWave2 = TimeSpan.FromMilliseconds(1600);
         private TimeSpan AttackWave2;
 
-        private TimeSpan eDelayAtk3 = TimeSpan.FromMilliseconds(2800);
+        private TimeSpan eDelayAtk3 = TimeSpan.FromMilliseconds(2700);
         private static readonly TimeSpan eCoolDownAtk3 = TimeSpan.FromMilliseconds(300);
         private TimeSpan eAtkTime3;
 
@@ -247,9 +244,6 @@ namespace Castle_Knight
         private const int e_walk_FramesPerSec = 4;
         private const int e_walk_FramesRow = 1;
 
-        private const int e_atk_Frames = 9;
-        private const int e_atk_FramesPerSec = 18;
-        private const int e_atk_FramesRow = 1;
 
         #endregion
 
@@ -335,16 +329,16 @@ namespace Castle_Knight
 
             // Ai
             enemyGold.walkAni.Load(game.Content, "goldEnemy", e_walk_Frames, e_walk_FramesRow, e_walk_FramesPerSec);
-            enemyGold.atkAni.Load(game.Content, "goldEnemyAtk", 8, e_atk_FramesRow, 16);
+            enemyGold.atkAni.Load(game.Content, "goldEnemyAtk", 8, 1, 16);
             eWaveAtk1 = game.Content.Load<Texture2D>("goldEneAtkWave");
-            enemyArcherR.atkAni.Load(game.Content, "ArcherAni2", 8, e_atk_FramesRow, 10);
+            enemyArcherR.atkAni.Load(game.Content, "ArcherAni2", 8, 1, 10);
             enemyArcherR.idleAni.Load(game.Content, "Archer_idle2", Frames, FramesRow, FramesPerSec);
             eWaveAtk2 = game.Content.Load<Texture2D>("Arrow2");
             enemyBoss.walkAni.Load(game.Content, "King_walk", e_walk_Frames, e_walk_FramesRow, e_walk_FramesPerSec);
-            enemyBoss.atkAni.Load(game.Content, "King_atk", 8, e_atk_FramesRow, 12);
+            enemyBoss.atkAni.Load(game.Content, "King_atk", 8, 1, 12);
             enemyBoss.idleAni.Load(game.Content, "King_idle", Frames, FramesRow, FramesPerSec);
             walkSheid.Load(game.Content, "King_walk_S", e_walk_Frames, e_walk_FramesRow, e_walk_FramesPerSec);
-            atkSheid.Load(game.Content, "King_atk_S", 8, e_atk_FramesRow, 12);
+            atkSheid.Load(game.Content, "King_atk_S", 8, 1, 12);
             idleSheid.Load(game.Content, "King_idle_S", Frames, FramesRow, FramesPerSec);
 
             buttonRetry = game.Content.Load<Texture2D>("RetryButton");
@@ -414,6 +408,8 @@ namespace Castle_Knight
 
         public override void Draw(SpriteBatch theBatch, GameTime theTime)
         {
+            game.GraphicsDevice.Clear(Color.Black);
+
             DrawGameplay(theBatch, theTime);
 
             base.Draw(theBatch, theTime);
@@ -507,19 +503,58 @@ namespace Castle_Knight
 
                 if (gamefinish)
                 {
-                    MediaPlayer.IsMuted = true;
-                    Player.stop_move = true;
                     if (text == 7 && lasttimeFinish + delayfinish < theTime.TotalGameTime)
                     {
+                        Game1.soundOn = false;
+                        Player.stop_move = true;
                         ChatOn = true;
                     }
-                    if (text == 8 && gamefinish && lasttimeChat + _delayChat < theTime.TotalGameTime)
+                    if (text == 8 && gamefinish && lasttimeChat + _delayChat - TimeSpan.FromMilliseconds(6000) < theTime.TotalGameTime)
                     {
-                        resetValue = false;
-                        MediaPlayer.IsMuted = false;
-                        ChatOn = false;
-                        text = 7;
-                        ScreenEvent.Invoke(game.mTitleScreen, new EventArgs());
+                        Player.Position = new Vector2(1900, -1200);
+                        enemyBoss.Position = new Vector2(1530, 163);
+                        enemyGold.Position = new Vector2(1500, -900);
+                        enemyBoss.hp = 5;
+                        enemyBoss.died = false;
+                        enemyGold.hp = 5;
+                        enemyGold.died = false;
+
+                        if (lasttimeChat + _delayChat + TimeSpan.FromMilliseconds(6000) < theTime.TotalGameTime)
+                        {
+                            resetValue = false;
+                            Game1.soundOn = true;
+                            ChatOn = false;
+                            text = 7;
+                            ScreenEvent.Invoke(game.mTitleScreen, new EventArgs());
+                        }           
+                    }
+                }
+
+                
+                if (gamefinish && text == 8 && lasttimeChat + _delayChat - TimeSpan.FromMilliseconds(3000) < theTime.TotalGameTime)
+                {
+                    mFadeDelay -= theTime.ElapsedGameTime.TotalSeconds;
+                    if (mFadeDelay <= 0)
+                    {
+                        mFadeDelay = .035;
+                        mAlphaValue -= mFadeIncrement;
+                        if (mAlphaValue <= 0)
+                        {
+                            mAlphaValue = 0;
+                        }
+                    }
+                }
+                else if (gamefinish && lasttimeFinish + delayfinish < theTime.TotalGameTime)
+                {
+                    mFadeDelay -= theTime.ElapsedGameTime.TotalSeconds;
+                    if (mFadeDelay <= 0)
+                    {
+                        mFadeDelay = .035;
+                        mAlphaValue += mFadeIncrement;
+                        if (mAlphaValue >= 255)
+                        {
+                            mAlphaValue = 255;
+                        }
                     }
                 }
 
@@ -1249,7 +1284,7 @@ namespace Castle_Knight
                     {
                         if (text == 1)
                         {
-                            messages.Add(new DisplayMessage("Where is my brother? Bring my brother back.", TimeSpan.FromSeconds(5.0), new Vector2
+                            messages.Add(new DisplayMessage("Where is my brother? \n   Bring my brother back.", TimeSpan.FromSeconds(5.0), new Vector2
                                 (290 - camera.ViewMatrix.Translation.X, 310 + messages.Count * 30 - camera.ViewMatrix.Translation.Y), Color.White));
                             text += 1;
                             _text = "P";
@@ -1266,7 +1301,7 @@ namespace Castle_Knight
                         }
                         else if (text == 3)
                         {
-                            messages.Add(new DisplayMessage("You don't seem to remember anything, right? \nI'm just waiting for you.", TimeSpan.FromSeconds(5.0), new Vector2
+                            messages.Add(new DisplayMessage("I'm just waiting for you.\n  You don't seem to remember anything, right?", TimeSpan.FromSeconds(5.0), new Vector2
                                 (50 - camera.ViewMatrix.Translation.X, 310 + messages.Count * 30 - camera.ViewMatrix.Translation.Y), Color.White));
                             text += 1;
 
@@ -1284,7 +1319,7 @@ namespace Castle_Knight
                         }
                         else if (text == 5)
                         {
-                            messages.Add(new DisplayMessage("Ask yourself or you can kill me first. Come in.", TimeSpan.FromSeconds(5.0), new Vector2
+                            messages.Add(new DisplayMessage("Ask yourself or kill me first. Come in.", TimeSpan.FromSeconds(5.0), new Vector2
                                 (50 - camera.ViewMatrix.Translation.X, 310 + messages.Count * 30 - camera.ViewMatrix.Translation.Y), Color.White));
                             text += 1;
 
@@ -1308,12 +1343,6 @@ namespace Castle_Knight
                             _text = "F";
 
                             lasttimeChat = theTime.TotalGameTime;
-                        }
-                        else if (text == 8 && lasttimeChat + _delayChat < theTime.TotalGameTime)
-                        {
-                            lasttimeFinish2 = theTime.TotalGameTime;
-                            ChatOn = false;
-                            gamePause = false;
                         }
                     }                
                 }
@@ -1438,30 +1467,33 @@ namespace Castle_Knight
                 }
 
                 #region HeartDraw
-                for (int i = 0; i < Player.hp; i++)
+                if (!gamefinish)
                 {
-                    theBatch.Draw(Heart, Player.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.White);
-                }
-                for (int i = 0; i < enemyGold.hp; i++)
-                {
-                    theBatch.Draw(Heart, enemyGold.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.Brown);
-                }
-                if (enemyGold.died)
-                {
-                    for (int i = 0; i < enemyArcherR.hp; i++)
+                    for (int i = 0; i < Player.hp; i++)
                     {
-                        theBatch.Draw(Heart, enemyArcherR.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.Brown);
+                        theBatch.Draw(Heart, Player.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.White);
                     }
-                }
-                for (int i = 0; i < enemyBoss.hp; i++)
-                {
-                    theBatch.Draw(Heart, enemyBoss.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.Brown);
-                }
+                    for (int i = 0; i < enemyGold.hp; i++)
+                    {
+                        theBatch.Draw(Heart, enemyGold.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.Brown);
+                    }
+                    if (enemyGold.died)
+                    {
+                        for (int i = 0; i < enemyArcherR.hp; i++)
+                        {
+                            theBatch.Draw(Heart, enemyArcherR.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.Brown);
+                        }
+                    }
+                    for (int i = 0; i < enemyBoss.hp; i++)
+                    {
+                        theBatch.Draw(Heart, enemyBoss.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.Brown);
+                    }
+                }    
 
                 #endregion
 
                 #region PlayerDraw
-                if (Player.died == false && !gamefinish)
+                if (Player.died == false)
                 {
                     if (!Player.getHit)
                     {
@@ -1513,7 +1545,7 @@ namespace Castle_Knight
                         }
                     }
                 }
-                else if (Player.died && text != 8)
+                else
                 {
                     Player.atkAni.Pause(0, 0);
                     Player.defAni.Pause(0, 0);
@@ -1523,17 +1555,6 @@ namespace Castle_Knight
                     Player.idleAni.Pause(0, 0);
                     Player.diedAni.DrawFrame(theBatch, Player.Position);
                 }
-                else if (!Player.died && text != 8 && gamefinish)
-                {
-                    Player.atkAni.Pause(0, 0);
-                    Player.defAni.Pause(0, 0);
-                    Player.specialAni.Pause(0, 0);
-                    Player.specialAtkAni.Pause(0, 0);
-                    Player.walkAni.Pause(0, 0);
-                    Player.idleAni.Pause(0, 0);
-                    Player.diedAni.DrawFrame(theBatch, Player.Position);
-                }
-
                 #endregion
 
                 #region EnemyDraw
@@ -1663,18 +1684,46 @@ namespace Castle_Knight
                 if (gamePause && Switch == "InGame3" && !ChatOn)
                 {
                     theBatch.Draw(pausePic, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
-                    theBatch.Draw(pausePic, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
-                    theBatch.Draw(buttonRetry, new Vector2(435 - camera.ViewMatrix.Translation.X, 180 - camera.ViewMatrix.Translation.Y), Color.White);
-                    theBatch.Draw(buttonExit, new Vector2(435 - camera.ViewMatrix.Translation.X, 320 - camera.ViewMatrix.Translation.Y), Color.White);
-                    theBatch.Draw(ButtonGuide, new Vector2(860 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
-                    buttonSelect.DrawFrame(theBatch, new Vector2(select_Pos.X - camera.ViewMatrix.Translation.X, select_Pos.Y - camera.ViewMatrix.Translation.Y));
-                    if (Game1.soundOn)
+                    if (select_Pos.Y == 185)
                     {
-                        theBatch.Draw(buttonSoundOn, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
+                        theBatch.Draw(buttonRetry, new Vector2(427 - camera.ViewMatrix.Translation.X, 175 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
                     }
-                    else if (!Game1.soundOn)
+                    else
                     {
-                        theBatch.Draw(buttonSoundOff, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
+                        theBatch.Draw(buttonRetry, new Vector2(435 - camera.ViewMatrix.Translation.X, 180 - camera.ViewMatrix.Translation.Y), Color.White);
+                    }
+                    if (select_Pos.Y == 325)
+                    {
+                        theBatch.Draw(buttonExit, new Vector2(427 - camera.ViewMatrix.Translation.X, 315 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                    }
+                    else
+                    {
+                        theBatch.Draw(buttonExit, new Vector2(435 - camera.ViewMatrix.Translation.X, 320 - camera.ViewMatrix.Translation.Y), Color.White);
+
+                    }
+                    theBatch.Draw(ButtonGuide, new Vector2(860 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
+                    buttonSelect.DrawFrame(theBatch, new Vector2(select_Pos.X - 10 - camera.ViewMatrix.Translation.X, select_Pos.Y - camera.ViewMatrix.Translation.Y));
+                    if (select_Pos.Y == 255)
+                    {
+                        if (Game1.soundOn)
+                        {
+                            theBatch.Draw(buttonSoundOn, new Vector2(427 - camera.ViewMatrix.Translation.X, 245 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                        }
+                        else if (!Game1.soundOn)
+                        {
+                            theBatch.Draw(buttonSoundOff, new Vector2(427 - camera.ViewMatrix.Translation.X, 245 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                        }
+                    }
+                    else
+                    {
+                        if (Game1.soundOn)
+                        {
+                            theBatch.Draw(buttonSoundOn, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
+                        }
+                        else if (!Game1.soundOn)
+                        {
+                            theBatch.Draw(buttonSoundOff, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
+                        }
                     }
                 }
                 else if (!gamePause && !ChatOn)
@@ -1693,7 +1742,7 @@ namespace Castle_Knight
                 }
                 else if (gamePause && ChatOn && _text == "F")
                 {
-                    theBatch.Draw(fChat, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
+                    theBatch.Draw(fChat, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), new Color((byte)255, (byte)255, (byte)255, (byte)MathHelper.Clamp(mAlphaValue, 0, 255)));
                     DrawMessages(theBatch);
                 }
 
@@ -2071,6 +2120,5 @@ namespace Castle_Knight
                 }
             }
         }
-
     }
 }

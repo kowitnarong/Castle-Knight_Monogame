@@ -66,7 +66,7 @@ namespace Castle_Knight
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.White);
 
             mCurrentScreen.Draw(spriteBatch , gameTime);
             

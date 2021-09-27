@@ -14,6 +14,25 @@ namespace Castle_Knight
 {
     public class GameplayScreen : screen
     {
+        struct DisplayMessage
+        {
+            public string Message;
+            public TimeSpan DisplayTime;
+            public int CurentIndex;
+            public Vector2 Position;
+            public string DrawnMessage;
+            public Color DrawColor;
+            public DisplayMessage(string message, TimeSpan displayTime, Vector2 position, Color color)
+            {
+                Message = message;
+                DisplayTime = displayTime;
+                CurentIndex = 0;
+                Position = position;
+                DrawnMessage = string.Empty;
+                DrawColor = color;
+            }
+        }
+        List<DisplayMessage> messages = new List<DisplayMessage>();
         bool resetValue = false;
 
         Player Player = new Player();
@@ -51,6 +70,10 @@ namespace Castle_Knight
         private AnimatedTexture glass;
         private AnimatedTexture effect1;
         private AnimatedTexture effect2;
+        bool ChatOn = true;
+        int text = 1;
+        string _text;
+        Texture2D fChat;
 
         Texture2D buttonRetry;
         Texture2D buttonSoundOn;
@@ -144,6 +167,10 @@ namespace Castle_Knight
         // time effec1
         private static readonly TimeSpan effectfadeOut = TimeSpan.FromMilliseconds(30);
         private TimeSpan lasttimeEffect;
+
+        // time chat
+        private static readonly TimeSpan delayChat = TimeSpan.FromMilliseconds(2500);
+        private TimeSpan lasttimeChat;
 
         // Enemy time
         private static readonly TimeSpan eDelayAtk = TimeSpan.FromMilliseconds(3000);
@@ -337,6 +364,7 @@ namespace Castle_Knight
             buttonSoundOff = game.Content.Load<Texture2D>("SfxOff");
             buttonExit = game.Content.Load<Texture2D>("ExitButton");
             buttonSelect.Load(game.Content, "Select", 4, 1, 5);
+            fChat = game.Content.Load<Texture2D>("FinishChat");
 
             Player.walkAni.Pause();
             #endregion
@@ -411,6 +439,8 @@ namespace Castle_Knight
 
         public override void Draw(SpriteBatch theBatch, GameTime theTime)
         {
+            game.GraphicsDevice.Clear(Color.Black);
+
             DrawGameplay(theBatch, theTime);
             
             base.Draw(theBatch, theTime);
@@ -1369,7 +1399,38 @@ namespace Castle_Knight
                         camera.Update(Camera_Pos);
                     }
                 }
+
+                if (ChatOn)
+                {
+                    gamePause = true;
+                }
+
+                if (ChatOn)
+                {
+                    if (lasttimeChat + delayChat < theTime.TotalGameTime)
+                    {
+                        if (text == 1)
+                        {
+                            messages.Add(new DisplayMessage("   A wandering knight passed out in the forest. He couldn't remember anything.\nBut he had a memory that He had to help his brother in a mysterious castle.\nArriving at a point near the castle met someone who was trying to get rid of him.\nHe must fight and overcome obstacles to save his brother.", TimeSpan.FromSeconds(18.0), new Vector2
+                                (75 - camera.ViewMatrix.Translation.X, 150 + messages.Count * 30 - camera.ViewMatrix.Translation.Y), Color.White));
+                            text += 1;
+
+                            _text = "F";
+
+                            lasttimeChat = theTime.TotalGameTime;
+                        }
+                        else if (text == 2 && lasttimeChat + TimeSpan.FromSeconds(18.0) < theTime.TotalGameTime)
+                        {
+                            ChatOn = false;
+                            gamePause = false;
+
+                            lasttimeChat = theTime.TotalGameTime;
+                        }
+                    }
+                }
             }
+
+            UpdateMessages(theTime);
 
             #region DiedPlayer
 
@@ -1720,7 +1781,7 @@ namespace Castle_Knight
                     theBatch.DrawString(ArialFont, strDevMode, new Vector2(880 - camera.ViewMatrix.Translation.X, 435 - camera.ViewMatrix.Translation.Y), Color.Red);
                 }
 
-                if (gamePause && Switch == "InGame1")
+                if (gamePause && Switch == "InGame1" && !ChatOn)
                 {
                     theBatch.Draw(pausePic, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
                     if (select_Pos.Y == 185)
@@ -1765,9 +1826,14 @@ namespace Castle_Knight
                         }
                     }
                 }
-                else if (!gamePause)
+                else if (!gamePause && !ChatOn)
                 {
                     theBatch.Draw(ButtonMenu, new Vector2(860 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
+                }
+                else if (gamePause && ChatOn && _text == "F")
+                {
+                    theBatch.Draw(fChat, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
+                    DrawMessages(theBatch);
                 }
                 theBatch.End();
             }
@@ -1932,7 +1998,7 @@ namespace Castle_Knight
             keyboardState = Keyboard.GetState();
             if (lastTimePause + intervalBetweenPause < theTime.TotalGameTime)
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !Player.died)
+                if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !Player.died && !ChatOn)
                 {
                     if (gamePause == false)
                     {
@@ -2005,7 +2071,7 @@ namespace Castle_Knight
                     lastTimePause = theTime.TotalGameTime;
                 }
             }
-            if (gamePause)
+            if (gamePause && !ChatOn)
             {
                 if (keyboardState.IsKeyDown(Keys.Down) && stopPress == false)
                 {
@@ -2105,5 +2171,41 @@ namespace Castle_Knight
             }
         }
 
+        void UpdateMessages(GameTime gameTime)
+        {
+            if (messages.Count > 0)
+            {
+                for (int i = 0; i < messages.Count; i++)
+                {
+                    DisplayMessage dm = messages[i];
+                    dm.DisplayTime -= gameTime.ElapsedGameTime;
+                    if (dm.DisplayTime <= TimeSpan.Zero)
+                    {
+                        messages.RemoveAt(i);
+                    }
+                    else
+                    {
+                        messages[i] = dm;
+                    }
+                }
+            }
+        }
+        void DrawMessages(SpriteBatch theBatch)
+        {
+            if (messages.Count > 0)
+            {
+                for (int i = 0; i < messages.Count; i++)
+                {
+                    DisplayMessage dm = messages[i];
+                    dm.DrawnMessage += dm.Message[dm.CurentIndex].ToString();
+                    theBatch.DrawString(ArialFont, dm.DrawnMessage, dm.Position, dm.DrawColor);
+                    if (dm.CurentIndex != dm.Message.Length - 1)
+                    {
+                        dm.CurentIndex++;
+                        messages[i] = dm;
+                    }
+                }
+            }
+        }
     }
 }
