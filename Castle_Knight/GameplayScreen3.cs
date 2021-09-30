@@ -512,12 +512,15 @@ namespace Castle_Knight
                     if (text == 8 && gamefinish && lasttimeChat + _delayChat - TimeSpan.FromMilliseconds(6000) < theTime.TotalGameTime)
                     {
                         Player.Position = new Vector2(1900, -1200);
+                        Camera_Pos.X = 1353;
                         enemyBoss.Position = new Vector2(1530, 163);
                         enemyGold.Position = new Vector2(1500, -900);
                         enemyBoss.hp = 5;
                         enemyBoss.died = false;
                         enemyGold.hp = 5;
                         enemyGold.died = false;
+
+                        camera.Update(Camera_Pos);
 
                         if (lasttimeChat + _delayChat + TimeSpan.FromMilliseconds(6000) < theTime.TotalGameTime)
                         {
@@ -1278,6 +1281,9 @@ namespace Castle_Knight
                         camera.Update(Camera_Pos);
                     }
                 }
+
+                camera.Update(Camera_Pos);
+
                 if (ChatOn)
                 {
                     if (lasttimeChat + delayChat < theTime.TotalGameTime)
@@ -1336,7 +1342,7 @@ namespace Castle_Knight
                         }
                         else if (text == 7)
                         {
-                            messages.Add(new DisplayMessage("Devil: You did your job very well, my brother. \n      Well, I give you strength and I will rule you for my great goal. \n       You will sleep well. \n\nPlayer: Yes sir", TimeSpan.FromSeconds(10.0), new Vector2
+                            messages.Add(new DisplayMessage("Devil: You did your job very well, my brother. \n      Well, I give you strength and I will rule you for my great goal. \n       You will sleep well. \n\nPlayer: Yes sir", TimeSpan.FromSeconds(8.0), new Vector2
                                 (50 - camera.ViewMatrix.Translation.X, 60 + messages.Count * 30 - camera.ViewMatrix.Translation.Y), Color.White));
                             text = 8;
 
