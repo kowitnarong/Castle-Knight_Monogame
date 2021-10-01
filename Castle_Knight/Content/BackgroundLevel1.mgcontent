@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/BackgroundLevel1.mp3</SourceFile>
+  <SourceTime>2021-09-18T04:18:28.0906892+07:00</SourceTime>
+  <DestFile>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/BackgroundLevel1.xnb</DestFile>
+  <DestTime>2021-10-01T18:19:55.6690358+07:00</DestTime>
+  <Importer>Mp3Importer</Importer>
+  <ImporterTime>2020-08-10T23:17:54+07:00</ImporterTime>
+  <Processor>SongProcessor</Processor>
+  <ProcessorTime>2020-08-10T23:17:54+07:00</ProcessorTime>
+  <Parameters>
+    <Key>Quality</Key>
+    <Value>Best</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput>
+    <string>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/BackgroundLevel1.wma</string>
+  </BuildOutput>
+</PipelineBuildEvent>

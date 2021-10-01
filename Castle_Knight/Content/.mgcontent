@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Profile>Reach</Profile>
+  <Platform>Windows</Platform>
+  <Config />
+  <SourceFiles>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Archer_idle.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Archer_idle2.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/ArcherAni.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/ArcherAni2.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/ArialFont.spritefont</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Arrow.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Arrow2.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/ArrowSound.wav</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/atk_special.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/BackgroundLevel1.mp3</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/BackgroundLevel2.mp3</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Bat.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/bg_level1.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/bg_level1_1.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/bg_level1_2.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/bigFireBall.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/bossChat.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/button-15.wav</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/ButtonGuide.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/ButtonMenu.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/cat.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Cloud1.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Cloud2.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Credit.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Dead.wav</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Drink.wav</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/effect1.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/effect2.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/enemy_atk.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/enemy_idle.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/enemy_walk.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Exit.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/ExitButton.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/FinishChat.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Fire.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/fireBall.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Game over.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/gameTitle.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Ghost.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Glass.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/goldEneAtkWave.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/goldEnemy.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/goldEnemyAtk.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Heart.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/hp_Potion.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_atk.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_atk_S.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_idle.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_idle_S.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_walk.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_walk_S.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Load.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/loadScreen.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Logo_game.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Map1.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Map1_2.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Map1_3.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Map3_1.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Map3_2.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/noLoad.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/p_died.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/p_test.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/p_Title.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/p_Walk_Test.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/pause.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/player_atk.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/player_def.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/player_special.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/playerChat.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/PlayerDead.wav</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/rabbit.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/redEnemy.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/redEnemyAtk.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/RetryButton.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Select.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/SfxOff.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/SfxOn.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/sound1.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/sound2.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/special_atk.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/special_atk2.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/special_atk3.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/special_atk4.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/special_atk5.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Start.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/SwordBlock.wav</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/SwordHit.wav</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/SwordKillpower.wav</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/SwordWhoosh.wav</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Touch.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/WalkSound.wav</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/WalkSound5.wav</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/wizard.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/wizard_idle.png</File>
+  </SourceFiles>
+  <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+  </DestFiles>
+</SourceFileCollection>
