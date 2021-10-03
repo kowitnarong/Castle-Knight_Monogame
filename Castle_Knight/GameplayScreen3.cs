@@ -94,6 +94,7 @@ namespace Castle_Knight
         Texture2D BG1_1;
         Texture2D BG1_2;
         Texture2D Heart;
+        Texture2D Heart2;
         Texture2D potion;
         // Special attack
         Texture2D special1;
@@ -311,6 +312,7 @@ namespace Castle_Knight
             BG1_1 = game.Content.Load<Texture2D>("Map3_1");
             BG1_2 = game.Content.Load<Texture2D>("Map3_2");
             Heart = game.Content.Load<Texture2D>("Heart");
+            Heart2 = game.Content.Load<Texture2D>("Heart_Boss");
             gameOver = game.Content.Load<Texture2D>("Game over");
             potion = game.Content.Load<Texture2D>("hp_Potion");
             special1 = game.Content.Load<Texture2D>("special_atk");
@@ -598,7 +600,7 @@ namespace Castle_Knight
                         for (int i = 0; i < 5; i++)
                         {
                             enemyBoss.Heart_Pos[i].X = (enemyBoss.Position.X + 98) - (i + 1) * -22;
-                            enemyBoss.Heart_Pos[i].Y = enemyBoss.Position.Y - 15;
+                            enemyBoss.Heart_Pos[i].Y = enemyBoss.Position.Y + 10;
                         }
 
                         #endregion
@@ -1492,7 +1494,7 @@ namespace Castle_Knight
                     }
                     for (int i = 0; i < enemyBoss.hp; i++)
                     {
-                        theBatch.Draw(Heart, enemyBoss.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.Brown);
+                        theBatch.Draw(Heart2, enemyBoss.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.White);
                     }
                 }    
 

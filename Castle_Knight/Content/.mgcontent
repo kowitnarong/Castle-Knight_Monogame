@@ -48,6 +48,7 @@
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/goldEnemy.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/goldEnemyAtk.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Heart.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Heart_Boss.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/hp_Potion.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_atk.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_atk_S.png</File>
@@ -100,6 +101,7 @@
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/wizard_idle.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

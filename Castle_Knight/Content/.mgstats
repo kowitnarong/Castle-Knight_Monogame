@@ -43,6 +43,7 @@ Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Siz
 "D:/golf/Game dev/Castle_knight/Castle_Knight/Content/goldEnemy.png","D:/golf/Game dev/Castle_knight/Castle_Knight/Content/goldEnemy.xnb","TextureProcessor","Texture2DContent",3815,409685,0.0213621
 "D:/golf/Game dev/Castle_knight/Castle_Knight/Content/goldEnemyAtk.png","D:/golf/Game dev/Castle_knight/Castle_Knight/Content/goldEnemyAtk.xnb","TextureProcessor","Texture2DContent",8248,921685,0.0319719
 "D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Heart.png","D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Heart.xnb","TextureProcessor","Texture2DContent",306,4181,0.0082622
+"D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Heart_Boss.png","D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Heart_Boss.xnb","TextureProcessor","Texture2DContent",276,4181,0.3743219
 "D:/golf/Game dev/Castle_knight/Castle_Knight/Content/hp_Potion.png","D:/golf/Game dev/Castle_knight/Castle_Knight/Content/hp_Potion.xnb","TextureProcessor","Texture2DContent",351,4181,0.0094616
 "D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_atk.png","D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_atk.xnb","TextureProcessor","Texture2DContent",11216,2162773,0.0597555
 "D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_atk_S.png","D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_atk_S.xnb","TextureProcessor","Texture2DContent",18381,2162773,0.0603934
