@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SourceFile>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/ExitButton.png</SourceFile>
-  <SourceTime>2021-09-23T02:57:51.1379234+07:00</SourceTime>
+  <SourceTime>2021-10-04T00:56:50.5045906+07:00</SourceTime>
   <DestFile>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/ExitButton.xnb</DestFile>
-  <DestTime>2021-10-01T18:20:03.6930606+07:00</DestTime>
+  <DestTime>2021-10-04T01:45:59.0853438+07:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T23:17:54+07:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

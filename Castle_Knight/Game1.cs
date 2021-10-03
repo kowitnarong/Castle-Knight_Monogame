@@ -21,6 +21,10 @@ namespace Castle_Knight
         public screen mCurrentScreen;
 
         public static bool soundOn = true;
+        public static bool MusicOn = true;
+        public static bool SFXOn = true;
+        public static string State = "Title";
+        public static bool BackMenu = false;
 
         public Game1()
         {

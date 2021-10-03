@@ -13,6 +13,7 @@
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Arrow2.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/ArrowSound.wav</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/atk_special.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/BackButton.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/BackgroundLevel1.mp3</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/BackgroundLevel2.mp3</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Bat.png</File>
@@ -49,6 +50,7 @@
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/goldEnemyAtk.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Heart.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Heart_Boss.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/HeartBlack.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/hp_Potion.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_atk.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/King_atk_S.png</File>
@@ -64,6 +66,8 @@
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Map1_3.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Map3_1.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Map3_2.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/MusicOFF.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/MusicON.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/noLoad.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/p_died.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/p_test.png</File>
@@ -80,6 +84,7 @@
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/redEnemyAtk.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/RetryButton.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Select.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Setting.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/SfxOff.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/SfxOn.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/sound1.png</File>
@@ -90,6 +95,7 @@
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/special_atk4.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/special_atk5.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/Start.png</File>
+    <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/StartChat.png</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/SwordBlock.wav</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/SwordHit.wav</File>
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/SwordKillpower.wav</File>
@@ -101,6 +107,12 @@
     <File>D:/golf/Game dev/Castle_knight/Castle_Knight/Content/wizard_idle.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

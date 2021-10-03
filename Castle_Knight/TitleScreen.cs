@@ -57,8 +57,11 @@ namespace Castle_Knight
         private static readonly TimeSpan intervalBetweenSelect = TimeSpan.FromMilliseconds(250);
         private TimeSpan lastTimeSelect;
 
-        private static readonly TimeSpan intervalBetweenLoad = TimeSpan.FromMilliseconds(2500);
+        private static readonly TimeSpan intervalBetweenLoad = TimeSpan.FromMilliseconds(1000);
         private TimeSpan lastTimeLoad;
+
+        private static readonly TimeSpan DelayBack = TimeSpan.FromMilliseconds(2500);
+        private TimeSpan lastTimeBack;
 
         private TimeSpan lastTimeLogo;
 
@@ -116,6 +119,11 @@ namespace Castle_Knight
         }
         public override void Update(GameTime theTime)
         {
+            if (Game1.BackMenu)
+            {
+                lastTimeBack = theTime.TotalGameTime;
+                Game1.BackMenu = false;
+            }
             float elapsed = (float)theTime.ElapsedGameTime.TotalSeconds;
 
             if (!logoOn)
@@ -162,14 +170,31 @@ namespace Castle_Knight
                 p_title.UpdateFrame(elapsed);
                 buttonSelect.UpdateFrame(elapsed);
 
-                if (Game1.soundOn)
+                if (Game1.State == "Title")
+                {
+                    if (!Game1.SFXOn)
+                    {
+                        Game1.soundOn = false;
+                    }
+                    else if (Game1.SFXOn)
+                    {
+                        Game1.soundOn = true;
+                    }
+                }
+                if (Game1.MusicOn)
                 {
                     MediaPlayer.IsMuted = true;
+                }
+                else if (!Game1.MusicOn)
+                {
+                    MediaPlayer.IsMuted = true;
+                }
+                if (Game1.SFXOn)
+                {
                     SoundEffect.MasterVolume = 0.5f;
                 }
-                else if (!Game1.soundOn)
+                else if (!Game1.SFXOn)
                 {
-                    MediaPlayer.IsMuted = true;
                     SoundEffect.MasterVolume = 0f;
                 }
 
@@ -195,13 +220,13 @@ namespace Castle_Knight
                     {
                         if (Game1.soundOn)
                         {
-                            Game1.soundOn = false;
+                            Game1.SFXOn = false;
                             select = 0;
-
                         }
                         else if (!Game1.soundOn)
                         {
-                            Game1.soundOn = true;
+                            Game1.SFXOn = true;
+                            select = 0;
                         }
 
                         lastTimeSelect = theTime.TotalGameTime;
@@ -240,7 +265,7 @@ namespace Castle_Knight
                         }
                     }
                 }
-                else if (keyboardState.IsKeyDown(Keys.A) && stopPress == false && !Credit)
+                else if (keyboardState.IsKeyDown(Keys.A) && stopPress == false && !Credit && lastTimeBack + DelayBack < theTime.TotalGameTime)
                 {
                     stopPress = true;
                     soundEffects.Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
@@ -278,7 +303,6 @@ namespace Castle_Knight
                             ScreenEvent.Invoke(game.mGameplayScreen, new EventArgs());
                             return;
                         }
-
                     }
                     else if (select == 2)
                     {

@@ -47,14 +47,19 @@ namespace Castle_Knight
         private AnimatedTexture loading;
         private AnimatedTexture effect1;
 
+        Texture2D buttonBack;
         Texture2D buttonRetry;
         Texture2D buttonSoundOn;
         Texture2D buttonSoundOff;
+        Texture2D buttonSetting;
+        Texture2D buttonMusicOn;
+        Texture2D buttonMusicOFF;
         Texture2D buttonExit;
         private AnimatedTexture buttonSelect;
         Vector2 select_Pos;
         int select = 0;
         bool stopPress = false;
+        bool setting = false;
 
         // Sound
         Song bgSong2;
@@ -69,6 +74,7 @@ namespace Castle_Knight
         Texture2D BG1_2;
         private AnimatedTexture BG1_3;
         Texture2D Heart;
+        Texture2D HeartBlack;
         Texture2D potion;
         // Special attack
         Texture2D special1;
@@ -297,6 +303,7 @@ namespace Castle_Knight
             BG1_2 = game.Content.Load<Texture2D>("Map1_2");
             BG1_3.Load(game.Content, "Map1_3", 1, 2, 6);
             Heart = game.Content.Load<Texture2D>("Heart");
+            HeartBlack = game.Content.Load<Texture2D>("HeartBlack");
             gameOver = game.Content.Load<Texture2D>("Game over");
             potion = game.Content.Load<Texture2D>("hp_Potion");
             special1 = game.Content.Load<Texture2D>("special_atk");
@@ -329,9 +336,13 @@ namespace Castle_Knight
             enemyBlack2.idleAni.Load(game.Content, "enemy_idle", Frames, FramesRow, FramesPerSec);
             enemyBlack2.atkAni.Load(game.Content, "enemy_atk", e_atk_Frames, e_atk_FramesRow, e_atk_FramesPerSec);
 
+            buttonBack = game.Content.Load<Texture2D>("BackButton");
             buttonRetry = game.Content.Load<Texture2D>("RetryButton");
             buttonSoundOn = game.Content.Load<Texture2D>("SfxOn");
             buttonSoundOff = game.Content.Load<Texture2D>("SfxOff");
+            buttonMusicOn = game.Content.Load<Texture2D>("MusicON");
+            buttonMusicOFF = game.Content.Load<Texture2D>("MusicOFF");
+            buttonSetting = game.Content.Load<Texture2D>("Setting");
             buttonExit = game.Content.Load<Texture2D>("ExitButton");
             buttonSelect.Load(game.Content, "Select", 4, 1, 5);
 
@@ -429,6 +440,7 @@ namespace Castle_Knight
             load = true;
             loadOn = false;
             Switch = "loading";
+            setting = false;
 
             PauseTime = TimeSpan.FromMilliseconds(0);
             PauseTime2 = TimeSpan.FromMilliseconds(0);
@@ -477,6 +489,7 @@ namespace Castle_Knight
 
         private void GameplayUpdate(GameTime theTime, float elapsed)
         {
+            Game1.State = "Game2";
             if (load)
             {
                 menuLoading = true;
@@ -490,14 +503,20 @@ namespace Castle_Knight
                     MediaPlayer.Play(bgSong2);
                     bg2Song = true;
                 }
-                if (Game1.soundOn)
+                if (Game1.MusicOn)
                 {
                     MediaPlayer.IsMuted = false;
-                    SoundEffect.MasterVolume = 0.5f;
                 }
-                else if (!Game1.soundOn)
+                else if (!Game1.MusicOn)
                 {
                     MediaPlayer.IsMuted = true;
+                }
+                if (Game1.SFXOn)
+                {
+                    SoundEffect.MasterVolume = 0.5f;
+                }
+                else if (!Game1.SFXOn)
+                {
                     SoundEffect.MasterVolume = 0f;
                     if (walkSoundInstance.State != SoundState.Stopped) { walkSoundInstance.Stop(); }
                 }
@@ -1512,7 +1531,7 @@ namespace Castle_Knight
                 }
                 for (int i = 0; i < enemyArcher.hp; i++)
                 {
-                    theBatch.Draw(Heart, enemyArcher.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.Black);
+                    theBatch.Draw(HeartBlack, enemyArcher.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.White);
                 }
                 for (int i = 0; i < enemyGold.hp; i++)
                 {
@@ -1524,7 +1543,7 @@ namespace Castle_Knight
                 }
                 for (int i = 0; i < enemyBlack2.hp; i++)
                 {
-                    theBatch.Draw(Heart, enemyBlack2.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.Black);
+                    theBatch.Draw(HeartBlack, enemyBlack2.Heart_Pos[i], new Rectangle(0, 0, 32, 32), Color.White);
                 }
 
                 #endregion
@@ -1712,45 +1731,91 @@ namespace Castle_Knight
                 if (gamePause && Switch == "InGame2")
                 {
                     theBatch.Draw(pausePic, new Vector2(0 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
-                    if (select_Pos.Y == 185)
+                    if (setting)
                     {
-                        theBatch.Draw(buttonRetry, new Vector2(427 - camera.ViewMatrix.Translation.X, 175 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
-                    }
-                    else
-                    {
-                        theBatch.Draw(buttonRetry, new Vector2(435 - camera.ViewMatrix.Translation.X, 180 - camera.ViewMatrix.Translation.Y), Color.White);
-                    }
-                    if (select_Pos.Y == 325)
-                    {
-                        theBatch.Draw(buttonExit, new Vector2(427 - camera.ViewMatrix.Translation.X, 315 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
-                    }
-                    else
-                    {
-                        theBatch.Draw(buttonExit, new Vector2(435 - camera.ViewMatrix.Translation.X, 320 - camera.ViewMatrix.Translation.Y), Color.White);
+                        buttonSelect.DrawFrame(theBatch, new Vector2(select_Pos.X - 10 - camera.ViewMatrix.Translation.X, select_Pos.Y - camera.ViewMatrix.Translation.Y));
+                        if (select_Pos.Y == 185)
+                        {
+                            if (Game1.MusicOn)
+                            {
+                                theBatch.Draw(buttonMusicOn, new Vector2(427 - camera.ViewMatrix.Translation.X, 175 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                            }
+                            else if (!Game1.MusicOn)
+                            {
+                                theBatch.Draw(buttonMusicOFF, new Vector2(427 - camera.ViewMatrix.Translation.X, 175 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                            }
+                        }
+                        else
+                        {
+                            if (Game1.MusicOn)
+                            {
+                                theBatch.Draw(buttonMusicOn, new Vector2(435 - camera.ViewMatrix.Translation.X, 180 - camera.ViewMatrix.Translation.Y), Color.White);
+                            }
+                            else if (!Game1.MusicOn)
+                            {
+                                theBatch.Draw(buttonMusicOFF, new Vector2(435 - camera.ViewMatrix.Translation.X, 180 - camera.ViewMatrix.Translation.Y), Color.White);
+                            }
+                        }
+                        if (select_Pos.Y == 255)
+                        {
+                            if (Game1.SFXOn)
+                            {
+                                theBatch.Draw(buttonSoundOn, new Vector2(427 - camera.ViewMatrix.Translation.X, 245 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                            }
+                            else if (!Game1.SFXOn)
+                            {
+                                theBatch.Draw(buttonSoundOff, new Vector2(427 - camera.ViewMatrix.Translation.X, 245 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                            }
+                        }
+                        else
+                        {
+                            if (Game1.SFXOn)
+                            {
+                                theBatch.Draw(buttonSoundOn, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
+                            }
+                            else if (!Game1.SFXOn)
+                            {
+                                theBatch.Draw(buttonSoundOff, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
+                            }
+                        }
+                        if (select_Pos.Y == 325)
+                        {
+                            theBatch.Draw(buttonBack, new Vector2(427 - camera.ViewMatrix.Translation.X, 315 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                        }
+                        else
+                        {
+                            theBatch.Draw(buttonBack, new Vector2(435 - camera.ViewMatrix.Translation.X, 320 - camera.ViewMatrix.Translation.Y), Color.White);
 
-                    }
-                    theBatch.Draw(ButtonGuide, new Vector2(860 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
-                    buttonSelect.DrawFrame(theBatch, new Vector2(select_Pos.X - 10 - camera.ViewMatrix.Translation.X, select_Pos.Y - camera.ViewMatrix.Translation.Y));
-                    if (select_Pos.Y == 255)
-                    {
-                        if (Game1.soundOn)
-                        {
-                            theBatch.Draw(buttonSoundOn, new Vector2(427 - camera.ViewMatrix.Translation.X, 245 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
-                        }
-                        else if (!Game1.soundOn)
-                        {
-                            theBatch.Draw(buttonSoundOff, new Vector2(427 - camera.ViewMatrix.Translation.X, 245 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
                         }
                     }
-                    else
+                    else if (!setting)
                     {
-                        if (Game1.soundOn)
+                        if (select_Pos.Y == 185)
                         {
-                            theBatch.Draw(buttonSoundOn, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
+                            theBatch.Draw(buttonRetry, new Vector2(427 - camera.ViewMatrix.Translation.X, 175 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
                         }
-                        else if (!Game1.soundOn)
+                        else
                         {
-                            theBatch.Draw(buttonSoundOff, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
+                            theBatch.Draw(buttonRetry, new Vector2(435 - camera.ViewMatrix.Translation.X, 180 - camera.ViewMatrix.Translation.Y), Color.White);
+                        }
+                        if (select_Pos.Y == 325)
+                        {
+                            theBatch.Draw(buttonExit, new Vector2(427 - camera.ViewMatrix.Translation.X, 315 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                        }
+                        else
+                        {
+                            theBatch.Draw(buttonExit, new Vector2(435 - camera.ViewMatrix.Translation.X, 320 - camera.ViewMatrix.Translation.Y), Color.White);
+
+                        }
+                        theBatch.Draw(ButtonGuide, new Vector2(860 - camera.ViewMatrix.Translation.X, 0 - camera.ViewMatrix.Translation.Y), Color.White);
+                        buttonSelect.DrawFrame(theBatch, new Vector2(select_Pos.X - 10 - camera.ViewMatrix.Translation.X, select_Pos.Y - camera.ViewMatrix.Translation.Y));
+                        if (select_Pos.Y == 255)
+                        {
+                            theBatch.Draw(buttonSetting, new Vector2(427 - camera.ViewMatrix.Translation.X, 245 - camera.ViewMatrix.Translation.Y), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+                        }
+                        else
+                        {
+                            theBatch.Draw(buttonSetting, new Vector2(435 - camera.ViewMatrix.Translation.X, 250 - camera.ViewMatrix.Translation.Y), Color.White);
                         }
                     }
                 }
@@ -1945,6 +2010,7 @@ namespace Castle_Knight
                         enemyBlack2.atkAni.Pause();
                         enemyBlack2.walkAni.Pause();
 
+                        setting = false;
                         select_Pos = new Vector2(340, 185);
                         if (walkSoundInstance.State != SoundState.Paused) { walkSoundInstance.Pause(); }
                         gamePause = true;
@@ -2031,63 +2097,121 @@ namespace Castle_Knight
                 {
                     stopPress = true;
                     soundEffects[1].Play(volume: 0.5f, pitch: 0.0f, pan: 0.0f);
-                    if (select_Pos.Y == 185)
+                    if (setting)
                     {
-                        select = 1;
-                    }
-                    else if (select_Pos.Y == 255)
-                    {
-                        select = 2;
-                    }
-                    else if (select_Pos.Y == 325)
-                    {
-                        select = 3;
-                    }
-
-                    if (select == 1)
-                    {
-                        resetValue = false;
-                        stopPress = false;
-
-                        lastTimeSelect = theTime.TotalGameTime;
-                    }
-                    else if (select == 2)
-                    {
-                        if (Game1.soundOn)
+                        if (select_Pos.Y == 185)
                         {
+                            select = 1;
+                        }
+                        else if (select_Pos.Y == 255)
+                        {
+                            select = 2;
+                        }
+                        else if (select_Pos.Y == 325)
+                        {
+                            select = 3;
+                        }
+
+                        if (select == 1)
+                        {
+                            if (Game1.MusicOn)
+                            {
+                                stopPress = false;
+                                Game1.MusicOn = false;
+                                select = 0;
+
+                                lastTimeSelect = theTime.TotalGameTime;
+                            }
+                            else if (!Game1.MusicOn)
+                            {
+                                stopPress = false;
+                                Game1.MusicOn = true;
+                                select = 0;
+
+                                lastTimeSelect = theTime.TotalGameTime;
+                            }
+                        }
+                        else if (select == 2)
+                        {
+                            if (Game1.SFXOn)
+                            {
+                                stopPress = false;
+                                Game1.SFXOn = false;
+                                select = 0;
+
+                                lastTimeSelect = theTime.TotalGameTime;
+                            }
+                            else if (!Game1.SFXOn)
+                            {
+                                stopPress = false;
+                                Game1.SFXOn = true;
+                                select = 0;
+
+                                lastTimeSelect = theTime.TotalGameTime;
+                            }
+                        }
+                        else if (select == 3)
+                        {
+                            lastTimeSelect = theTime.TotalGameTime;
+
                             stopPress = false;
-                            Game1.soundOn = false;
-                            select = 0;
+                            select_Pos.Y = 185;
+                            setting = false;
+                        }
+                    }
+                    else if (!setting)
+                    {
+                        if (select_Pos.Y == 185)
+                        {
+                            select = 1;
+                        }
+                        else if (select_Pos.Y == 255)
+                        {
+                            select = 2;
+                        }
+                        else if (select_Pos.Y == 325)
+                        {
+                            select = 3;
+                        }
+
+                        if (select == 1)
+                        {
+                            resetValue = false;
+                            stopPress = false;
 
                             lastTimeSelect = theTime.TotalGameTime;
                         }
-                        else if (!Game1.soundOn)
+                        else if (select == 2)
                         {
-                            stopPress = false;
-                            Game1.soundOn = true;
-                            select = 0;
-
                             lastTimeSelect = theTime.TotalGameTime;
+
+                            stopPress = false;
+                            select_Pos.Y = 185;
+                            setting = true;
                         }
-                    }
-                    else if (select == 3)
-                    {
-                        string filepath = Path.Combine(@"Content\data.txt");
-                        FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Write);
-                        StreamWriter sw = new StreamWriter(fs);
-                        if (Switch == "InGame2")
-                        { sw.WriteLine("InGame2"); }
-                        sw.Flush();
-                        sw.Close();
-                        
-                        string filepathDead = Path.Combine(@"Content\Dead.txt");
-                        FileStream fsDead = new FileStream(filepathDead, FileMode.Open, FileAccess.Write);
-                        StreamWriter swDead = new StreamWriter(fsDead);
-                        if (Switch == "InGame2")
-                        { swDead.WriteLine(dead_count.ToString()); }
-                        swDead.Flush();
-                        swDead.Close();
-                        game.Exit();
+                        else if (select == 3)
+                        {
+                            string filepath = Path.Combine(@"Content\data.txt");
+                            FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Write);
+                            StreamWriter sw = new StreamWriter(fs);
+                            if (Switch == "InGame2")
+                            { sw.WriteLine("InGame2"); }
+                            sw.Flush();
+                            sw.Close();
+
+                            string filepathDead = Path.Combine(@"Content\Dead.txt");
+                            FileStream fsDead = new FileStream(filepathDead, FileMode.Open, FileAccess.Write);
+                            StreamWriter swDead = new StreamWriter(fsDead);
+                            if (Switch == "InGame2")
+                            { swDead.WriteLine(dead_count.ToString()); }
+                            swDead.Flush();
+                            swDead.Close();
+                            stopPress = false;
+                            resetValue = false;
+                            Game1.BackMenu = true;
+                            Game1.State = "Title";
+                            ScreenEvent.Invoke(game.mTitleScreen, new EventArgs());
+                        }
                     }
                 }
             }
