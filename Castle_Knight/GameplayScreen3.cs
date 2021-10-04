@@ -524,7 +524,8 @@ namespace Castle_Knight
                 {
                     if (text == 7 && lasttimeFinish + delayfinish < theTime.TotalGameTime)
                     {
-                        Game1.soundOn = false;
+                        Game1.MusicOn = false;
+                        Game1.SFXOn = false;
                         Player.stop_move = true;
                         ChatOn = true;
                     }
@@ -544,9 +545,14 @@ namespace Castle_Knight
                         if (lasttimeChat + _delayChat + TimeSpan.FromMilliseconds(6000) < theTime.TotalGameTime)
                         {
                             resetValue = false;
-                            Game1.soundOn = true;
+                            Game1.MusicOn = true;
+                            Game1.SFXOn = true;
                             ChatOn = false;
                             text = 7;
+                            stopPress = false;
+                            resetValue = false;
+                            Game1.BackMenu = true;
+                            Game1.State = "Title";
                             ScreenEvent.Invoke(game.mTitleScreen, new EventArgs());
                         }           
                     }
@@ -1459,37 +1465,45 @@ namespace Castle_Knight
 
 
                 // Potion
-                if (potion_Ena[0] == true && potion_Use[0] == false)
+
+                if (!gamefinish)
                 {
-                    theBatch.Draw(potion, new Vector2(15 - camera.ViewMatrix.Translation.X, 35 - camera.ViewMatrix.Translation.Y), Color.White);
+                    if (potion_Ena[0] == true && potion_Use[0] == false)
+                    {
+                        theBatch.Draw(potion, new Vector2(15 - camera.ViewMatrix.Translation.X, 35 - camera.ViewMatrix.Translation.Y), Color.White);
+                    }
+                    else if (potion_Ena[0] == false)
+                    {
+                        theBatch.Draw(potion, potion_Pos[0], Color.White);
+                    }
+                    if (potion_Ena[1] == false)
+                    {
+                        theBatch.Draw(potion, potion_Pos[1], Color.White);
+                    }
                 }
-                else if (potion_Ena[0] == false)
-                {
-                    theBatch.Draw(potion, potion_Pos[0], Color.White);
-                }
-                if (potion_Ena[1] == false)
-                {
-                    theBatch.Draw(potion, potion_Pos[1], Color.White);
-                }
+                
                 // Special
-                switch (Player.SpeCount)
+                if (!gamefinish)
                 {
-                    case 0:
-                        theBatch.Draw(special1, new Vector2(0 - camera.ViewMatrix.Translation.X, 5 - camera.ViewMatrix.Translation.Y), Color.White);
-                        break;
-                    case 1:
-                        theBatch.Draw(special2, new Vector2(0 - camera.ViewMatrix.Translation.X, 5 - camera.ViewMatrix.Translation.Y), Color.White);
-                        break;
-                    case 2:
-                        theBatch.Draw(special3, new Vector2(0 - camera.ViewMatrix.Translation.X, 5 - camera.ViewMatrix.Translation.Y), Color.White);
-                        break;
-                    case 3:
-                        theBatch.Draw(special4, new Vector2(0 - camera.ViewMatrix.Translation.X, 5 - camera.ViewMatrix.Translation.Y), Color.White);
-                        break;
-                    case 4:
-                        theBatch.Draw(special5, new Vector2(0 - camera.ViewMatrix.Translation.X, 5 - camera.ViewMatrix.Translation.Y), Color.White);
-                        break;
-                }
+                    switch (Player.SpeCount)
+                    {
+                        case 0:
+                            theBatch.Draw(special1, new Vector2(0 - camera.ViewMatrix.Translation.X, 5 - camera.ViewMatrix.Translation.Y), Color.White);
+                            break;
+                        case 1:
+                            theBatch.Draw(special2, new Vector2(0 - camera.ViewMatrix.Translation.X, 5 - camera.ViewMatrix.Translation.Y), Color.White);
+                            break;
+                        case 2:
+                            theBatch.Draw(special3, new Vector2(0 - camera.ViewMatrix.Translation.X, 5 - camera.ViewMatrix.Translation.Y), Color.White);
+                            break;
+                        case 3:
+                            theBatch.Draw(special4, new Vector2(0 - camera.ViewMatrix.Translation.X, 5 - camera.ViewMatrix.Translation.Y), Color.White);
+                            break;
+                        case 4:
+                            theBatch.Draw(special5, new Vector2(0 - camera.ViewMatrix.Translation.X, 5 - camera.ViewMatrix.Translation.Y), Color.White);
+                            break;
+                    }
+                }        
 
                 #region HeartDraw
                 if (!gamefinish)
@@ -1697,11 +1711,11 @@ namespace Castle_Knight
 
                 string strDead = "Dead = " + dead_count;
                 string strDevMode = "DevMode";
-                if (Switch == "InGame3")
+                if (Switch == "InGame3" && !gamefinish)
                 {
                     theBatch.DrawString(ArialFont, strDead, new Vector2(470 - camera.ViewMatrix.Translation.X, 435 - camera.ViewMatrix.Translation.Y), Color.White);
                 }
-                if (devMode)
+                if (devMode && !gamefinish)
                 {
                     theBatch.DrawString(ArialFont, strDevMode, new Vector2(880 - camera.ViewMatrix.Translation.X, 435 - camera.ViewMatrix.Translation.Y), Color.Red);
                 }
