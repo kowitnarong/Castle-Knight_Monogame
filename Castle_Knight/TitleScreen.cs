@@ -345,9 +345,9 @@ namespace Castle_Knight
                 BG1_2Pos[0].X -= 1 * 0.6f;
                 BG1_1Pos[1].X -= 1 * 0.4f;
                 BG1_2Pos[1].X -= 1 * 0.6f;
-                if (BG1_1Pos[0].X <= -3680)
+                if (BG1_1Pos[0].X <= -3682)
                 {
-                    BG1_1Pos[0].X = 3678;
+                    BG1_1Pos[0].X = 3676;
                 }
                 if (BG1_2Pos[0].X <= -3680)
                 {
